@@ -1,0 +1,30 @@
+﻿@if (Request.IsAuthenticated)
+{
+    <ul class="nav navbar-nav">
+        <li>@Html.ActionLink("Resumen", "Index", "Home")</li>
+        <li>@Html.ActionLink("Inventario", "List", "Home")</li>
+        <li>@Html.ActionLink("Entradas", "Index", "StockIn")</li>
+        <li>@Html.ActionLink("Salidas", "Index", "StockOut")</li>
+        @if (User.IsInRole(RoleConstants.Editor) || User.IsInRole(RoleConstants.Administrator))
+        {
+            <li>@Html.ActionLink("Categorias", "Index", "Category")</li>
+        }
+    </ul>
+    using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { id = "logoutForm", @class = "navbar-right" }))
+    {
+        @Html.AntiForgeryToken()
+
+        <ul class="nav navbar-nav navbar-right">
+            <li>
+                @Html.ActionLink("Hola " + User.Identity.GetUserName() + "!", "Index", "Manage", routeValues: null, htmlAttributes: new { title = "Manage" })
+            </li>
+            <li><a href="javascript:document.getElementById('logoutForm').submit()">Salir</a></li>
+        </ul>
+    }
+}
+else
+{
+    <ul class="nav navbar-nav navbar-right">
+        <li>@Html.ActionLink("Entrar", "Login", "Account", routeValues: null, htmlAttributes: new { id = "loginLink" })</li>
+    </ul>
+}

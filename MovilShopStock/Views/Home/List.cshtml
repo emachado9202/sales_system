@@ -1,0 +1,111 @@
+﻿@model IEnumerable<MovilShopStock.Models.ProductModel>
+
+@{
+    ViewBag.Title = "Inventario";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Inventario</h2>
+
+<div class="form-horizontal pull-left">
+    <div class="form-group">
+        <label class="control-label col-md-6">Filtrar por Categoría</label>
+        <div class="col-md-6">
+            @Html.DropDownList("Category", new SelectList(ViewBag.Categories, "Item1", "Item2", ViewBag.Category), new { @class = "form-control" })
+        </div>
+    </div>
+</div>
+@if (User.IsInRole(RoleConstants.Editor) || User.IsInRole(RoleConstants.Administrator))
+{
+    <div class="pull-right">
+        <a class="btn btn-success" href="@Url.Action("Create")">Agregar Producto al Inventario</a>
+    </div>
+}
+
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Category)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Product)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.CurrentPrice)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.In)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Out)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Exist)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.LatestUpdated)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.NoCountOut)
+        </th>
+        @if (User.IsInRole(RoleConstants.Editor) || User.IsInRole(RoleConstants.Administrator))
+        {
+            <th></th>
+        }
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Category)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Product)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.CurrentPrice)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.In)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Out)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Exist)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.LatestUpdated)
+            </td>
+            <td>
+                @if (item.NoCountOut)
+                {
+                    <span>Si</span>
+                }
+                else
+                {
+                    <span>No</span>
+                }
+            </td>
+            @if (User.IsInRole(RoleConstants.Editor) || User.IsInRole(RoleConstants.Administrator))
+            {
+                <td>
+                    @Html.ActionLink("Editar", "Edit", new { id = item.Id })
+                </td>
+            }
+        </tr>
+    }
+</table>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $("#Category").on("change", function () {
+                location.href = `/Home/List/${$(this).val()}`;
+            });
+
+        });
+    </script>
+}

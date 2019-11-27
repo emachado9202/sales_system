@@ -1,0 +1,90 @@
+﻿@model IEnumerable<MovilShopStock.Models.StockOutModel>
+
+@{
+    ViewBag.Title = "Salidas";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Salidas</h2>
+<div class="pull-right">
+    <a class="btn btn-success" href="@Url.Action("Create")">Crear Salida</a>
+</div>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Category)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.ProductName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Date)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.User)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.SalePrice)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Quantity)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.TotalSale)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Gain)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.TotalGain)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Receiver)
+        </th>
+        <th></th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Category)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ProductName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Date)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.User)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.SalePrice)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Quantity)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.TotalSale)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Gain)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.TotalGain)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Receiver)
+            </td>
+            <td>
+                @if (!item.Receivered && (User.IsInRole(RoleConstants.Editor) || User.IsInRole(RoleConstants.Administrator)))
+                {
+                    @Html.ActionLink("Recibir Venta", "Receiver", new { id = item.Id })
+                    <br />
+                }
+                @Html.ActionLink("Editar", "Edit", new { id = item.Id })
+            </td>
+        </tr>
+    }
+</table>
