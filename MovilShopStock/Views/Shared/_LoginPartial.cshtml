@@ -1,30 +1,41 @@
 ﻿@if (Request.IsAuthenticated)
 {
-    <ul class="nav navbar-nav">
-        <li>@Html.ActionLink("Resumen", "Index", "Home")</li>
-        <li>@Html.ActionLink("Inventario", "List", "Home")</li>
-        <li>@Html.ActionLink("Entradas", "Index", "StockIn")</li>
-        <li>@Html.ActionLink("Salidas", "Index", "StockOut")</li>
+    <ul class="navbar-nav mr-auto">
+        <li class="nav-item">@Html.ActionLink("Resumen", "Index", "Home", routeValues: null, htmlAttributes: new { @class = "nav-link" })</li>
+        <li class="nav-item">@Html.ActionLink("Inventario", "List", "Home", routeValues: null, htmlAttributes: new { @class = "nav-link" })</li>
+        <li class="nav-item">@Html.ActionLink("Entradas", "Index", "StockIn", routeValues: null, htmlAttributes: new { @class = "nav-link" })</li>
+        <li class="nav-item">@Html.ActionLink("Salidas", "Index", "StockOut", routeValues: null, htmlAttributes: new { @class = "nav-link" })</li>
         @if (User.IsInRole(RoleConstants.Editor) || User.IsInRole(RoleConstants.Administrator))
         {
-            <li>@Html.ActionLink("Categorias", "Index", "Category")</li>
+            <li class="nav-item">@Html.ActionLink("Categorias", "Index", "Category", routeValues: null, htmlAttributes: new { @class = "nav-link" })</li>
         }
     </ul>
     using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { id = "logoutForm", @class = "navbar-right" }))
     {
         @Html.AntiForgeryToken()
 
-        <ul class="nav navbar-nav navbar-right">
-            <li>
-                @Html.ActionLink("Hola " + User.Identity.GetUserName() + "!", "Index", "Manage", routeValues: null, htmlAttributes: new { title = "Manage" })
+        <ul class="navbar-nav mr-auto navbar-right">
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    @ViewBag.BusinessWorking.Name
+                </a>
+                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                    @foreach (var business in ViewBag.Business)
+                    {
+                        <a class="dropdown-item" href="/home/setbusiness/@business.Id?returnUrl=@Request.RawUrl">@business.Name</a>
+                    }
+                </div>
             </li>
-            <li><a href="javascript:document.getElementById('logoutForm').submit()">Salir</a></li>
+            <li class="nav-item">
+                @Html.ActionLink("Hola " + User.Identity.GetUserName() + "!", "Index", "Manage", routeValues: null, htmlAttributes: new { title = "Manage", @class = "nav-link" })
+            </li>
+            <li class="nav-item"><a class="nav-link" href="javascript:document.getElementById('logoutForm').submit()">Salir</a></li>
         </ul>
     }
 }
 else
 {
-    <ul class="nav navbar-nav navbar-right">
-        <li>@Html.ActionLink("Entrar", "Login", "Account", routeValues: null, htmlAttributes: new { id = "loginLink" })</li>
+    <ul class="navbar-nav mr-auto navbar-right">
+        <li class="nav-item">@Html.ActionLink("Entrar", "Login", "Account", routeValues: null, htmlAttributes: new { id = "loginLink", @class = "nav-link" })</li>
     </ul>
 }

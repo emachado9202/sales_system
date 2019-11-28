@@ -1,3 +1,5 @@
+using Microsoft.AspNet.Identity;
+using MovilShopStock.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -5,17 +7,32 @@ using System.Web;
 using System.Web.Mvc;
 using System.Web.Optimization;
 using System.Web.Routing;
+using Telerik.Web.Mvc;
 
 namespace MovilShopStock
 {
     public class MvcApplication : System.Web.HttpApplication
     {
+        private ApplicationDbContext applicationDbContext = new ApplicationDbContext();
+
         protected void Application_Start()
         {
             AreaRegistration.RegisterAllAreas();
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
+
+            WebAssetDefaultSettings.ScriptFilesPath = "~/Content/telerik/js";
+            WebAssetDefaultSettings.StyleSheetFilesPath = "~/Content/telerik/css";
+        }
+
+        protected void Session_Start()
+        {
+            if (User.Identity.IsAuthenticated)
+            {
+                string userId = User.Identity.GetUserId();
+                Session["BusinessWorking"] = applicationDbContext.BusinessUsers.Include("Business").FirstOrDefault(x => x.User_Id == userId && x.Business.IsPrimary)?.Business_Id;
+            }
         }
     }
 }

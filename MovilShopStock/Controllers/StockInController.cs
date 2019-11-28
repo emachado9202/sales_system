@@ -13,15 +13,17 @@ using System.Web.Mvc;
 namespace MovilShopStock.Controllers
 {
     [Authorize(Roles = RoleConstants.Editor + "," + RoleConstants.Administrator)]
-    public class StockInController : Controller
+    public class StockInController : GenericController
     {
         private ApplicationDbContext applicationDbContext = new ApplicationDbContext();
 
         public async Task<ActionResult> Index()
         {
+            Guid business_working = Guid.Parse(Session["BusinessWorking"].ToString());
+
             List<StockInModel> result = new List<StockInModel>();
 
-            List<StockIn> stockIns = await applicationDbContext.StockIns.Include("Product").Include("Product.Category").Include("User").OrderByDescending(x => x.Date).ToListAsync();
+            List<StockIn> stockIns = await applicationDbContext.StockIns.Include("Product").Include("Product.Category").Include("User").Where(x => x.Product.Business_Id == business_working).OrderByDescending(x => x.Date).ToListAsync();
 
             foreach (var stockIn in stockIns)
             {
@@ -57,6 +59,7 @@ namespace MovilShopStock.Controllers
             if (ModelState.IsValid)
             {
                 Guid productId = Guid.Parse(model.ProductName);
+
                 StockIn stockIn = new StockIn()
                 {
                     Id = Guid.NewGuid(),

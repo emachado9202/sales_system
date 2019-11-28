@@ -12,7 +12,7 @@ using System.Web.Mvc;
 namespace MovilShopStock.Controllers
 {
     [Authorize(Roles = RoleConstants.Editor + "," + RoleConstants.Administrator)]
-    public class CategoryController : Controller
+    public class CategoryController : GenericController
     {
         private ApplicationDbContext applicationDbContext = new ApplicationDbContext();
 
@@ -103,6 +103,15 @@ namespace MovilShopStock.Controllers
             tuples.Add(new Tuple<string, string>(ActionConstants.Sum + "", "Sumar"));
 
             ViewBag.ActionList = tuples;
+
+            return View(model);
+        }
+
+        public ActionResult View()
+        {
+            CategoryListModel model = new CategoryListModel();
+
+            model.GridPageSize = 10;
 
             return View(model);
         }

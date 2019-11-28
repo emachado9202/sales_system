@@ -14,7 +14,7 @@ using System.Web.Mvc;
 namespace MovilShopStock.Controllers
 {
     [Authorize(Roles = RoleConstants.Dealer + "," + RoleConstants.Editor + "," + RoleConstants.Administrator)]
-    public class HomeController : Controller
+    public class HomeController : GenericController
     {
         private ApplicationDbContext applicationDbContext = new ApplicationDbContext();
 
@@ -37,15 +37,17 @@ namespace MovilShopStock.Controllers
 
             List<Product> products;
 
+            Guid business_working = Guid.Parse(Session["BusinessWorking"].ToString());
+
             if (string.IsNullOrEmpty(id))
             {
-                products = await applicationDbContext.Products.Include("Category").OrderByDescending(x => x.LastUpdated).ToListAsync();
+                products = await applicationDbContext.Products.Include("Category").Where(x => x.Business_Id == business_working).OrderByDescending(x => x.LastUpdated).ToListAsync();
             }
             else
             {
                 Guid categoryId = Guid.Parse(id);
 
-                products = await applicationDbContext.Products.Where(x => x.Category_Id == categoryId).Include("Category").OrderByDescending(x => x.LastUpdated).ToListAsync();
+                products = await applicationDbContext.Products.Where(x => x.Category_Id == categoryId && x.Business_Id == business_working).Include("Category").OrderByDescending(x => x.LastUpdated).ToListAsync();
             }
 
             foreach (var product in products)
@@ -84,6 +86,8 @@ namespace MovilShopStock.Controllers
         {
             if (ModelState.IsValid)
             {
+                Guid business_working = Guid.Parse(Session["BusinessWorking"].ToString());
+
                 Product product = new Product()
                 {
                     Id = Guid.NewGuid(),
@@ -95,7 +99,8 @@ namespace MovilShopStock.Controllers
                     User_Id = User.Identity.GetUserId(),
                     CurrentPrice = decimal.Parse(model.CurrentPrice),
                     LastUpdated = DateTime.Now,
-                    NoCountOut = model.NoCountOut
+                    NoCountOut = model.NoCountOut,
+                    Business_Id = business_working
                 };
 
                 applicationDbContext.Products.Add(product);
@@ -162,7 +167,9 @@ namespace MovilShopStock.Controllers
         public async Task<ActionResult> GetProductByCat(string category_id)
         {
             Guid categoryId = Guid.Parse(category_id);
-            List<ProductModel> products = await applicationDbContext.Products.Where(x => x.Category_Id == categoryId).OrderBy(x => x.Name).Select(x => new ProductModel { Id = x.Id.ToString(), Product = x.Name }).ToListAsync();
+            Guid business_working = Guid.Parse(Session["BusinessWorking"].ToString());
+
+            List<ProductModel> products = await applicationDbContext.Products.Where(x => x.Category_Id == categoryId && x.Business_Id == business_working).OrderBy(x => x.Name).Select(x => new ProductModel { Id = x.Id.ToString(), Product = x.Name }).ToListAsync();
 
             return Json(products);
         }
@@ -174,13 +181,15 @@ namespace MovilShopStock.Controllers
 
             DateTime month_init = DateTime.Today.AddDays(-DateTime.Now.Day);
 
-            long quantity_in = (await applicationDbContext.StockIns.SumAsync(x => (int?)x.Quantity)) ?? 0;
-            long quantity_in_month = (await applicationDbContext.StockIns.Where(x => x.Date > month_init).SumAsync(x => (int?)x.Quantity)) ?? 0;
+            Guid business_working = Guid.Parse(Session["BusinessWorking"].ToString());
+
+            long quantity_in = (await applicationDbContext.StockIns.Include("Product").Where(x => x.Product.Business_Id == business_working).SumAsync(x => (int?)x.Quantity)) ?? 0;
+            long quantity_in_month = (await applicationDbContext.StockIns.Include("Product").Where(x => x.Date > month_init && x.Product.Business_Id == business_working).SumAsync(x => (int?)x.Quantity)) ?? 0;
             decimal percent_quantity_in = quantity_in == 0 ? 0 : (quantity_in_month * 100) / quantity_in;
 
             model.InQuantity = new Tuple<long, decimal>(quantity_in, percent_quantity_in);
 
-            List<StockIn> stockIns = await applicationDbContext.StockIns.Include("Product.Category").ToListAsync();
+            List<StockIn> stockIns = await applicationDbContext.StockIns.Include("Product").Include("Product.Category").Where(x => x.Product.Business_Id == business_working).ToListAsync();
             decimal money_in = 0, money_in_month = 0;
 
             foreach (var stockIn in stockIns)
@@ -211,13 +220,13 @@ namespace MovilShopStock.Controllers
 
             model.InMoney = new Tuple<decimal, decimal>(money_in, percent_money_in);
 
-            long quantity_out = (await applicationDbContext.StockOuts.SumAsync(x => (int?)x.Quantity)) ?? 0;
-            long quantity_out_month = (await applicationDbContext.StockOuts.Where(x => x.Date > month_init).SumAsync(x => (int?)x.Quantity)) ?? 0;
+            long quantity_out = (await applicationDbContext.StockOuts.Include("Product").Where(x => x.Product.Business_Id == business_working).SumAsync(x => (int?)x.Quantity)) ?? 0;
+            long quantity_out_month = (await applicationDbContext.StockOuts.Include("Product").Where(x => x.Date > month_init && x.Product.Business_Id == business_working).SumAsync(x => (int?)x.Quantity)) ?? 0;
             decimal percent_quantity_out = quantity_out == 0 ? 0 : (quantity_out_month * 100) / quantity_out;
 
             model.OutQuantity = new Tuple<long, decimal>(quantity_out, percent_quantity_out);
 
-            List<StockOut> stockOuts = await applicationDbContext.StockOuts.Include("Product.Category").ToListAsync();
+            List<StockOut> stockOuts = await applicationDbContext.StockOuts.Include("Product").Include("Product.Category").Where(x => x.Product.Business_Id == business_working).ToListAsync();
             decimal money_out = 0, money_out_month = 0;
 
             foreach (var stockOut in stockOuts)
@@ -248,14 +257,14 @@ namespace MovilShopStock.Controllers
 
             model.OutMoney = new Tuple<decimal, decimal>(money_out, percent_money_out);
 
-            long quantity_stock = (await applicationDbContext.Products.SumAsync(x => (int?)x.In - x.Out)) ?? 0;
-            long quantity_stock_month = (await applicationDbContext.Products.Where(x => x.LastUpdated > month_init).SumAsync(x => (int?)x.In - x.Out)) ?? 0;
+            long quantity_stock = (await applicationDbContext.Products.Where(x => x.Business_Id == business_working).SumAsync(x => (int?)x.In - x.Out)) ?? 0;
+            long quantity_stock_month = (await applicationDbContext.Products.Where(x => x.LastUpdated > month_init && x.Business_Id == business_working).SumAsync(x => (int?)x.In - x.Out)) ?? 0;
             decimal percent_quantity_stock = quantity_stock == 0 ? 0 : (quantity_stock_month * 100) / quantity_stock;
 
             model.StockQuantity = new Tuple<long, decimal>(quantity_stock, percent_quantity_stock);
 
-            decimal money_stock = (await applicationDbContext.Products.SumAsync(x => (decimal?)x.CurrentPrice * (x.In - x.Out))) ?? 0;
-            decimal money_stock_month = (await applicationDbContext.Products.Where(x => x.LastUpdated > month_init).SumAsync(x => (decimal?)x.CurrentPrice * (x.In - x.Out))) ?? 0;
+            decimal money_stock = (await applicationDbContext.Products.Where(x => x.Business_Id == business_working).SumAsync(x => (decimal?)x.CurrentPrice * (x.In - x.Out))) ?? 0;
+            decimal money_stock_month = (await applicationDbContext.Products.Where(x => x.LastUpdated > month_init && x.Business_Id == business_working).SumAsync(x => (decimal?)x.CurrentPrice * (x.In - x.Out))) ?? 0;
             decimal percent_money_stock = money_stock == 0 ? 0 : (money_stock_month * 100) / money_stock;
 
             model.StockMoney = new Tuple<decimal, decimal>(money_stock, percent_money_stock);
@@ -298,7 +307,7 @@ namespace MovilShopStock.Controllers
                 }
 
                 model.Categories = new List<Tuple<string, List<Tuple<string, decimal>>>>();
-                var outs_categories = await applicationDbContext.StockOuts.Include("Product").Include("Product.Category").Where(x => x.Product.Category.ShowDashboard && x.Date > month_init).GroupBy(x => x.Product.Category).ToListAsync();
+                var outs_categories = await applicationDbContext.StockOuts.Include("Product").Include("Product.Category").Where(x => x.Product.Category.ShowDashboard && x.Date > month_init && x.Product.Business_Id == business_working).GroupBy(x => x.Product.Category).ToListAsync();
 
                 foreach (var ocat in outs_categories)
                 {
@@ -321,6 +330,13 @@ namespace MovilShopStock.Controllers
             }
 
             return View(model);
+        }
+
+        [HttpGet]
+        public async Task<ActionResult> SetBusiness(string id, string returnUrl)
+        {
+            Session["BusinessWorking"] = id;
+            return Redirect(returnUrl);
         }
     }
 }

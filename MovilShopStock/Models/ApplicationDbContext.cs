@@ -52,11 +52,33 @@ namespace MovilShopStock.Models
                     .WithMany(ul => ul.StockOuts)
                     .HasForeignKey(ul => ul.Product_Id)
                     .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<TransferBusinessProduct>()
+                    .HasRequired(u => u.ProductTo)
+                    .WithMany(ul => ul.TransferBusinessProducts)
+                    .HasForeignKey(ul => ul.ProductTo_Id)
+                    .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<TransferBusinessProduct>()
+                    .HasRequired(u => u.User)
+                    .WithMany(ul => ul.TransferBusinessProducts)
+                    .HasForeignKey(ul => ul.User_Id)
+                    .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<TransferMoneyUser>()
+                    .HasRequired(u => u.UserTo)
+                    .WithMany(ul => ul.TransferMoneyUsers)
+                    .HasForeignKey(ul => ul.UserTo_Id)
+                    .WillCascadeOnDelete(false);
         }
 
         public DbSet<Category> Categories { get; set; }
         public DbSet<Product> Products { get; set; }
         public DbSet<StockIn> StockIns { get; set; }
         public DbSet<StockOut> StockOuts { get; set; }
+        public DbSet<Business> Businesses { get; set; }
+        public DbSet<BusinessUser> BusinessUsers { get; set; }
+        public DbSet<TransferBusinessProduct> TransferBusinessProducts { get; set; }
+        public DbSet<TransferMoneyUser> TransferMoneyUsers { get; set; }
     }
 }

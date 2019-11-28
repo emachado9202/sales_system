@@ -23,6 +23,9 @@ namespace MovilShopStock.Models.Catalog
         [Required]
         public Guid Category_Id { get; set; }
 
+        [ForeignKey("Business")]
+        public Guid? Business_Id { get; set; }
+
         [ForeignKey("User")]
         [Required]
         public string User_Id { get; set; }
@@ -30,8 +33,10 @@ namespace MovilShopStock.Models.Catalog
         public DateTime LastUpdated { get; set; }
         public bool NoCountOut { get; set; }
 
+        public virtual Business Business { get; set; }
         public virtual Category Category { get; set; }
         public virtual User User { get; set; }
         public virtual List<StockOut> StockOuts { get; set; }
+        public virtual List<TransferBusinessProduct> TransferBusinessProducts { get; set; }
     }
 }

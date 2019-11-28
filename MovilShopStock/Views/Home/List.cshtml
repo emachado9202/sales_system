@@ -7,20 +7,22 @@
 
 <h2>Inventario</h2>
 
-<div class="form-horizontal pull-left">
-    <div class="form-group">
-        <label class="control-label col-md-6">Filtrar por Categoría</label>
-        <div class="col-md-6">
-            @Html.DropDownList("Category", new SelectList(ViewBag.Categories, "Item1", "Item2", ViewBag.Category), new { @class = "form-control" })
+<div class="row align-items-end justify-content-end mb-1">
+    <div class="col">
+        <div class="form-group">
+            <label class="control-label col-md-6">Filtrar por Categoría</label>
+            <div class="col-md-6">
+                @Html.DropDownList("Category", new SelectList(ViewBag.Categories, "Item1", "Item2", ViewBag.Category), new { @class = "form-control" })
+            </div>
         </div>
     </div>
+    @if (User.IsInRole(RoleConstants.Editor) || User.IsInRole(RoleConstants.Administrator))
+    {
+        <div class="col-sm-12 col-md-3">
+            <a class="btn btn-success" href="@Url.Action("Create")">Agregar Producto al Inventario</a>
+        </div>
+    }
 </div>
-@if (User.IsInRole(RoleConstants.Editor) || User.IsInRole(RoleConstants.Administrator))
-{
-    <div class="pull-right">
-        <a class="btn btn-success" href="@Url.Action("Create")">Agregar Producto al Inventario</a>
-    </div>
-}
 
 <table class="table">
     <tr>

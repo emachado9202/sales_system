@@ -31,7 +31,6 @@ namespace MovilShopStock.Models.Catalog
         public string Receiver_Id { get; set; }
 
         public virtual Product Product { get; set; }
-
         public virtual User User { get; set; }
         public virtual User Receiver { get; set; }
     }

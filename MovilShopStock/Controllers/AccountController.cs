@@ -14,7 +14,7 @@ using MovilShopStock.Models.Catalog;
 namespace MovilShopStock.Controllers
 {
     [Authorize]
-    public class AccountController : Controller
+    public class AccountController : GenericController
     {
         private ApplicationSignInManager _signInManager;
         private ApplicationUserManager _userManager;
