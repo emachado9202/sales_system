@@ -19,7 +19,9 @@ namespace MovilShopStock.Controllers
         [HttpGet]
         public async Task<ActionResult> Index()
         {
-            return View(await applicationDbContext.Categories.OrderByDescending(x => x.LastUpdated).ToListAsync());
+            Guid business_working = Guid.Parse(Session["BusinessWorking"].ToString());
+
+            return View(await applicationDbContext.Categories.Where(x => x.Business_Id == business_working).OrderByDescending(x => x.LastUpdated).ToListAsync());
         }
 
         [HttpGet]
@@ -41,8 +43,10 @@ namespace MovilShopStock.Controllers
         {
             if (ModelState.IsValid)
             {
+                Guid business_working = Guid.Parse(Session["BusinessWorking"].ToString());
                 model.Id = Guid.NewGuid();
                 model.LastUpdated = DateTime.Now;
+                model.Business_Id = business_working;
                 applicationDbContext.Categories.Add(model);
 
                 await applicationDbContext.SaveChangesAsync();

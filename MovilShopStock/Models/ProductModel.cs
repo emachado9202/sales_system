@@ -22,6 +22,9 @@ namespace MovilShopStock.Models
         [DisplayName("Precio Actual")]
         public string CurrentPrice { get; set; }
 
+        [DisplayName("Precio Venta")]
+        public string SalePrice { get; set; }
+
         [DisplayName("Entrada")]
         public int In { get; set; }
 

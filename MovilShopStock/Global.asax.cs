@@ -1,5 +1,6 @@
 using Microsoft.AspNet.Identity;
 using MovilShopStock.Models;
+using MovilShopStock.Models.Catalog;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -31,7 +32,27 @@ namespace MovilShopStock
             if (User.Identity.IsAuthenticated)
             {
                 string userId = User.Identity.GetUserId();
-                Session["BusinessWorking"] = applicationDbContext.BusinessUsers.Include("Business").FirstOrDefault(x => x.User_Id == userId && x.Business.IsPrimary)?.Business_Id;
+                Guid business_working = Guid.Empty;
+
+                User user = applicationDbContext.Users.FirstOrDefault(x => x.Id == userId);
+                if (user.CurrentBusiness_Id == null)
+                {
+                    try
+                    {
+                        BusinessUser business_user = applicationDbContext.BusinessUsers.Include("Business").FirstOrDefault(x => x.User_Id == userId && x.Business.IsPrimary);
+
+                        business_working = business_user.Business_Id;
+                    }
+                    catch (Exception e)
+                    {
+                    }
+                }
+                else
+                {
+                    business_working = user.CurrentBusiness_Id.Value;
+                }
+
+                Session["BusinessWorking"] = business_working;
             }
         }
     }

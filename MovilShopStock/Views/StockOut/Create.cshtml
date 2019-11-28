@@ -68,6 +68,10 @@
                 load_product();
             });
 
+            $("#ProductName").on("change", function () {
+                load_price();
+            });
+
             load_product = function () {
                 $.ajax({
                     type: 'POST',
@@ -81,12 +85,28 @@
                             .find('option')
                             .remove()
                             .end();
+                        var first = true;
                         $.each(data,
                             function (l, prod) {
-                                var option_prod = new Option(prod.Product, prod.Id, true, true);
-                                $("#ProductName").append(option_prod).trigger('change');
+                                var option_prod = new Option(prod.Product, prod.Id, true, first);
+                                $("#ProductName").append(option_prod);
+                                first = false;
                             });
+                        $("#ProductName").trigger('change');
+                    }
+                });
+            };
 
+            load_price = function () {
+                $.ajax({
+                    type: 'POST',
+                    data: {
+                        product_id: $("#ProductName").val()
+                    },
+                    url: "/Home/GetSalePriceProduct",
+                    dataType: 'json',
+                    success: function (data) {
+                        $("#SalePrice").val(data);
                     }
                 });
             };

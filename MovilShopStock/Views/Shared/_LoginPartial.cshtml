@@ -17,7 +17,10 @@
         <ul class="navbar-nav mr-auto navbar-right">
             <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    @ViewBag.BusinessWorking.Name
+                    @if (ViewBag.BusinessWorking != null)
+                    {
+                        <span>@ViewBag.BusinessWorking.Name</span>
+                    }
                 </a>
                 <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                     @foreach (var business in ViewBag.Business)

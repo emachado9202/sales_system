@@ -2,6 +2,7 @@
 using System;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace MovilShopStock.Models.Catalog
 {
@@ -27,5 +28,10 @@ namespace MovilShopStock.Models.Catalog
 
         [DisplayName("Mostrar en Resumen")]
         public bool ShowDashboard { get; set; }
+
+        [ForeignKey("Business")]
+        public Guid? Business_Id { get; set; }
+
+        public virtual Business Business { get; set; }
     }
 }

@@ -19,6 +19,7 @@ namespace MovilShopStock.Models
         public decimal TotalGain { get; set; }
 
         public List<Tuple<string, decimal>> UserMoney { get; set; }
+        public List<Tuple<string, decimal>> PendentMoney { get; set; }
         public List<Tuple<string, List<Tuple<string, decimal>>>> Categories { get; set; }
     }
 }

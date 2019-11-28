@@ -16,6 +16,9 @@ namespace MovilShopStock.Models.Catalog
         [DataType(DataType.Currency)]
         public decimal CurrentPrice { get; set; }
 
+        [DataType(DataType.Currency)]
+        public decimal SalePrice { get; set; }
+
         public int In { get; set; }
         public int Out { get; set; }
 

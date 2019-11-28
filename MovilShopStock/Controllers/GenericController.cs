@@ -18,7 +18,8 @@ namespace MovilShopStock.Controllers
             if (User.Identity.IsAuthenticated)
             {
                 string userId = User.Identity.GetUserId();
-                List<Business> businesses = applicationDbContext.BusinessUsers.Include("Business").Where(x => x.User_Id == userId)?.Select(x => x.Business).ToList();
+                List<BusinessUser> business_user = applicationDbContext.BusinessUsers.Include("Business").Where(x => x.User_Id == userId).ToList();
+                List<Business> businesses = business_user != null ? business_user.Select(x => x.Business).ToList() : new List<Business>();
                 Guid business_working = Guid.Parse(Session["BusinessWorking"].ToString());
 
                 ViewBag.Business = businesses;

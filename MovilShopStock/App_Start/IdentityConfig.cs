@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
+using System.Net.Mail;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using System.Web;
@@ -17,10 +18,22 @@ namespace MovilShopStock
 {
     public class EmailService : IIdentityMessageService
     {
-        public Task SendAsync(IdentityMessage message)
+        public async Task SendAsync(IdentityMessage message)
         {
             // Plug in your email service here to send an email.
-            return Task.FromResult(0);
+            var mailMessage = new MailMessage
+            ("info@livecamaguey.com", message.Destination, message.Subject, message.Body);
+
+            mailMessage.IsBodyHtml = true;
+
+            using (var client = new SmtpClient("smtp.ionos.com", Convert.ToInt32(587)))
+            {
+                System.Net.NetworkCredential credentials = new System.Net.NetworkCredential("info@livecamaguey.com", "LiveCamaguey2018*");
+                client.Credentials = credentials;
+                client.EnableSsl = true;
+
+                await client.SendMailAsync(mailMessage);
+            }
         }
     }
 

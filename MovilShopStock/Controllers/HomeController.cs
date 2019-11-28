@@ -58,6 +58,7 @@ namespace MovilShopStock.Controllers
                     Category = product.Category.Name,
                     Product = product.Name,
                     CurrentPrice = product.CurrentPrice.ToString("#,##0.00"),
+                    SalePrice = product.SalePrice.ToString("#,##0.00"),
                     LatestUpdated = product.LastUpdated.ToString("yyyy-MM-dd"),
                     In = product.In,
                     Out = product.Out,
@@ -74,7 +75,9 @@ namespace MovilShopStock.Controllers
         {
             ProductModel model = new ProductModel();
 
-            ViewBag.Categories = await applicationDbContext.Categories.OrderBy(x => x.Name).ToListAsync();
+            Guid business_working = Guid.Parse(Session["BusinessWorking"].ToString());
+
+            ViewBag.Categories = await applicationDbContext.Categories.Where(x => x.Business_Id == business_working).OrderBy(x => x.Name).ToListAsync();
 
             return View(model);
         }
@@ -84,10 +87,9 @@ namespace MovilShopStock.Controllers
         [Authorize(Roles = RoleConstants.Editor + "," + RoleConstants.Administrator)]
         public async Task<ActionResult> Create(ProductModel model)
         {
+            Guid business_working = Guid.Parse(Session["BusinessWorking"].ToString());
             if (ModelState.IsValid)
             {
-                Guid business_working = Guid.Parse(Session["BusinessWorking"].ToString());
-
                 Product product = new Product()
                 {
                     Id = Guid.NewGuid(),
@@ -109,7 +111,9 @@ namespace MovilShopStock.Controllers
 
                 return RedirectToAction("List");
             }
-            ViewBag.Categories = await applicationDbContext.Categories.OrderBy(x => x.Name).ToListAsync();
+
+            ViewBag.Categories = await applicationDbContext.Categories.Where(x => x.Business_Id == business_working).OrderBy(x => x.Name).ToListAsync();
+
             return View(model);
         }
 
@@ -119,7 +123,8 @@ namespace MovilShopStock.Controllers
         {
             Guid prod_id = Guid.Parse(id);
 
-            ViewBag.Categories = await applicationDbContext.Categories.OrderBy(x => x.Name).ToListAsync();
+            Guid business_working = Guid.Parse(Session["BusinessWorking"].ToString());
+            ViewBag.Categories = await applicationDbContext.Categories.Where(x => x.Business_Id == business_working).OrderBy(x => x.Name).ToListAsync();
 
             Product product = await applicationDbContext.Products.FirstOrDefaultAsync(x => x.Id == prod_id);
 
@@ -129,6 +134,7 @@ namespace MovilShopStock.Controllers
                 Category = product.Category_Id.ToString(),
                 Product = product.Name,
                 CurrentPrice = product.CurrentPrice.ToString("#,##0.00"),
+                SalePrice = product.SalePrice.ToString("#,##0.00"),
                 In = product.In
             };
 
@@ -150,6 +156,7 @@ namespace MovilShopStock.Controllers
                 product.Category_Id = Guid.Parse(model.Category);
                 product.In = model.In;
                 product.CurrentPrice = decimal.Parse(model.CurrentPrice);
+                product.SalePrice = decimal.Parse(model.SalePrice);
                 product.LastUpdated = DateTime.Now;
                 product.NoCountOut = model.NoCountOut;
 
@@ -159,7 +166,9 @@ namespace MovilShopStock.Controllers
 
                 return RedirectToAction("List");
             }
-            ViewBag.Categories = await applicationDbContext.Categories.OrderBy(x => x.Name).ToListAsync();
+            Guid business_working = Guid.Parse(Session["BusinessWorking"].ToString());
+            ViewBag.Categories = await applicationDbContext.Categories.Where(x => x.Business_Id == business_working).OrderBy(x => x.Name).ToListAsync();
+
             return View(model);
         }
 
@@ -172,6 +181,16 @@ namespace MovilShopStock.Controllers
             List<ProductModel> products = await applicationDbContext.Products.Where(x => x.Category_Id == categoryId && x.Business_Id == business_working).OrderBy(x => x.Name).Select(x => new ProductModel { Id = x.Id.ToString(), Product = x.Name }).ToListAsync();
 
             return Json(products);
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> GetSalePriceProduct(string product_id)
+        {
+            Guid productId = Guid.Parse(product_id);
+
+            Product product = await applicationDbContext.Products.FirstOrDefaultAsync(x => x.Id == productId);
+
+            return Json(product?.SalePrice);
         }
 
         [HttpGet]
@@ -269,6 +288,22 @@ namespace MovilShopStock.Controllers
 
             model.StockMoney = new Tuple<decimal, decimal>(money_stock, percent_money_stock);
 
+            model.PendentMoney = new List<Tuple<string, decimal>>();
+            List<string> dealer_ids = await applicationDbContext.Roles.Where(x => x.Name.Equals(RoleConstants.Dealer)).Select(x => x.Id).ToListAsync();
+            List<User> dealers = await applicationDbContext.Users.Where(x => x.Roles.FirstOrDefault(r => dealer_ids.Contains(r.RoleId)) != null).ToListAsync();
+            model.UserMoney = new List<Tuple<string, decimal>>();
+            foreach (var u in dealers)
+            {
+                decimal money = 0;
+
+                foreach (var stockOut in stockOuts.Where(x => x.User_Id == u.Id && x.Receiver_Id == null))
+                {
+                    money += stockOut.Quantity * stockOut.SalePrice;
+                }
+
+                model.PendentMoney.Add(new Tuple<string, decimal>(u.UserName, money));
+            }
+
             if (User.IsInRole(RoleConstants.Administrator) || User.IsInRole(RoleConstants.Editor))
             {
                 DateTime today = DateTime.Today;
@@ -335,7 +370,16 @@ namespace MovilShopStock.Controllers
         [HttpGet]
         public async Task<ActionResult> SetBusiness(string id, string returnUrl)
         {
+            string userId = User.Identity.GetUserId();
+            User user = await applicationDbContext.Users.FirstOrDefaultAsync(x => x.Id == userId);
+
+            user.CurrentBusiness_Id = Guid.Parse(id);
+
+            applicationDbContext.Entry(user).State = System.Data.Entity.EntityState.Modified;
+            await applicationDbContext.SaveChangesAsync();
+
             Session["BusinessWorking"] = id;
+
             return Redirect(returnUrl);
         }
     }

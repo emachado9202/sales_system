@@ -49,7 +49,8 @@ namespace MovilShopStock.Controllers
         {
             StockOutModel model = new StockOutModel();
 
-            ViewBag.Categories = await applicationDbContext.Categories.OrderBy(x => x.Name).ToListAsync();
+            Guid business_working = Guid.Parse(Session["BusinessWorking"].ToString());
+            ViewBag.Categories = await applicationDbContext.Categories.Where(x => x.Business_Id == business_working).OrderBy(x => x.Name).ToListAsync();
 
             return View(model);
         }
@@ -107,7 +108,10 @@ namespace MovilShopStock.Controllers
 
                 return RedirectToAction("Index");
             }
-            ViewBag.Categories = await applicationDbContext.Categories.OrderBy(x => x.Name).ToListAsync();
+
+            Guid business_working = Guid.Parse(Session["BusinessWorking"].ToString());
+            ViewBag.Categories = await applicationDbContext.Categories.Where(x => x.Business_Id == business_working).OrderBy(x => x.Name).ToListAsync();
+
             return View(model);
         }
 
