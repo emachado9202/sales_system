@@ -18,9 +18,29 @@ namespace MovilShopStock.Controllers
             if (User.Identity.IsAuthenticated)
             {
                 string userId = User.Identity.GetUserId();
-                List<BusinessUser> business_user = applicationDbContext.BusinessUsers.Include("Business").Where(x => x.User_Id == userId).ToList();
-                List<Business> businesses = business_user != null ? business_user.Select(x => x.Business).ToList() : new List<Business>();
-                Guid business_working = Guid.Parse(Session["BusinessWorking"].ToString());
+                List<Business> businesses = applicationDbContext.Businesses.Where(x => x.BusinessUsers.FirstOrDefault(y => y.User_Id == userId) != null).ToList();
+
+                Guid business_working = Guid.Empty;
+
+                User user = applicationDbContext.Users.FirstOrDefault(x => x.Id == userId);
+                if (user.CurrentBusiness_Id == null)
+                {
+                    try
+                    {
+                        Business business_user = businesses.FirstOrDefault(x => x.IsPrimary);
+
+                        business_working = business_user.Id;
+                    }
+                    catch (Exception)
+                    {
+                    }
+                }
+                else
+                {
+                    business_working = user.CurrentBusiness_Id.Value;
+                }
+
+                Session["BusinessWorking"] = business_working;
 
                 ViewBag.Business = businesses;
                 ViewBag.BusinessWorking = businesses.FirstOrDefault(x => x.Id == business_working);

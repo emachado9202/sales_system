@@ -27,6 +27,7 @@ namespace MovilShopStock.Models.Catalog
 
         public virtual Business CurrentBusiness { get; set; }
         public virtual List<StockIn> StockIns { get; set; }
+        public virtual List<BusinessUser> BusinessUsers { get; set; }
         public virtual List<StockOut> StockOuts { get; set; }
         public virtual List<TransferBusinessProduct> TransferBusinessProducts { get; set; }
         public virtual List<TransferMoneyUser> TransferMoneyUsers { get; set; }

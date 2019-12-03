@@ -6,7 +6,20 @@
 }
 
 <h2>Salidas</h2>
-<div class="row justify-content-end">
+@if (ViewBag.Msg != null)
+{
+    <div class="row justify-content-center">
+        <div class="alert alert-primary" role="alert">
+            @ViewBag.Msg
+        </div>
+    </div>
+}
+
+<div class="row justify-content-end mb-1">
+    @if (Model.FirstOrDefault(x => !x.Receivered) != null && (User.IsInRole(RoleConstants.Editor) || User.IsInRole(RoleConstants.Administrator)))
+    {
+        <a class="btn btn-primary mr-1" href="@Url.Action("AllReceiver")">Recibir Ventas</a>
+    }
     <a class="btn btn-success" href="@Url.Action("Create")">Crear Salida</a>
 </div>
 <table class="table">
@@ -78,12 +91,16 @@
                 @Html.DisplayFor(modelItem => item.Receiver)
             </td>
             <td>
-                @if (!item.Receivered && (User.IsInRole(RoleConstants.Editor) || User.IsInRole(RoleConstants.Administrator)))
+                @if (!item.Receivered)
                 {
-                    @Html.ActionLink("Recibir Venta", "Receiver", new { id = item.Id })
-                    <br />
+                    if (User.IsInRole(RoleConstants.Editor) || User.IsInRole(RoleConstants.Administrator))
+                    {
+                        @Html.ActionLink("Recibir Venta", "Receiver", new { id = item.Id }, new { @class = "btn btn-primary" })
+                        <br />
+                    }
+                    @Html.ActionLink("Editar", "Edit", new { id = item.Id }, new { @class = "btn btn-warning" })
+
                 }
-                @Html.ActionLink("Editar", "Edit", new { id = item.Id })
             </td>
         </tr>
     }

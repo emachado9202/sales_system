@@ -99,7 +99,7 @@
             @if (User.IsInRole(RoleConstants.Editor) || User.IsInRole(RoleConstants.Administrator))
             {
                 <td>
-                    @Html.ActionLink("Editar", "Edit", new { id = item.Id })
+                    @Html.ActionLink("Editar", "Edit", new { id = item.Id }, new { @class = "btn btn-warning" })
                 </td>
             }
         </tr>

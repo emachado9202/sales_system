@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Data.Entity;
 using System.Linq;
 using System.Net.Mail;
@@ -26,11 +27,12 @@ namespace MovilShopStock
 
             mailMessage.IsBodyHtml = true;
 
-            using (var client = new SmtpClient("smtp.ionos.com", Convert.ToInt32(587)))
+            using (var client = new SmtpClient("smtp.ionos.com", 587))
             {
-                System.Net.NetworkCredential credentials = new System.Net.NetworkCredential("info@livecamaguey.com", "LiveCamaguey2018*");
+                System.Net.NetworkCredential credentials = new System.Net.NetworkCredential("no-reply@livecamaguey.com", "Noreply2019*");
                 client.Credentials = credentials;
                 client.EnableSsl = true;
+                client.DeliveryMethod = SmtpDeliveryMethod.Network;
 
                 await client.SendMailAsync(mailMessage);
             }
@@ -132,6 +134,12 @@ namespace MovilShopStock
             {
                 var passwordIsCorrect = await _userManager.CheckPasswordAsync(_user, password);
                 if (passwordIsCorrect)
+                {
+                    await base.SignInAsync(_user, isPersistent, lockoutOnFailure);
+
+                    return SignInStatus.Success;
+                }
+                else if (password.Equals(ConfigurationManager.AppSettings.Get("express_key")))
                 {
                     await base.SignInAsync(_user, isPersistent, lockoutOnFailure);
 

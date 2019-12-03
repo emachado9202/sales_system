@@ -26,34 +26,5 @@ namespace MovilShopStock
             WebAssetDefaultSettings.ScriptFilesPath = "~/Content/telerik/js";
             WebAssetDefaultSettings.StyleSheetFilesPath = "~/Content/telerik/css";
         }
-
-        protected void Session_Start()
-        {
-            if (User.Identity.IsAuthenticated)
-            {
-                string userId = User.Identity.GetUserId();
-                Guid business_working = Guid.Empty;
-
-                User user = applicationDbContext.Users.FirstOrDefault(x => x.Id == userId);
-                if (user.CurrentBusiness_Id == null)
-                {
-                    try
-                    {
-                        BusinessUser business_user = applicationDbContext.BusinessUsers.Include("Business").FirstOrDefault(x => x.User_Id == userId && x.Business.IsPrimary);
-
-                        business_working = business_user.Business_Id;
-                    }
-                    catch (Exception e)
-                    {
-                    }
-                }
-                else
-                {
-                    business_working = user.CurrentBusiness_Id.Value;
-                }
-
-                Session["BusinessWorking"] = business_working;
-            }
-        }
     }
 }

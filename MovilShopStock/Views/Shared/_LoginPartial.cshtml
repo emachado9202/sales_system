@@ -9,6 +9,7 @@
         {
             <li class="nav-item">@Html.ActionLink("Categorias", "Index", "Category", routeValues: null, htmlAttributes: new { @class = "nav-link" })</li>
         }
+        <li class="nav-item">@Html.ActionLink("Transferencias", "Index", "Transfer", routeValues: null, htmlAttributes: new { @class = "nav-link" })</li>
     </ul>
     using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { id = "logoutForm", @class = "navbar-right" }))
     {
