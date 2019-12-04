@@ -25,7 +25,7 @@ namespace MovilShopStock.Models.Catalog
 
         [Required]
         [DataType(DataType.Currency)]
-        public decimal Monto { get; set; }
+        public decimal Amount { get; set; }
 
         public User UserFrom { get; set; }
         public User UserTo { get; set; }

@@ -136,3 +136,15 @@ h6.text-uppercase {
     margin-right: -12px;
     margin-left: -12px;
 }
+
+.dataTables_length {
+    float: left;
+}
+
+.dataTables_wrapper {
+    margin-top: 15px;
+}
+
+.dataTables_filter {
+    float: right;
+}

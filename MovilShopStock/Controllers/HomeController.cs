@@ -193,6 +193,16 @@ namespace MovilShopStock.Controllers
             return Json(product?.SalePrice);
         }
 
+        [HttpPost]
+        public async Task<ActionResult> GetExistProduct(string product_id)
+        {
+            Guid productId = Guid.Parse(product_id);
+
+            Product product = await applicationDbContext.Products.FirstOrDefaultAsync(x => x.Id == productId);
+
+            return Json(product?.In - product?.Out);
+        }
+
         [HttpGet]
         public async Task<ActionResult> Index()
         {

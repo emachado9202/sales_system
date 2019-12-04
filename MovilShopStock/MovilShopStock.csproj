@@ -192,7 +192,7 @@
       <DependentUpon>201911220719255_InitialCreate.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
-    <Compile Include="Models\AccountViewModels.cs" />
+    <Compile Include="Models\View\AccountViewModels.cs" />
     <Compile Include="Models\Catalog\Business.cs" />
     <Compile Include="Models\Catalog\BusinessUser.cs" />
     <Compile Include="Models\Catalog\Category.cs" />
@@ -203,16 +203,19 @@
     <Compile Include="Models\Catalog\TransferBusinessProduct.cs" />
     <Compile Include="Models\Catalog\User.cs" />
     <Compile Include="Models\ApplicationDbContext.cs" />
-    <Compile Include="Models\CategoryModel.cs" />
-    <Compile Include="Models\DashboardModel.cs" />
+    <Compile Include="Models\View\CategoryModel.cs" />
+    <Compile Include="Models\View\DashboardModel.cs" />
     <Compile Include="Models\Handlers\ActionConstants.cs" />
     <Compile Include="Models\Handlers\Extensions\RouteExtensions.cs" />
     <Compile Include="Models\Handlers\Extensions\TelerikExtensions.cs" />
     <Compile Include="Models\Handlers\RoleConstants.cs" />
-    <Compile Include="Models\ManageViewModels.cs" />
-    <Compile Include="Models\ProductModel.cs" />
-    <Compile Include="Models\StockOutModel.cs" />
-    <Compile Include="Models\StockInModel.cs" />
+    <Compile Include="Models\View\ManageViewModels.cs" />
+    <Compile Include="Models\View\ProductModel.cs" />
+    <Compile Include="Models\View\StockOutModel.cs" />
+    <Compile Include="Models\View\StockInModel.cs" />
+    <Compile Include="Models\View\ToolModel.cs" />
+    <Compile Include="Models\View\TransferPrivateModel.cs" />
+    <Compile Include="Models\View\TransferBusinessModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
   </ItemGroup>
@@ -223,32 +226,38 @@
     <Content Include="Content\bootstrap-reboot.min.css" />
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
+    <Content Include="Content\DataTables\extensions\AutoFill\css\autoFill.bootstrap.min.css" />
+    <Content Include="Content\DataTables\extensions\AutoFill\js\autoFill.bootstrap.min.js" />
+    <Content Include="Content\DataTables\extensions\AutoFill\js\dataTables.autoFill.min.js" />
+    <Content Include="Content\DataTables\extensions\Buttons\css\buttons.bootstrap.min.css" />
+    <Content Include="Content\DataTables\extensions\Buttons\js\buttons.bootstrap.min.js" />
+    <Content Include="Content\DataTables\extensions\Buttons\js\buttons.flash.min.js" />
+    <Content Include="Content\DataTables\extensions\Buttons\js\buttons.html5.min.js" />
+    <Content Include="Content\DataTables\extensions\Buttons\js\buttons.print.min.js" />
+    <Content Include="Content\DataTables\extensions\Buttons\js\dataTables.buttons.min.js" />
+    <Content Include="Content\DataTables\extensions\Buttons\js\jszip.min.js" />
+    <Content Include="Content\DataTables\extensions\Buttons\js\pdfmake.min.js" />
+    <Content Include="Content\DataTables\extensions\Buttons\js\vfs_fonts.min.js" />
+    <Content Include="Content\DataTables\extensions\ColReorder\css\colReorder.bootstrap.min.css" />
+    <Content Include="Content\DataTables\extensions\ColReorder\js\dataTables.colReorder.min.js" />
+    <Content Include="Content\DataTables\extensions\FixedColumns\css\fixedColumns.bootstrap.min.css" />
+    <Content Include="Content\DataTables\extensions\FixedColumns\js\dataTables.fixedColumns.min.js" />
+    <Content Include="Content\DataTables\extensions\FixedHeader\css\fixedHeader.bootstrap.min.css" />
+    <Content Include="Content\DataTables\extensions\FixedHeader\js\dataTables.fixedHeader.min.js" />
+    <Content Include="Content\DataTables\extensions\KeyTable\css\keyTable.bootstrap.min.css" />
+    <Content Include="Content\DataTables\extensions\KeyTable\js\dataTables.keyTable.min.js" />
+    <Content Include="Content\DataTables\extensions\Responsive\css\responsive.bootstrap.min.css" />
+    <Content Include="Content\DataTables\extensions\Responsive\js\dataTables.responsive.min.js" />
+    <Content Include="Content\DataTables\extensions\RowReorder\css\rowReorder.bootstrap.min.css" />
+    <Content Include="Content\DataTables\extensions\RowReorder\js\dataTables.rowReorder.min.js" />
+    <Content Include="Content\DataTables\extensions\Scroller\css\scroller.bootstrap.min.css" />
+    <Content Include="Content\DataTables\extensions\Scroller\js\dataTables.scroller.min.js" />
+    <Content Include="Content\DataTables\extensions\Select\css\select.bootstrap.min.css" />
+    <Content Include="Content\DataTables\extensions\Select\js\dataTables.select.min.js" />
+    <Content Include="Content\DataTables\media\css\dataTables.bootstrap.min.css" />
+    <Content Include="Content\DataTables\media\js\dataTables.bootstrap.min.js" />
+    <Content Include="Content\DataTables\media\js\jquery.dataTables.js" />
     <Content Include="Content\telerik.css" />
-    <Content Include="Content\telerik\css\2012.2.607\telerik.common.css" />
-    <Content Include="Content\telerik\css\2012.2.607\telerik.rtl.css" />
-    <Content Include="Content\telerik\img\editor.png" />
-    <Content Include="Content\telerik\img\gradient.png" />
-    <Content Include="Content\telerik\img\imagebrowser.png" />
-    <Content Include="Content\telerik\img\loading.gif" />
-    <Content Include="Content\telerik\img\slider-h.gif" />
-    <Content Include="Content\telerik\img\slider-v.gif" />
-    <Content Include="Content\telerik\img\sprite-vertical.png" />
-    <Content Include="Content\telerik\img\sprite.png" />
-    <Content Include="Content\telerik\js\jquery-1.7.1.min.js" />
-    <Content Include="Content\telerik\js\jquery.validate.js" />
-    <Content Include="Content\telerik\js\2012.2.607\telerik.calendar.min.js" />
-    <Content Include="Content\telerik\js\2012.2.607\telerik.common.min.js" />
-    <Content Include="Content\telerik\js\2012.2.607\telerik.datepicker.min.js" />
-    <Content Include="Content\telerik\js\2012.2.607\telerik.datetimepicker.min.js" />
-    <Content Include="Content\telerik\js\2012.2.607\telerik.draganddrop.min.js" />
-    <Content Include="Content\telerik\js\2012.2.607\telerik.grid.editing.min.js" />
-    <Content Include="Content\telerik\js\2012.2.607\telerik.grid.filtering.min.js" />
-    <Content Include="Content\telerik\js\2012.2.607\telerik.grid.grouping.min.js" />
-    <Content Include="Content\telerik\js\2012.2.607\telerik.grid.min.js" />
-    <Content Include="Content\telerik\js\2012.2.607\telerik.grid.reordering.min.js" />
-    <Content Include="Content\telerik\js\2012.2.607\telerik.grid.resizing.min.js" />
-    <Content Include="Content\telerik\js\2012.2.607\telerik.textbox.min.js" />
-    <Content Include="Content\telerik\js\2012.2.607\telerik.treeview.min.js" />
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />
@@ -296,9 +305,6 @@
     <Content Include="Scripts\umd\popper-utils.min.js" />
     <Content Include="Scripts\umd\popper.js" />
     <Content Include="Scripts\umd\popper.min.js" />
-    <Content Include="Scripts\utils\stock.jquery.utils.js" />
-    <Content Include="Scripts\utils\stock.hacks.js" />
-    <Content Include="Scripts\utils\stock.common.js" />
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
@@ -352,6 +358,8 @@
     <Content Include="Views\Category\View.cshtml" />
     <Content Include="Views\Transfer\Index.cshtml" />
     <Content Include="Views\StockOut\Edit.cshtml" />
+    <Content Include="Views\Transfer\CreateBusiness.cshtml" />
+    <Content Include="Views\Transfer\CreatePrivate.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

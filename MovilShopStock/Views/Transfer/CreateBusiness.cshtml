@@ -1,72 +1,77 @@
-﻿@model MovilShopStock.Models.StockOutModel
+﻿@model MovilShopStock.Models.View.TransferBusinessModel
 
 @{
-    ViewBag.Title = "Editar Salida";
+    ViewBag.Title = "Transferencia";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2>Editar Salida</h2>
+<h2>Transferencia</h2>
 
 @using (Html.BeginForm())
 {
     @Html.AntiForgeryToken()
 
     <div class="form-horizontal">
+        <h4>Transferencia de Producto</h4>
         <hr />
         @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-        @Html.HiddenFor(model => model.Id)
-
         <div class="form-group">
             @Html.LabelFor(model => model.Category, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.DropDownList("Category", new SelectList(ViewBag.Categories, "Id", "Name", Model.Category), new { @class = "form-control" })
+                @Html.DropDownList("Category", new SelectList(ViewBag.Categories, "Id", "Name"), new { @class = "form-control" })
                 @Html.ValidationMessageFor(model => model.Category, "", new { @class = "text-danger" })
             </div>
         </div>
+
         <div class="form-group">
             @Html.LabelFor(model => model.ProductName, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.DropDownList("ProductName", Enumerable.Empty<SelectListItem>(), new { @class = "form-control" })
+                <select id="ProductName" name="ProductName" class="form-control" required></select>
                 @Html.ValidationMessageFor(model => model.ProductName, "", new { @class = "text-danger" })
             </div>
         </div>
+
         <div class="form-group">
             @Html.LabelFor(model => model.Quantity, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.EditorFor(model => model.Quantity, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.EditorFor(model => model.Quantity, new { htmlAttributes = new { @class = "form-control", min = "1" } })
                 @Html.ValidationMessageFor(model => model.Quantity, "", new { @class = "text-danger" })
             </div>
         </div>
+
         <div class="form-group">
-            @Html.LabelFor(model => model.SalePrice, htmlAttributes: new { @class = "control-label col-md-2" })
+            @Html.LabelFor(model => model.FromTo, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.EditorFor(model => model.SalePrice, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.SalePrice, "", new { @class = "text-danger" })
+                @Html.DropDownList("FromTo", new SelectList(ViewBag.To, "Id", "Name"), new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.FromTo, "", new { @class = "text-danger" })
             </div>
         </div>
+
         <div class="form-group">
             <div class="col-md-offset-2 col-md-10">
-                <input type="submit" value="Guardar" class="btn btn-dark" />
-                @if (!Model.Receivered)
-                {
-                    @Html.ActionLink("Eliminar", "Delete", new { id = Model.Id }, new { @class = "btn btn-danger" })
-                }
+                <input type="submit" value="Transferir" class="btn btn-dark" />
             </div>
         </div>
     </div>
 }
 
 <div>
-    @Html.ActionLink("Regresar", "Index")
+    @Html.ActionLink("Regresar", "Index", new { selectedTab = "nav-business" })
 </div>
 
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")
     <script type="text/javascript">
         $(document).ready(function () {
+
             $("#Category").on("change", function () {
                 load_product();
             });
+
+            $("#ProductName").on("change", function () {
+                load_price();
+            });
+
             load_product = function () {
                 $.ajax({
                     type: 'POST',
@@ -80,12 +85,28 @@
                             .find('option')
                             .remove()
                             .end();
+                        var first = true;
                         $.each(data,
                             function (l, prod) {
-                                var option_prod = new Option(prod.Product, prod.Id, true, prod.Id=='@(Model.ProductName)');
+                                var option_prod = new Option(prod.Product, prod.Id, true, first);
                                 $("#ProductName").append(option_prod);
+                                first = false;
                             });
                         $("#ProductName").trigger('change');
+                    }
+                });
+            };
+
+            load_price = function () {
+                $.ajax({
+                    type: 'POST',
+                    data: {
+                        product_id: $("#ProductName").val()
+                    },
+                    url: "/Home/GetExistProduct",
+                    dataType: 'json',
+                    success: function (data) {
+                        $("#Quantity").attr("max", data);
                     }
                 });
             };
