@@ -148,3 +148,25 @@ h6.text-uppercase {
 .dataTables_filter {
     float: right;
 }
+
+table.table-bordered.dataTable.fixedHeader-floating {
+    margin-top: 56px !important;
+}
+
+main > .container-fluid {
+    padding: 60px 15px 0;
+}
+
+.footer {
+    background-color: #343a40;
+    color: rgba(255, 255, 255, 0.75);
+}
+
+    .footer > .container {
+        padding-right: 15px;
+        padding-left: 15px;
+    }
+
+code {
+    font-size: 80%;
+}

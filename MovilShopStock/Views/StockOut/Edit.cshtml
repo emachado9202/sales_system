@@ -14,19 +14,19 @@
     <div class="form-horizontal">
         <hr />
         @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-        @Html.HiddenFor(model => model.Id)
+        @Html.HiddenFor(model => model.DT_RowId)
 
         <div class="form-group">
             @Html.LabelFor(model => model.Category, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.DropDownList("Category", new SelectList(ViewBag.Categories, "Id", "Name", Model.Category), new { @class = "form-control" })
+                @Html.DropDownList("Category", new SelectList(ViewBag.Categories, "Id", "Name", Model.Category), new { @class = "custom-select form-control" })
                 @Html.ValidationMessageFor(model => model.Category, "", new { @class = "text-danger" })
             </div>
         </div>
         <div class="form-group">
             @Html.LabelFor(model => model.ProductName, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.DropDownList("ProductName", Enumerable.Empty<SelectListItem>(), new { @class = "form-control" })
+                @Html.DropDownList("ProductName", Enumerable.Empty<SelectListItem>(), new { @class = "custom-select form-control" })
                 @Html.ValidationMessageFor(model => model.ProductName, "", new { @class = "text-danger" })
             </div>
         </div>

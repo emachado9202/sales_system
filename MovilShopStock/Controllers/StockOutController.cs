@@ -20,28 +20,8 @@ namespace MovilShopStock.Controllers
         public async Task<ActionResult> Index()
         {
             Guid business_working = Guid.Parse(Session["BusinessWorking"].ToString());
-            List<StockOutModel> result = new List<StockOutModel>();
 
-            List<StockOut> stockOuts = await applicationDbContext.StockOuts.Include("Product").Include("Product.Category").Include("User").Where(x => x.Product.Business_Id == business_working).OrderByDescending(x => x.Date).ToListAsync();
-
-            foreach (var stockOut in stockOuts)
-            {
-                result.Add(new StockOutModel()
-                {
-                    Id = stockOut.Id.ToString(),
-                    ProductName = stockOut.Product.Name,
-                    Date = stockOut.Date.ToString("yyyy-MM-dd"),
-                    Quantity = stockOut.Quantity,
-                    User = stockOut.User.UserName,
-                    SalePrice = stockOut.SalePrice,
-                    Gain = stockOut.Gain,
-                    Receivered = stockOut.Receiver != null,
-                    Receiver = stockOut.Receiver?.UserName,
-                    Category = stockOut.Product.Category.Name
-                });
-            }
-
-            return View(result);
+            return View();
         }
 
         [HttpGet]
@@ -203,7 +183,7 @@ namespace MovilShopStock.Controllers
 
                 StockOutModel model = new StockOutModel()
                 {
-                    Id = stockout.Id.ToString(),
+                    DT_RowId = stockout.Id.ToString(),
                     ProductName = stockout.Product_Id.ToString(),
                     Quantity = stockout.Quantity,
                     SalePrice = stockout.SalePrice,
@@ -262,6 +242,181 @@ namespace MovilShopStock.Controllers
             ViewBag.Msg = "La salida ha sido eliminada correctamente";
 
             return RedirectToAction("Index");
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> Search(TableFilterViewModel filter)
+        {
+            List<StockOutModel> result = new List<StockOutModel>();
+            long totalRowsFiltered = 0;
+            long totalRows = await applicationDbContext.StockOuts.CountAsync();
+            List<StockOut> model;
+
+            Guid business_working = Guid.Parse(Session["BusinessWorking"].ToString());
+
+            var entity = applicationDbContext.StockOuts.Include("Product").Include("Product.Category").Include("User").Where(x => x.Product.Business_Id == business_working);
+
+            if (filter.type == "1")
+            {
+                entity = applicationDbContext.StockOuts.Include("Product").Include("Product.Category").Include("User").Where(x => x.Product.Business_Id == business_working && x.Receiver_Id != null);
+            }
+            else if (filter.type == "2")
+            {
+                entity = applicationDbContext.StockOuts.Include("Product").Include("Product.Category").Include("User").Where(x => x.Product.Business_Id == business_working && x.Receiver_Id == null);
+            }
+
+            IOrderedQueryable<StockOut> sort = null;
+            if (filter.order[0].column == 0)
+            {
+                if (filter.order[0].dir.Equals("asc"))
+                {
+                    sort = entity.OrderBy(x => x.Product.Category.Name);
+                }
+                else
+                {
+                    sort = entity.OrderByDescending(x => x.Product.Category.Name);
+                }
+            }
+            else if (filter.order[0].column == 1)
+            {
+                if (filter.order[0].dir.Equals("asc"))
+                {
+                    sort = entity.OrderBy(x => x.Product.Name);
+                }
+                else
+                {
+                    sort = entity.OrderByDescending(x => x.Product.Name);
+                }
+            }
+            else if (filter.order[0].column == 2)
+            {
+                if (filter.order[0].dir.Equals("asc"))
+                {
+                    sort = entity.OrderBy(x => x.Date);
+                }
+                else
+                {
+                    sort = entity.OrderByDescending(x => x.Date);
+                }
+            }
+            else if (filter.order[0].column == 3)
+            {
+                if (filter.order[0].dir.Equals("asc"))
+                {
+                    sort = entity.OrderBy(x => x.User.UserName);
+                }
+                else
+                {
+                    sort = entity.OrderByDescending(x => x.User.UserName);
+                }
+            }
+            else if (filter.order[0].column == 4)
+            {
+                if (filter.order[0].dir.Equals("asc"))
+                {
+                    sort = entity.OrderBy(x => x.SalePrice);
+                }
+                else
+                {
+                    sort = entity.OrderByDescending(x => x.SalePrice);
+                }
+            }
+            else if (filter.order[0].column == 5)
+            {
+                if (filter.order[0].dir.Equals("asc"))
+                {
+                    sort = entity.OrderBy(x => x.Quantity);
+                }
+                else
+                {
+                    sort = entity.OrderByDescending(x => x.Quantity);
+                }
+            }
+            else if (filter.order[0].column == 6)
+            {
+                if (filter.order[0].dir.Equals("asc"))
+                {
+                    sort = entity.OrderBy(x => x.Quantity * x.SalePrice);
+                }
+                else
+                {
+                    sort = entity.OrderByDescending(x => x.Quantity * x.SalePrice);
+                }
+            }
+            else if (filter.order[0].column == 7)
+            {
+                if (filter.order[0].dir.Equals("asc"))
+                {
+                    sort = entity.OrderBy(x => x.Gain);
+                }
+                else
+                {
+                    sort = entity.OrderByDescending(x => x.Gain);
+                }
+            }
+            else if (filter.order[0].column == 8)
+            {
+                if (filter.order[0].dir.Equals("asc"))
+                {
+                    sort = entity.OrderBy(x => x.Quantity * x.Gain);
+                }
+                else
+                {
+                    sort = entity.OrderByDescending(x => x.Quantity * x.Gain);
+                }
+            }
+
+            if (string.IsNullOrEmpty(filter.search.value))
+            {
+                totalRowsFiltered = totalRows;
+                model = await sort.Skip(filter.start)
+                    .Take(filter.length)
+                    .ToListAsync();
+            }
+            else
+            {
+                totalRowsFiltered = await
+                   applicationDbContext.StockOuts.CountAsync(x => x.Product.Category.Name.ToString().Contains(filter.search.value) ||
+                   x.Product.Name.ToString().Contains(filter.search.value) ||
+                   x.User.UserName.ToString().Contains(filter.search.value) ||
+                   x.SalePrice.ToString().Contains(filter.search.value) ||
+                   x.Quantity.ToString().Contains(filter.search.value));
+
+                model = await
+                    sort.Where(x => x.Product.Category.Name.ToString().Contains(filter.search.value) ||
+                   x.Product.Name.ToString().Contains(filter.search.value) ||
+                   x.User.UserName.ToString().Contains(filter.search.value) ||
+                   x.SalePrice.ToString().Contains(filter.search.value) ||
+                   x.Quantity.ToString().Contains(filter.search.value))
+                        .Skip(filter.start)
+                        .Take(filter.length)
+                        .ToListAsync();
+            }
+
+            foreach (var stockOut in model)
+            {
+                result.Add(new StockOutModel()
+                {
+                    DT_RowId = stockOut.Id.ToString(),
+                    ProductName = stockOut.Product.Name,
+                    Date = stockOut.Date.ToString("yyyy-MM-dd hh:mm"),
+                    Quantity = stockOut.Quantity,
+                    User = stockOut.User.UserName,
+                    SalePrice = stockOut.SalePrice,
+                    Gain = stockOut.Gain,
+                    Receivered = stockOut.Receiver != null,
+                    Receiver = stockOut.Receiver?.UserName,
+                    Category = stockOut.Product.Category.Name
+                });
+            }
+
+            return Json(new
+            {
+                draw = filter.draw,
+                recordsTotal = totalRows,
+                recordsFiltered = totalRowsFiltered,
+                data = result
+            });
         }
     }
 }

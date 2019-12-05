@@ -252,7 +252,7 @@ namespace MovilShopStock.Controllers
 
                 await applicationDbContext.SaveChangesAsync();
 
-                return RedirectToAction("Index");
+                return RedirectToAction("Index", new { selectedTab = "nav-business" });
             }
             Guid business_working = Guid.Parse(Session["BusinessWorking"].ToString());
             ViewBag.Categories = await applicationDbContext.Categories.Where(x => x.Business_Id == business_working).OrderBy(x => x.Name).ToListAsync();
@@ -407,7 +407,7 @@ namespace MovilShopStock.Controllers
 
                 await applicationDbContext.SaveChangesAsync();
 
-                return RedirectToAction("Index");
+                return RedirectToAction("Index", new { selectedTab = "nav-private" });
             }
 
             Guid business_working = Guid.Parse(Session["BusinessWorking"].ToString());

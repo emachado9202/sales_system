@@ -17,7 +17,7 @@
         <div class="form-group">
             @Html.LabelFor(model => model.Category, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.DropDownList("Category", new SelectList(ViewBag.Categories, "Id", "Name"), new { @class = "form-control" })
+                @Html.DropDownList("Category", new SelectList(ViewBag.Categories, "Id", "Name"), new { @class = "custom-select form-control" })
                 @Html.ValidationMessageFor(model => model.Category, "", new { @class = "text-danger" })
             </div>
         </div>
@@ -25,7 +25,7 @@
         <div class="form-group">
             @Html.LabelFor(model => model.ProductName, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                <select id="ProductName" name="ProductName" class="form-control" required></select>
+                <select id="ProductName" name="ProductName" class="custom-select form-control" required></select>
                 @Html.ValidationMessageFor(model => model.ProductName, "", new { @class = "text-danger" })
             </div>
         </div>

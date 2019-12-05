@@ -333,11 +333,11 @@ namespace MovilShopStock.Controllers
                     {
                         if (stockOut.Product.Category.SystemAction == ActionConstants.Sum)
                         {
-                            model.GainToday += stockOut.SalePrice * stockOut.Quantity;
+                            model.GainToday += stockOut.Gain * stockOut.Quantity;
                         }
                         else if (stockOut.Product.Category.SystemAction == ActionConstants.Rest)
                         {
-                            model.GainToday -= stockOut.SalePrice * stockOut.Quantity;
+                            model.GainToday -= stockOut.Gain * stockOut.Quantity;
                         }
                     }
                 }
