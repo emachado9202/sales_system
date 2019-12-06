@@ -30,13 +30,13 @@ namespace MovilShopStock.Models
         public bool Receivered { get; set; }
 
         [DisplayName("Precio Venta")]
-        public decimal SalePrice { get; set; }
+        public string SalePrice { get; set; }
 
         [DisplayName("Cantidad Venta")]
         public int Quantity { get; set; }
 
         [DisplayName("Venta Total")]
-        public decimal TotalSale { get { return SalePrice * Quantity; } }
+        public decimal TotalSale { get { return decimal.Parse(SalePrice.Replace(".", ",")) * Quantity; } }
 
         [DisplayName("Ganancia")]
         public decimal Gain { get; set; }

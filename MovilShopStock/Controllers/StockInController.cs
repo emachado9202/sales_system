@@ -31,7 +31,7 @@ namespace MovilShopStock.Controllers
                 {
                     Id = stockIn.Id.ToString(),
                     ProductName = stockIn.Product.Name,
-                    ShopPrice = stockIn.ShopPrice,
+                    ShopPrice = stockIn.ShopPrice.ToString("#,##0.00"),
                     Date = stockIn.Date.ToString("yyyy-MM-dd"),
                     Quantity = stockIn.Quantity,
                     User = stockIn.User.UserName,
@@ -67,7 +67,7 @@ namespace MovilShopStock.Controllers
                     Product_Id = productId,
                     Date = DateTime.Now,
                     Quantity = model.Quantity,
-                    ShopPrice = model.ShopPrice,
+                    ShopPrice = decimal.Parse(model.ShopPrice.Replace(".", ",")),
                     User_Id = User.Identity.GetUserId()
                 };
 

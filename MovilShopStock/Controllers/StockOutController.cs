@@ -51,9 +51,9 @@ namespace MovilShopStock.Controllers
                     Product_Id = productId,
                     Date = DateTime.Now,
                     Quantity = model.Quantity,
-                    SalePrice = model.SalePrice,
+                    SalePrice = decimal.Parse(model.SalePrice.Replace(".", ",")),
                     User_Id = User.Identity.GetUserId(),
-                    Gain = model.SalePrice - product.CurrentPrice
+                    Gain = decimal.Parse(model.SalePrice.Replace(".", ",")) - product.CurrentPrice
                 };
 
                 if (User.IsInRole(RoleConstants.Editor) || User.IsInRole(RoleConstants.Administrator))
@@ -186,7 +186,7 @@ namespace MovilShopStock.Controllers
                     DT_RowId = stockout.Id.ToString(),
                     ProductName = stockout.Product_Id.ToString(),
                     Quantity = stockout.Quantity,
-                    SalePrice = stockout.SalePrice,
+                    SalePrice = stockout.SalePrice.ToString("#,##0.00"),
                     Category = stockout.Product.Category_Id.ToString(),
                     Receivered = stockout.Receiver != null
                 };
@@ -402,7 +402,7 @@ namespace MovilShopStock.Controllers
                     Date = stockOut.Date.ToString("yyyy-MM-dd hh:mm"),
                     Quantity = stockOut.Quantity,
                     User = stockOut.User.UserName,
-                    SalePrice = stockOut.SalePrice,
+                    SalePrice = stockOut.SalePrice.ToString("#,##0.00"),
                     Gain = stockOut.Gain,
                     Receivered = stockOut.Receiver != null,
                     Receiver = stockOut.Receiver?.UserName,

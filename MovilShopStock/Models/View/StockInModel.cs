@@ -25,12 +25,12 @@ namespace MovilShopStock.Models
         public string User { get; set; }
 
         [DisplayName("Precio Compra")]
-        public decimal ShopPrice { get; set; }
+        public string ShopPrice { get; set; }
 
         [DisplayName("Cantidad Compra")]
         public int Quantity { get; set; }
 
         [DisplayName("Total Compra")]
-        public decimal TotalShop { get { return ShopPrice * Quantity; } }
+        public decimal TotalShop { get { return decimal.Parse(ShopPrice) * Quantity; } }
     }
 }

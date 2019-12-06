@@ -99,10 +99,11 @@ namespace MovilShopStock.Controllers
                     In = model.In,
                     Out = model.Out,
                     User_Id = User.Identity.GetUserId(),
-                    CurrentPrice = decimal.Parse(model.CurrentPrice),
+                    CurrentPrice = decimal.Parse(model.CurrentPrice.Replace(".", ",")),
                     LastUpdated = DateTime.Now,
                     NoCountOut = model.NoCountOut,
-                    Business_Id = business_working
+                    Business_Id = business_working,
+                    SalePrice = decimal.Parse(model.SalePrice.Replace(".", ","))
                 };
 
                 applicationDbContext.Products.Add(product);
@@ -155,8 +156,8 @@ namespace MovilShopStock.Controllers
                 product.Name = model.Product;
                 product.Category_Id = Guid.Parse(model.Category);
                 product.In = model.In;
-                product.CurrentPrice = decimal.Parse(model.CurrentPrice);
-                product.SalePrice = decimal.Parse(model.SalePrice);
+                product.CurrentPrice = decimal.Parse(model.CurrentPrice.Replace(".", ","));
+                product.SalePrice = decimal.Parse(model.SalePrice.Replace(".", ","));
                 product.LastUpdated = DateTime.Now;
                 product.NoCountOut = model.NoCountOut;
 
@@ -211,6 +212,8 @@ namespace MovilShopStock.Controllers
             DateTime month_init = DateTime.Today.AddDays(-DateTime.Now.Day);
 
             Guid business_working = Guid.Parse(Session["BusinessWorking"].ToString());
+
+            decimal netprofit = 0;
 
             long quantity_in = (await applicationDbContext.StockIns.Include("Product").Where(x => x.Product.Business_Id == business_working).SumAsync(x => (int?)x.Quantity)) ?? 0;
             long quantity_in_month = (await applicationDbContext.StockIns.Include("Product").Where(x => x.Date > month_init && x.Product.Business_Id == business_working).SumAsync(x => (int?)x.Quantity)) ?? 0;
@@ -296,6 +299,8 @@ namespace MovilShopStock.Controllers
             decimal money_stock_month = (await applicationDbContext.Products.Where(x => x.LastUpdated > month_init && x.Business_Id == business_working).SumAsync(x => (decimal?)x.CurrentPrice * (x.In - x.Out))) ?? 0;
             decimal percent_money_stock = money_stock == 0 ? 0 : (money_stock_month * 100) / money_stock;
 
+            netprofit += money_stock;
+
             model.StockMoney = new Tuple<decimal, decimal>(money_stock, percent_money_stock);
 
             model.PendentMoney = new List<Tuple<string, decimal>>();
@@ -310,7 +315,7 @@ namespace MovilShopStock.Controllers
                 {
                     money += stockOut.Quantity * stockOut.SalePrice;
                 }
-
+                netprofit += money;
                 model.PendentMoney.Add(new Tuple<string, decimal>(u.UserName, money));
             }
 
@@ -348,6 +353,7 @@ namespace MovilShopStock.Controllers
                 model.UserMoney = new List<Tuple<string, decimal>>();
                 foreach (var u in users)
                 {
+                    netprofit += u.Cash;
                     model.UserMoney.Add(new Tuple<string, decimal>(u.UserName, u.Cash));
                 }
 
@@ -372,6 +378,8 @@ namespace MovilShopStock.Controllers
 
                     model.Categories.Add(new Tuple<string, List<Tuple<string, decimal>>>($"{ocat.Key.Name} (Mes)", temp));
                 }
+
+                model.NetProfit = netprofit;
             }
 
             return View(model);

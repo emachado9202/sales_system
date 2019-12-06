@@ -198,7 +198,7 @@
 @if (User.IsInRole(RoleConstants.Editor) || User.IsInRole(RoleConstants.Administrator))
 {
     <div class="row">
-        <div class="col-12 col-lg-6 col-xl">
+        <div class="col-12 col-lg-4 col-xl">
             <!-- Card -->
             <div class="card">
                 <div class="card-body">
@@ -224,7 +224,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-12 col-lg-6 col-xl">
+        <div class="col-12 col-lg-4 col-xl">
             <!-- Card -->
             <div class="card">
                 <div class="card-body">
@@ -239,6 +239,32 @@
                             <!-- Heading -->
                             <span class="h2 mb-0">
                                 $@Model.TotalGain.ToString("#,##0.00")
+                            </span>
+                        </div>
+                        <div class="col-auto">
+
+                            <!-- Icon -->
+                            <span class="h2 fa fa-usd text-muted mb-0"></span>
+                        </div>
+                    </div> <!-- / .row -->
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-lg-4 col-xl">
+            <!-- Card -->
+            <div class="card">
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col">
+
+                            <!-- Title -->
+                            <h6 class="card-title text-uppercase mb-2">
+                                Utilidad Neta
+                            </h6>
+
+                            <!-- Heading -->
+                            <span class="h2 mb-0">
+                                $@Model.NetProfit.ToString("#,##0.00")
                             </span>
                         </div>
                         <div class="col-auto">
