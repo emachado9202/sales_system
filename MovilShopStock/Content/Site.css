@@ -170,3 +170,17 @@ main > .container-fluid {
 code {
     font-size: 80%;
 }
+
+@media (max-width: 800px) {
+    .btn-editions {
+        width: 100%;
+    }
+
+        .btn-editions select {
+            margin-bottom: 10px;
+        }
+
+    .dataTables_filter {
+        float: left;
+    }
+}

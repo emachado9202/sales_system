@@ -9,7 +9,7 @@ namespace MovilShopStock.Models
 {
     public class StockInModel
     {
-        public string Id { get; set; }
+        public string DT_RowId { get; set; }
 
         [DisplayName("Categoría")]
         public string Category { get; set; }

@@ -17,29 +17,23 @@ namespace MovilShopStock.Controllers
     {
         private ApplicationDbContext applicationDbContext = new ApplicationDbContext();
 
-        public async Task<ActionResult> Index()
+        public async Task<ActionResult> Index(string id)
         {
+            List<Tuple<string, string>> categories = new List<Tuple<string, string>>();
+
+            categories.Add(new Tuple<string, string>("", "Categoría Todas"));
+
             Guid business_working = Guid.Parse(Session["BusinessWorking"].ToString());
 
-            List<StockInModel> result = new List<StockInModel>();
-
-            List<StockIn> stockIns = await applicationDbContext.StockIns.Include("Product").Include("Product.Category").Include("User").Where(x => x.Product.Business_Id == business_working).OrderByDescending(x => x.Date).ToListAsync();
-
-            foreach (var stockIn in stockIns)
+            foreach (var cat in await applicationDbContext.Categories.Where(x => x.Business_Id == business_working).OrderBy(x => x.Name).ToListAsync())
             {
-                result.Add(new StockInModel()
-                {
-                    Id = stockIn.Id.ToString(),
-                    ProductName = stockIn.Product.Name,
-                    ShopPrice = stockIn.ShopPrice.ToString("#,##0.00"),
-                    Date = stockIn.Date.ToString("yyyy-MM-dd"),
-                    Quantity = stockIn.Quantity,
-                    User = stockIn.User.UserName,
-                    Category = stockIn.Product.Category.Name
-                });
+                categories.Add(new Tuple<string, string>(cat.Id.ToString(), cat.Name));
             }
 
-            return View(result);
+            ViewBag.Categories = categories;
+            ViewBag.Category = id;
+
+            return View();
         }
 
         [HttpGet]
@@ -107,6 +101,154 @@ namespace MovilShopStock.Controllers
             Guid business_working = Guid.Parse(Session["BusinessWorking"].ToString());
             ViewBag.Categories = await applicationDbContext.Categories.Where(x => x.Business_Id == business_working).OrderBy(x => x.Name).ToListAsync();
             return View(model);
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> Search(TableFilterViewModel filter)
+        {
+            List<StockInModel> result = new List<StockInModel>();
+            long totalRowsFiltered = 0;
+            long totalRows = await applicationDbContext.StockIns.CountAsync();
+            List<StockIn> model;
+
+            Guid business_working = Guid.Parse(Session["BusinessWorking"].ToString());
+
+            var entity = applicationDbContext.StockIns.Include("Product").Include("Product.Category").Include("User").Where(x => x.Product.Business_Id == business_working);
+
+            if (!string.IsNullOrEmpty(filter.type))
+            {
+                Guid categoryId = Guid.Parse(filter.type);
+
+                entity = applicationDbContext.StockIns.Include("Product").Include("Product.Category").Include("User").Where(x => x.Product.Business_Id == business_working && x.Product.Category_Id == categoryId);
+            }
+
+            IOrderedQueryable<StockIn> sort = null;
+            if (filter.order[0].column == 0)
+            {
+                if (filter.order[0].dir.Equals("asc"))
+                {
+                    sort = entity.OrderBy(x => x.Product.Category.Name);
+                }
+                else
+                {
+                    sort = entity.OrderByDescending(x => x.Product.Category.Name);
+                }
+            }
+            else if (filter.order[0].column == 1)
+            {
+                if (filter.order[0].dir.Equals("asc"))
+                {
+                    sort = entity.OrderBy(x => x.Product.Name);
+                }
+                else
+                {
+                    sort = entity.OrderByDescending(x => x.Product.Name);
+                }
+            }
+            else if (filter.order[0].column == 2)
+            {
+                if (filter.order[0].dir.Equals("asc"))
+                {
+                    sort = entity.OrderBy(x => x.Date);
+                }
+                else
+                {
+                    sort = entity.OrderByDescending(x => x.Date);
+                }
+            }
+            else if (filter.order[0].column == 3)
+            {
+                if (filter.order[0].dir.Equals("asc"))
+                {
+                    sort = entity.OrderBy(x => x.User.UserName);
+                }
+                else
+                {
+                    sort = entity.OrderByDescending(x => x.User.UserName);
+                }
+            }
+            else if (filter.order[0].column == 4)
+            {
+                if (filter.order[0].dir.Equals("asc"))
+                {
+                    sort = entity.OrderBy(x => x.ShopPrice);
+                }
+                else
+                {
+                    sort = entity.OrderByDescending(x => x.ShopPrice);
+                }
+            }
+            else if (filter.order[0].column == 5)
+            {
+                if (filter.order[0].dir.Equals("asc"))
+                {
+                    sort = entity.OrderBy(x => x.Quantity);
+                }
+                else
+                {
+                    sort = entity.OrderByDescending(x => x.Quantity);
+                }
+            }
+            else if (filter.order[0].column == 6)
+            {
+                if (filter.order[0].dir.Equals("asc"))
+                {
+                    sort = entity.OrderBy(x => x.Quantity * x.ShopPrice);
+                }
+                else
+                {
+                    sort = entity.OrderByDescending(x => x.Quantity * x.ShopPrice);
+                }
+            }
+
+            if (string.IsNullOrEmpty(filter.search.value))
+            {
+                totalRowsFiltered = totalRows;
+                model = await sort.Skip(filter.start)
+                    .Take(filter.length)
+                    .ToListAsync();
+            }
+            else
+            {
+                totalRowsFiltered = await
+                   applicationDbContext.StockIns.CountAsync(x => x.Product.Category.Name.ToString().Contains(filter.search.value) ||
+                   x.Product.Name.ToString().Contains(filter.search.value) ||
+                   x.User.UserName.ToString().Contains(filter.search.value) ||
+                   x.ShopPrice.ToString().Contains(filter.search.value) ||
+                   x.Quantity.ToString().Contains(filter.search.value));
+
+                model = await
+                    sort.Where(x => x.Product.Category.Name.ToString().Contains(filter.search.value) ||
+                   x.Product.Name.ToString().Contains(filter.search.value) ||
+                   x.User.UserName.ToString().Contains(filter.search.value) ||
+                   x.ShopPrice.ToString().Contains(filter.search.value) ||
+                   x.Quantity.ToString().Contains(filter.search.value))
+                        .Skip(filter.start)
+                        .Take(filter.length)
+                        .ToListAsync();
+            }
+
+            foreach (var stockOut in model)
+            {
+                result.Add(new StockInModel()
+                {
+                    DT_RowId = stockOut.Id.ToString(),
+                    ProductName = stockOut.Product.Name,
+                    Date = stockOut.Date.ToString("yyyy-MM-dd hh:mm"),
+                    Quantity = stockOut.Quantity,
+                    User = stockOut.User.UserName,
+                    ShopPrice = stockOut.ShopPrice.ToString("#,##0.00"),
+                    Category = stockOut.Product.Category.Name
+                });
+            }
+
+            return Json(new
+            {
+                draw = filter.draw,
+                recordsTotal = totalRows,
+                recordsFiltered = totalRowsFiltered,
+                data = result
+            });
         }
     }
 }
