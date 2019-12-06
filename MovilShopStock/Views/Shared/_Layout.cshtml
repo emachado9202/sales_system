@@ -31,8 +31,16 @@
             <p>&copy; @DateTime.Now.Year - MovilShop Almacen</p>
         </div>
     </footer>
+    <input type="hidden" id="protocol" value="@Session["app_protocol"]" />
     @Scripts.Render("~/bundles/jquery")
     @Scripts.Render("~/bundles/bootstrap")
     @RenderSection("scripts", required: false)
+    <script type="text/javascript">
+        $(document).ready(function () {
+            if (location.protocol != '@(Session["app_protocol"])') {
+                location.href = '@(Session["app_protocol"])' + window.location.href.substring(window.location.protocol.length);
+            }
+        });
+    </script>
 </body>
 </html>

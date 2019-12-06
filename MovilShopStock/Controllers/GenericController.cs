@@ -3,6 +3,7 @@ using MovilShopStock.Models;
 using MovilShopStock.Models.Catalog;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
@@ -44,6 +45,8 @@ namespace MovilShopStock.Controllers
 
                 ViewBag.Business = businesses;
                 ViewBag.BusinessWorking = businesses.FirstOrDefault(x => x.Id == business_working);
+
+                Session["app_protocol"] = ConfigurationManager.AppSettings.Get("httpProtocol");
             }
         }
     }
