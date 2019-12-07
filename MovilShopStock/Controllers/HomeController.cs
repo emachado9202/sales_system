@@ -3,6 +3,7 @@ using Microsoft.AspNet.Identity.EntityFramework;
 using MovilShopStock.Models;
 using MovilShopStock.Models.Catalog;
 using MovilShopStock.Models.Handlers;
+using MovilShopStock.Models.View;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
@@ -54,7 +55,7 @@ namespace MovilShopStock.Controllers
         {
             DashboardModel model = new DashboardModel();
 
-            DateTime month_init = DateTime.Today.AddDays(-DateTime.Now.Day);
+            DateTime month_init = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 01);
 
             Guid business_working = Guid.Parse(Session["BusinessWorking"].ToString());
 
@@ -249,6 +250,175 @@ namespace MovilShopStock.Controllers
         public ActionResult Index()
         {
             return View();
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> DashboardChart()
+        {
+            DateTime init_month = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 01);
+            DateTime init_year = new DateTime(DateTime.Now.Year, 01, 01);
+
+            #region Grahp Daily
+
+            List<IGrouping<int, StockIn>> stockIns = await applicationDbContext.StockIns.Include("Product.Category").Where(x => x.Date > init_month).GroupBy(x => x.Date.Day).ToListAsync();
+
+            List<DashboardChartModel> inout_daily = new List<DashboardChartModel>();
+
+            DashboardChartModel model_daily_in = new DashboardChartModel()
+            {
+                label = "Entradas",
+                backgroundColor = "rgba(52, 143, 226, 0.2)",
+                borderColor = "rgba(52, 143, 226, 0.8)",
+                pointBackgroundColor = "rgba(52, 143, 226, 0.8)",
+                data = new List<decimal>()
+            };
+
+            decimal[] data_in = new decimal[31];
+            for (int i = 0; i < data_in.Length; i++)
+            {
+                var element = stockIns.FirstOrDefault(x => x.Key - 1 == i);
+
+                decimal total = 0;
+                if (element != null)
+                {
+                    foreach (var stock in element)
+                    {
+                        if (stock.Product.Category.SystemAction == ActionConstants.Sum)
+                        {
+                            total += stock.ShopPrice * stock.Quantity;
+                        }
+                        else if (stock.Product.Category.SystemAction == ActionConstants.Rest)
+                        {
+                            total -= stock.ShopPrice * stock.Quantity;
+                        }
+                    }
+                }
+
+                data_in[i] = total;
+            }
+            model_daily_in.data.AddRange(data_in);
+            inout_daily.Add(model_daily_in);
+
+            List<IGrouping<int, StockOut>> stockOuts = await applicationDbContext.StockOuts.Include("Product.Category").Where(x => x.Date > init_month).GroupBy(x => x.Date.Day).ToListAsync();
+
+            DashboardChartModel model_daily_out = new DashboardChartModel()
+            {
+                label = "Salidas",
+                backgroundColor = "rgba(45, 53, 60, 0.2)",
+                borderColor = "rgba(45, 53, 60, 0.8)",
+                pointBackgroundColor = "rgba(45, 53, 60, 0.8)",
+                data = new List<decimal>()
+            };
+
+            decimal[] data_out = new decimal[31];
+            for (int i = 0; i < data_out.Length; i++)
+            {
+                var element = stockOuts.FirstOrDefault(x => x.Key - 1 == i);
+
+                decimal total = 0;
+                if (element != null)
+                {
+                    foreach (var stock in element)
+                    {
+                        if (stock.Product.Category.SystemAction == ActionConstants.Sum)
+                        {
+                            total += stock.SalePrice * stock.Quantity;
+                        }
+                        else if (stock.Product.Category.SystemAction == ActionConstants.Rest)
+                        {
+                            total -= stock.SalePrice * stock.Quantity;
+                        }
+                    }
+                }
+
+                data_out[i] = total;
+            }
+            model_daily_out.data.AddRange(data_out);
+            inout_daily.Add(model_daily_out);
+
+            #endregion Grahp Daily
+
+            #region Grahp Monthly
+
+            List<IGrouping<int, StockIn>> stockIns_monthly = await applicationDbContext.StockIns.Include("Product.Category").Where(x => x.Date > init_year).GroupBy(x => x.Date.Month).ToListAsync();
+
+            List<DashboardChartModel> inout_monthly = new List<DashboardChartModel>();
+
+            DashboardChartModel model_monthly_in = new DashboardChartModel()
+            {
+                label = "Entradas",
+                backgroundColor = "rgba(52, 143, 226, 0.2)",
+                borderColor = "rgba(52, 143, 226, 0.8)",
+                pointBackgroundColor = "rgba(52, 143, 226, 0.8)",
+                data = new List<decimal>()
+            };
+
+            decimal[] data_monthly_in = new decimal[12];
+            for (int i = 0; i < data_monthly_in.Length; i++)
+            {
+                var element = stockIns_monthly.FirstOrDefault(x => x.Key - 1 == i);
+
+                decimal total = 0;
+                if (element != null)
+                {
+                    foreach (var stock in element)
+                    {
+                        if (stock.Product.Category.SystemAction == ActionConstants.Sum)
+                        {
+                            total += stock.ShopPrice * stock.Quantity;
+                        }
+                        else if (stock.Product.Category.SystemAction == ActionConstants.Rest)
+                        {
+                            total -= stock.ShopPrice * stock.Quantity;
+                        }
+                    }
+                }
+
+                data_monthly_in[i] = total;
+            }
+            model_monthly_in.data.AddRange(data_monthly_in);
+            inout_monthly.Add(model_monthly_in);
+
+            List<IGrouping<int, StockOut>> stockOuts_monthly = await applicationDbContext.StockOuts.Include("Product.Category").Where(x => x.Date > init_year).GroupBy(x => x.Date.Month).ToListAsync();
+
+            DashboardChartModel model_monthly_out = new DashboardChartModel()
+            {
+                label = "Salidas",
+                backgroundColor = "rgba(45, 53, 60, 0.2)",
+                borderColor = "rgba(45, 53, 60, 0.8)",
+                pointBackgroundColor = "rgba(45, 53, 60, 0.8)",
+                data = new List<decimal>()
+            };
+
+            decimal[] data_monthly_out = new decimal[31];
+            for (int i = 0; i < data_monthly_out.Length; i++)
+            {
+                var element = stockOuts_monthly.FirstOrDefault(x => x.Key - 1 == i);
+
+                decimal total = 0;
+                if (element != null)
+                {
+                    foreach (var stock in element)
+                    {
+                        if (stock.Product.Category.SystemAction == ActionConstants.Sum)
+                        {
+                            total += stock.SalePrice * stock.Quantity;
+                        }
+                        else if (stock.Product.Category.SystemAction == ActionConstants.Rest)
+                        {
+                            total -= stock.SalePrice * stock.Quantity;
+                        }
+                    }
+                }
+
+                data_monthly_out[i] = total;
+            }
+            model_monthly_out.data.AddRange(data_monthly_out);
+            inout_monthly.Add(model_monthly_out);
+
+            #endregion Grahp Monthly
+
+            return Json(new { inout_daily = inout_daily, inout_monthly = inout_monthly });
         }
     }
 }

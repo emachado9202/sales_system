@@ -202,3 +202,48 @@ code {
 #nav-dashboard .tab-pane {
     padding-top: 15px;
 }
+
+/*Panel*/
+.panel {
+    border: none;
+    -webkit-box-shadow: none;
+    box-shadow: none;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+}
+
+.panel-inverse > .panel-heading {
+    background: #242a30;
+}
+
+.panel-inverse > .panel-heading {
+    color: #fff;
+}
+
+.panel-heading {
+    padding: 10px 15px;
+    border: none;
+}
+
+.panel-heading {
+    padding: 10px 15px;
+    border-bottom: 1px solid transparent;
+    border-top-left-radius: 3px;
+    border-top-right-radius: 3px;
+}
+
+.panel-title {
+    font-size: 1rem;
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+    .panel-title, .panel-title .pull-right {
+        line-height: 20px;
+    }
+
+.panel-body {
+    padding: 15px;
+    background-color: #edf2f9;
+}

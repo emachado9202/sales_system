@@ -20,3 +20,186 @@
         @Html.Partial("_PartialDashboardCharts")
     </div>
 </div>
+
+@section scripts{
+    @Scripts.Render("~/bundles/chart")
+    <script type="text/javascript">
+        $(document).ready(function () {
+            var white = "rgba(255,255,255,1.0)",
+                fillBlack = "rgba(45, 53, 60, 0.6)",
+                fillBlackLight = "rgba(45, 53, 60, 0.2)",
+                strokeBlack = "rgba(45, 53, 60, 0.8)",
+                highlightFillBlack = "rgba(45, 53, 60, 0.8)",
+                highlightStrokeBlack = "rgba(45, 53, 60, 1)",
+                fillBlue = "rgba(52, 143, 226, 0.6)",
+                fillBlueLight = "rgba(52, 143, 226, 0.2)",
+                strokeBlue = "rgba(52, 143, 226, 0.8)",
+                highlightFillBlue = "rgba(52, 143, 226, 0.8)",
+                highlightStrokeBlue = "rgba(52, 143, 226, 1)",
+                fillGrey = "rgba(182, 194, 201, 0.6)",
+                fillGreyLight = "rgba(182, 194, 201, 0.2)",
+                strokeGrey = "rgba(182, 194, 201, 0.8)",
+                highlightFillGrey = "rgba(182, 194, 201, 0.8)",
+                highlightStrokeGrey = "rgba(182, 194, 201, 1)",
+                fillGreen = "rgba(0, 172, 172, 0.6)",
+                fillGreenLight = "rgba(0, 172, 172, 0.2)",
+                strokeGreen = "rgba(0, 172, 172, 0.8)",
+                highlightFillGreen = "rgba(0, 172, 172, 0.8)",
+                highlightStrokeGreen = "rgba(0, 172, 172, 1)",
+                fillPurple = "rgba(114, 124, 182, 0.6)",
+                fillPurpleLight = "rgba(114, 124, 182, 0.2)",
+                strokePurple = "rgba(114, 124, 182, 0.8)",
+                highlightFillPurple = "rgba(114, 124, 182, 0.8)",
+                highlightStrokePurple = "rgba(114, 124, 182, 1)",
+
+                randomScalingFactor = function () {
+                    return Math.round(100 * Math.random())
+                };
+
+            $.ajax({
+                type: 'POST',
+                data: {
+                },
+                url: "/Home/DashboardChart",
+                dataType: 'json',
+                success: function (data) {
+                    var lineChartDataDaily = {
+                        labels: ["01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "21", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "31"],
+                        datasets: []
+                    };
+
+                    $.each(data.inout_daily,
+                        function (l, dataset) {
+
+                            var dataset_m = {
+                                label: dataset.label,
+                                borderColor: dataset.borderColor,
+                                pointBackgroundColor: dataset.pointBackgroundColor,
+                                pointRadius: 2,
+                                borderWidth: 2,
+                                backgroundColor: dataset.backgroundColor,
+                                data: []
+                            }
+
+                            $.each(dataset.data,
+                                function (l, ele) {
+                                    dataset_m.data.push(ele);
+                                });
+                            lineChartDataDaily.datasets.push(dataset_m);
+                        });
+
+                    var a = document.getElementById("inout-chart-daily").getContext("2d");
+
+                    var c = (new Chart(a, { type: "line", data: lineChartDataDaily }));
+
+                    var lineChartDataMonthly = {
+                        labels: ["01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12"],
+                        datasets: []
+                    };
+
+                    $.each(data.inout_monthly,
+                        function (l, dataset) {
+
+                            var dataset_m = {
+                                label: dataset.label,
+                                borderColor: dataset.borderColor,
+                                pointBackgroundColor: dataset.pointBackgroundColor,
+                                pointRadius: 2,
+                                borderWidth: 2,
+                                backgroundColor: dataset.backgroundColor,
+                                data: []
+                            }
+
+                            $.each(dataset.data,
+                                function (l, ele) {
+                                    dataset_m.data.push(ele);
+                                });
+                            lineChartDataMonthly.datasets.push(dataset_m);
+                        });
+
+                    var d = document.getElementById("inout-chart-monthly").getContext("2d");
+
+                    var e = (new Chart(d, { type: "line", data: lineChartDataMonthly }));
+                }
+            });
+
+            lineChartData = {
+                labels: ["January", "February", "March", "April", "May", "June", "July"],
+                datasets: [{
+                    label: "Dataset 1",
+                    borderColor: strokeBlue,
+                    pointBackgroundColor: strokeBlue,
+                    pointRadius: 2,
+                    borderWidth: 2,
+                    backgroundColor: fillBlueLight,
+                    data: [randomScalingFactor(), randomScalingFactor(), randomScalingFactor(), randomScalingFactor(), randomScalingFactor(), randomScalingFactor(), randomScalingFactor()]
+                },
+                {
+                    label: "Dataset 2",
+                    borderColor: strokeBlack,
+                    pointBackgroundColor: strokeBlack,
+                    pointRadius: 2,
+                    borderWidth: 2,
+                    backgroundColor: fillBlackLight,
+                    data: [randomScalingFactor(), randomScalingFactor(), randomScalingFactor(), randomScalingFactor(), randomScalingFactor(), randomScalingFactor(), randomScalingFactor()]
+                }]
+            };
+
+            //var a = document.getElementById("inout-chart").getContext("2d");
+
+            //var c = (new Chart(a, { type: "line", data: lineChartData }));
+
+            var radarChartData = {
+                labels: ["Eating", "Drinking", "Sleeping", "Designing", "Coding", "Cycling", "Running"],
+                datasets: [{
+                    label: "Dataset 1",
+                    borderWidth: 2,
+                    borderColor: strokePurple,
+                    pointBackgroundColor: strokePurple,
+                    pointRadius: 2,
+                    backgroundColor: fillPurpleLight,
+                    data: [65, 59, 90, 81, 56, 55, 40]
+                },
+                {
+                    label: "Dataset 2",
+                    borderWidth: 2,
+                    borderColor: strokeBlack,
+                    pointBackgroundColor: strokeBlack,
+                    pointRadius: 2,
+                    backgroundColor: fillBlackLight,
+                    data: [28, 48, 40, 19, 96, 27, 100]
+                }]
+            };
+            var polarAreaData = {
+                labels: ["Purple", "Blue", "Green", "Grey", "Black"],
+                datasets: [{
+                    data: [300, 160, 100, 200, 120],
+                    backgroundColor: [fillPurple, fillBlue, fillGreen, fillGrey, fillBlack],
+                    borderColor: [strokePurple, strokeBlue, strokeGreen, strokeGrey, strokeBlack],
+                    borderWidth: 2,
+                    label: "My dataset"
+                }]
+            };
+            var pieChartData = {
+                labels: ["Purple", "Blue", "Green", "Grey", "Black"],
+                datasets: [{
+                    data: [300, 50, 100, 40, 120],
+                    backgroundColor: [fillPurple, fillBlue, fillGreen, fillGrey, fillBlack],
+                    borderColor: [strokePurple, strokeBlue, strokeGreen, strokeGrey, strokeBlack],
+                    borderWidth: 2,
+                    label: "My dataset"
+                }]
+            },
+                doughnutChartData = {
+                    labels: ["Purple", "Blue", "Green", "Grey", "Black"],
+                    datasets: [{
+                        data: [300, 50, 100, 40, 120],
+                        backgroundColor: [fillPurple, fillBlue, fillGreen, fillGrey, fillBlack],
+                        borderColor: [strokePurple, strokeBlue, strokeGreen, strokeGrey, strokeBlack],
+                        borderWidth: 2,
+                        label: "My dataset"
+                    }]
+                };
+        });
+    </script>
+}

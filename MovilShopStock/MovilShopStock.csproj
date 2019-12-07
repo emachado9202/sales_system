@@ -205,6 +205,7 @@
     <Compile Include="Models\Catalog\User.cs" />
     <Compile Include="Models\ApplicationDbContext.cs" />
     <Compile Include="Models\View\CategoryModel.cs" />
+    <Compile Include="Models\View\DashboardChartModel.cs" />
     <Compile Include="Models\View\DashboardModel.cs" />
     <Compile Include="Models\Handlers\ActionConstants.cs" />
     <Compile Include="Models\Handlers\Extensions\RouteExtensions.cs" />
@@ -273,6 +274,7 @@
     <Content Include="Scripts\bootstrap.bundle.min.js" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
+    <Content Include="Scripts\Chart.min.js" />
     <Content Include="Scripts\esm\popper-utils.js" />
     <Content Include="Scripts\esm\popper-utils.min.js" />
     <Content Include="Scripts\esm\popper.js" />
