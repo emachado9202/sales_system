@@ -153,6 +153,17 @@ table.table-bordered.dataTable.fixedHeader-floating {
     margin-top: 56px !important;
 }
 
+/* Sticky footer styles
+-------------------------------------------------- */
+html {
+    position: relative;
+    min-height: 100%;
+}
+
+body {
+    margin-bottom: 60px; /* Margin bottom by footer height */
+}
+
 main > .container-fluid {
     padding: 60px 15px 0;
 }
@@ -160,6 +171,9 @@ main > .container-fluid {
 .footer {
     background-color: #343a40;
     color: rgba(255, 255, 255, 0.75);
+    position: absolute;
+    bottom: 0;
+    width: 100%;
 }
 
     .footer > .container {

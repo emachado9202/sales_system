@@ -21,4 +21,9 @@
         public int column { get; set; }
         public string dir { get; set; }
     }
+
+    public class StockFilterViewModel : TableFilterViewModel
+    {
+        public string exist { get; set; }
+    }
 }

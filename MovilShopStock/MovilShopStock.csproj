@@ -181,6 +181,7 @@
     <Compile Include="Controllers\GenericController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
+    <Compile Include="Controllers\StockController.cs" />
     <Compile Include="Controllers\StockInController.cs" />
     <Compile Include="Controllers\StockOutController.cs" />
     <Compile Include="Controllers\TransferController.cs" />
@@ -334,12 +335,12 @@
     <Content Include="Views\Manage\VerifyPhoneNumber.cshtml" />
     <Content Include="Views\Shared\Lockout.cshtml" />
     <Content Include="Views\Shared\_LoginPartial.cshtml" />
-    <Content Include="Views\Home\List.cshtml" />
-    <Content Include="Views\Home\Create.cshtml" />
+    <Content Include="Views\Stock\Index.cshtml" />
+    <Content Include="Views\Stock\Create.cshtml" />
     <Content Include="Views\Category\Index.cshtml" />
     <Content Include="Views\Category\Create.cshtml" />
     <Content Include="Views\Category\Edit.cshtml" />
-    <Content Include="Views\Home\Edit.cshtml" />
+    <Content Include="Views\Stock\Edit.cshtml" />
     <Content Include="Views\StockIn\Index.cshtml" />
     <Content Include="Views\StockIn\Create.cshtml" />
     <Content Include="Views\StockOut\Index.cshtml" />
@@ -361,6 +362,8 @@
     <Content Include="Views\StockOut\Edit.cshtml" />
     <Content Include="Views\Transfer\CreateBusiness.cshtml" />
     <Content Include="Views\Transfer\CreatePrivate.cshtml" />
+    <Content Include="Views\Transfer\_PartialTabBusiness.cshtml" />
+    <Content Include="Views\Transfer\_PartialTabPrivate.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

@@ -2,7 +2,7 @@
 {
     <ul class="navbar-nav mr-auto">
         <li class="nav-item">@Html.ActionLink("Resumen", "Index", "Home", routeValues: null, htmlAttributes: new { @class = "nav-link" })</li>
-        <li class="nav-item">@Html.ActionLink("Inventario", "List", "Home", routeValues: null, htmlAttributes: new { @class = "nav-link" })</li>
+        <li class="nav-item">@Html.ActionLink("Inventario", "Index", "Stock", routeValues: null, htmlAttributes: new { @class = "nav-link" })</li>
         <li class="nav-item">@Html.ActionLink("Entradas", "Index", "StockIn", routeValues: null, htmlAttributes: new { @class = "nav-link" })</li>
         <li class="nav-item">@Html.ActionLink("Salidas", "Index", "StockOut", routeValues: null, htmlAttributes: new { @class = "nav-link" })</li>
         @if (User.IsInRole(RoleConstants.Editor) || User.IsInRole(RoleConstants.Administrator))
