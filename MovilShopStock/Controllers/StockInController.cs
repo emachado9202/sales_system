@@ -228,17 +228,17 @@ namespace MovilShopStock.Controllers
                         .ToListAsync();
             }
 
-            foreach (var stockOut in model)
+            foreach (var stockIn in model)
             {
                 result.Add(new StockInModel()
                 {
-                    DT_RowId = stockOut.Id.ToString(),
-                    ProductName = stockOut.Product.Name,
-                    Date = stockOut.Date.ToString("yyyy-MM-dd hh:mm"),
-                    Quantity = stockOut.Quantity,
-                    User = stockOut.User.UserName,
-                    ShopPrice = stockOut.ShopPrice.ToString("#,##0.00"),
-                    Category = stockOut.Product.Category.Name
+                    DT_RowId = stockIn.Id.ToString(),
+                    ProductName = stockIn.Product.Name,
+                    Date = stockIn.Date.ToString("yyyy-MM-dd hh:mm"),
+                    Quantity = stockIn.Quantity,
+                    User = stockIn.User.UserName,
+                    ShopPrice = stockIn.ShopPrice.ToString("#,##0.00"),
+                    Category = stockIn.Product.Category.Name
                 });
             }
 

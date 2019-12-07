@@ -88,7 +88,7 @@
                         var first = true;
                         $.each(data,
                             function (l, prod) {
-                                var option_prod = new Option(prod.Product, prod.Id, true, first);
+                                var option_prod = new Option(prod.Product, prod.DT_RowId, true, first);
                                 $("#ProductName").append(option_prod);
                                 first = false;
                             });

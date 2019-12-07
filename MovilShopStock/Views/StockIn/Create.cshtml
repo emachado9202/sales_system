@@ -82,7 +82,7 @@
                             .end();
                         $.each(data,
                             function (l, prod) {
-                                var option_prod = new Option(prod.Product, prod.Id, true, true);
+                                var option_prod = new Option(prod.Product, prod.DT_RowId, true, true);
                                 $("#ProductName").append(option_prod).trigger('change');
                             });
 
