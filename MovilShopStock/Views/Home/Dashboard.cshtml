@@ -1,0 +1,22 @@
+﻿@model MovilShopStock.Models.DashboardModel
+@{
+    ViewBag.Title = "Resumen";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2 class="text-center">Resumen</h2>
+
+<nav>
+    <div class="nav nav-tabs" id="nav-tab" role="tablist">
+        <a class="nav-item nav-link active" id="nav-accounting-tab" data-toggle="tab" href="#nav-accounting" role="tab" aria-controls="nav-accounting" aria-selected="true">Números</a>
+        <a class="nav-item nav-link" id="nav-charts-tab" data-toggle="tab" href="#nav-charts" role="tab" aria-controls="nav-charts" aria-selected="false">Gráficos</a>
+    </div>
+</nav>
+<div class="tab-content" id="nav-dashboard">
+    <div class="tab-pane fade show active" id="nav-accounting" role="tabpanel" aria-labelledby="nav-accounting-tab">
+        @Html.Partial("_PartialDashboardAccounting", Model)
+    </div>
+    <div class="tab-pane fade" id="nav-charts" role="tabpanel" aria-labelledby="nav-charts-tab">
+        @Html.Partial("_PartialDashboardCharts")
+    </div>
+</div>

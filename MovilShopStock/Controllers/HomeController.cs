@@ -50,7 +50,7 @@ namespace MovilShopStock.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult> Index()
+        public async Task<ActionResult> Dashboard()
         {
             DashboardModel model = new DashboardModel();
 
@@ -244,6 +244,11 @@ namespace MovilShopStock.Controllers
             Session["BusinessWorking"] = id;
 
             return Redirect(returnUrl);
+        }
+
+        public ActionResult Index()
+        {
+            return View();
         }
     }
 }

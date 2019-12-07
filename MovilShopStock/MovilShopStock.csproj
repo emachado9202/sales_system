@@ -345,7 +345,7 @@
     <Content Include="Views\StockIn\Create.cshtml" />
     <Content Include="Views\StockOut\Index.cshtml" />
     <Content Include="Views\StockOut\Create.cshtml" />
-    <Content Include="Views\Home\Index.cshtml" />
+    <Content Include="Views\Home\Dashboard.cshtml" />
     <Content Include="Scripts\jquery-3.4.1.slim.min.map" />
     <Content Include="Scripts\jquery-3.4.1.min.map" />
     <Content Include="Scripts\umd\popper.min.js.map" />
@@ -364,6 +364,9 @@
     <Content Include="Views\Transfer\CreatePrivate.cshtml" />
     <Content Include="Views\Transfer\_PartialTabBusiness.cshtml" />
     <Content Include="Views\Transfer\_PartialTabPrivate.cshtml" />
+    <Content Include="Views\Home\Index.cshtml" />
+    <Content Include="Views\Home\_PartialDashboardAccounting.cshtml" />
+    <Content Include="Views\Home\_PartialDashboardCharts.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

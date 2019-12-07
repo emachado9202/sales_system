@@ -198,3 +198,7 @@ code {
         float: left;
     }
 }
+
+#nav-dashboard .tab-pane {
+    padding-top: 15px;
+}
