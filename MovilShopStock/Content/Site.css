@@ -265,16 +265,27 @@ code {
     transform: rotate(30deg);
 }
 
-    .product-device::before {
-        position: absolute;
-        top: 10%;
-        right: 10px;
-        bottom: 10%;
-        left: 10px;
-        content: "";
-        background-color: rgba(255, 255, 255, .1);
-        border-radius: 5px;
-    }
+.product-device-2::before {
+    position: absolute;
+    top: 10%;
+    right: 10px;
+    bottom: 10%;
+    left: 10px;
+    content: "";
+    background-image: url('img/stats1.jpg');
+    border-radius: 5px;
+}
+
+.product-device-1::before {
+    position: absolute;
+    top: 10%;
+    right: 10px;
+    bottom: 10%;
+    left: 10px;
+    content: "";
+    background-image: url('img/stats.jpg');
+    border-radius: 5px;
+}
 
 .product-device-2 {
     top: -25%;
@@ -302,4 +313,48 @@ code {
 
 .overflow-hidden {
     overflow: hidden;
+}
+
+.pricing-header {
+    max-width: 700px;
+}
+
+.card-deck .card {
+    min-width: 220px;
+}
+
+@media (max-width: 896px) {
+    .col-md-7.mx-auto.mb-3.content {
+        z-index: 1000;
+        background: rgba(0,0,0,0.5);
+        padding-bottom: 23px;
+        color: #fff;
+    }
+
+    .btn.btn-outline-secondary {
+        color: #fff;
+        border-color: #fff;
+    }
+}
+
+.characts-img {
+    width: 80%;
+    height: 300px;
+    border-radius: 21px 21px 0 0;
+}
+
+.img-stats-2 {
+    background-image: url('img/stats2.jpg');
+}
+
+.img-stats-3 {
+    background-image: url('img/stats3.jpg');
+}
+
+.img-stats-4 {
+    background-image: url('img/stats4.jpg');
+}
+
+.img-stats-5 {
+    background-image: url('img/stats5.jpg');
 }

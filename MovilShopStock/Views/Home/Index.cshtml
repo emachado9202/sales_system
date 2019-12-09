@@ -1,82 +1,95 @@
 ﻿@{
-    ViewBag.Title = "Index";
+    ViewBag.Title = "Portada";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
 <div class="position-relative overflow-hidden p-3 p-md-5 m-md-3 text-center bg-light">
-    <div class="col-md-5 p-lg-5 mx-auto my-5">
-        <h1 class="display-4 font-weight-normal">Punny headline</h1>
-        <p class="lead font-weight-normal">And an even wittier subheading to boot. Jumpstart your marketing efforts with this example based on Apple's marketing pages.</p>
-        <a class="btn btn-outline-secondary" href="#">Coming soon</a>
+    <div class="col-md-7 col-lg-5 mx-auto mb-3 content">
+        <h1 class="display-4 font-weight-normal">Administre todos sus negocios en un solo lugar</h1>
+        <p class="lead font-weight-normal">
+            Administrar sus negocios ahora es mucho más fácil, con nuestra plataforma podrá realizar muchas de sus tareas cotidianas más comunes en el negocio desde la comodidad de su hogar. Administrando el inventario y manejo de los trabajadores le proporcionará una alta eficacia, así de tener la informción segura y accesible 24/7.
+        </p>
+        @Html.ActionLink("Registrarse", "Login", "Account", routeValues: null, htmlAttributes: new { @class = "btn btn-outline-secondary" })
     </div>
-    <div class="product-device shadow-sm d-none d-md-block"></div>
-    <div class="product-device product-device-2 shadow-sm d-none d-md-block"></div>
+    <div class="product-device product-device-1 shadow-sm d-block"></div>
+    <div class="product-device product-device-2 shadow-sm d-block"></div>
 </div>
 
-<div class="d-md-flex flex-md-equal w-100 my-md-3 pl-md-3">
+<div id="characteristics" class="d-md-flex flex-md-equal w-100 my-md-3 pl-md-3">
     <div class="bg-dark mr-md-3 pt-3 px-3 pt-md-5 px-md-5 text-center text-white overflow-hidden">
         <div class="my-3 py-3">
-            <h2 class="display-5">Another headline</h2>
-            <p class="lead">And an even wittier subheading.</p>
+            <h2 class="display-5">Inventario</h2>
+            <p class="lead">Los inventarios no son necesarios solo porque sirva para controlar; su importancia radica principalmente en que ayudan a estimar el valor de tu negocio.</p>
         </div>
-        <div class="bg-light shadow-sm mx-auto" style="width: 80%; height: 300px; border-radius: 21px 21px 0 0;"></div>
+        <div class="characts-img img-stats-2 shadow-sm mx-auto"></div>
     </div>
     <div class="bg-light mr-md-3 pt-3 px-3 pt-md-5 px-md-5 text-center overflow-hidden">
         <div class="my-3 p-3">
-            <h2 class="display-5">Another headline</h2>
-            <p class="lead">And an even wittier subheading.</p>
+            <h2 class="display-5">Entradas</h2>
+            <p class="lead">Las entradas en un inventario definen el incremento de la existencia de los productos. Ejemplo de ello es cuando hacemos una compra para el negocio.</p>
         </div>
-        <div class="bg-dark shadow-sm mx-auto" style="width: 80%; height: 300px; border-radius: 21px 21px 0 0;"></div>
+        <div class="characts-img img-stats-3 shadow-sm mx-auto" style="width: 80%; height: 300px; border-radius: 21px 21px 0 0;"></div>
     </div>
 </div>
 
-<div class="d-md-flex flex-md-equal w-100 my-md-3 pl-md-3">
+<div class="d-md-flex flex-md-equal w-100 my-3 pl-md-3">
     <div class="bg-light mr-md-3 pt-3 px-3 pt-md-5 px-md-5 text-center overflow-hidden">
         <div class="my-3 p-3">
-            <h2 class="display-5">Another headline</h2>
-            <p class="lead">And an even wittier subheading.</p>
+            <h2 class="display-5">Salidas</h2>
+            <p class="lead">Las entradas en un inventario definen el decremento de la existencia de los productos. Ejemplo de ello es cuando hacemos una venta en el negocio.</p>
         </div>
-        <div class="bg-dark shadow-sm mx-auto" style="width: 80%; height: 300px; border-radius: 21px 21px 0 0;"></div>
+        <div class="characts-img img-stats-4 shadow-sm mx-auto"></div>
     </div>
-    <div class="bg-primary mr-md-3 pt-3 px-3 pt-md-5 px-md-5 text-center text-white overflow-hidden">
+    <div class="bg-dark mr-md-3 pt-3 px-3 pt-md-5 px-md-5 text-center text-white overflow-hidden">
         <div class="my-3 py-3">
-            <h2 class="display-5">Another headline</h2>
-            <p class="lead">And an even wittier subheading.</p>
+            <h2 class="display-5">Transferencias</h2>
+            <p class="lead">Las transferencias son muy importantes cuando se administra más de 1 negocio o poseen acceso a uno varias personas. Definiendo como transferencias en el sistema, el de envío de producto entre negocios y envío de dinero entre personas.</p>
         </div>
-        <div class="bg-light shadow-sm mx-auto" style="width: 80%; height: 300px; border-radius: 21px 21px 0 0;"></div>
+        <div class="characts-img img-stats-5 shadow-sm mx-auto"></div>
     </div>
 </div>
 
-<div class="d-md-flex flex-md-equal w-100 my-md-3 pl-md-3">
-    <div class="bg-light mr-md-3 pt-3 px-3 pt-md-5 px-md-5 text-center overflow-hidden">
-        <div class="my-3 p-3">
-            <h2 class="display-5">Another headline</h2>
-            <p class="lead">And an even wittier subheading.</p>
+<div id="prices" class="card-deck mb-3 text-center">
+    <div class="card mb-4 shadow-sm">
+        <div class="card-header">
+            <h4 class="my-0 font-weight-normal">Mínimo</h4>
         </div>
-        <div class="bg-white shadow-sm mx-auto" style="width: 80%; height: 300px; border-radius: 21px 21px 0 0;"></div>
+        <div class="card-body">
+            <h1 class="card-title pricing-card-title">$6.00 <small class="text-muted">/ mes</small></h1>
+            <ul class="list-unstyled mt-3 mb-4">
+                <li>1 usuario incluido</li>
+                <li>3 negocios</li>
+                <li>Ayuda y Soporte 24/7</li>
+            </ul>
+            <button type="button" class="btn btn-lg btn-block btn-outline-dark">Empezar 30 días gratis</button>
+        </div>
     </div>
-    <div class="bg-light mr-md-3 pt-3 px-3 pt-md-5 px-md-5 text-center overflow-hidden">
-        <div class="my-3 py-3">
-            <h2 class="display-5">Another headline</h2>
-            <p class="lead">And an even wittier subheading.</p>
+    <div class="card mb-4 shadow-sm">
+        <div class="card-header">
+            <h4 class="my-0 font-weight-normal">Estándar</h4>
         </div>
-        <div class="bg-white shadow-sm mx-auto" style="width: 80%; height: 300px; border-radius: 21px 21px 0 0;"></div>
+        <div class="card-body">
+            <h1 class="card-title pricing-card-title">$8.00 <small class="text-muted">/ mes</small></h1>
+            <ul class="list-unstyled mt-3 mb-4">
+                <li>3 usuarios</li>
+                <li>5 negocios</li>
+                <li>Ayuda y Soporte 24/7</li>
+            </ul>
+            <button type="button" class="btn btn-lg btn-block btn-outline-dark">Empezar 30 días gratis</button>
+        </div>
     </div>
-</div>
-
-<div class="d-md-flex flex-md-equal w-100 my-md-3 pl-md-3">
-    <div class="bg-light mr-md-3 pt-3 px-3 pt-md-5 px-md-5 text-center overflow-hidden">
-        <div class="my-3 p-3">
-            <h2 class="display-5">Another headline</h2>
-            <p class="lead">And an even wittier subheading.</p>
+    <div class="card mb-4 shadow-sm">
+        <div class="card-header">
+            <h4 class="my-0 font-weight-normal">Profesional</h4>
         </div>
-        <div class="bg-white shadow-sm mx-auto" style="width: 80%; height: 300px; border-radius: 21px 21px 0 0;"></div>
-    </div>
-    <div class="bg-light mr-md-3 pt-3 px-3 pt-md-5 px-md-5 text-center overflow-hidden">
-        <div class="my-3 py-3">
-            <h2 class="display-5">Another headline</h2>
-            <p class="lead">And an even wittier subheading.</p>
+        <div class="card-body">
+            <h1 class="card-title pricing-card-title">$20 <small class="text-muted">/ mes</small></h1>
+            <ul class="list-unstyled mt-3 mb-4">
+                <li>5 usuarios</li>
+                <li>20 negocios</li>
+                <li>Ayuda y Soporte 24/7</li>
+            </ul>
+            <button type="button" class="btn btn-lg btn-block btn-outline-dark">Empezar 30 días gratis</button>
         </div>
-        <div class="bg-white shadow-sm mx-auto" style="width: 80%; height: 300px; border-radius: 21px 21px 0 0;"></div>
     </div>
 </div>

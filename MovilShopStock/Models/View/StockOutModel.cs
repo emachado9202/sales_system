@@ -39,9 +39,9 @@ namespace MovilShopStock.Models
         public string TotalSale { get { return (decimal.Parse(SalePrice.Replace(".", ",")) * Quantity).ToString("#,##0.00"); } }
 
         [DisplayName("Ganancia")]
-        public decimal Gain { get; set; }
+        public string Gain { get; set; }
 
         [DisplayName("Ganancia Total")]
-        public decimal TotalGain { get { return Gain * Quantity; } }
+        public string TotalGain { get { return (decimal.Parse(Gain.Replace(".", ",")) * Quantity).ToString("#,##0.00"); } }
     }
 }

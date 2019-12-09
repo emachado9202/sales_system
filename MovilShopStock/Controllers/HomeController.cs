@@ -14,12 +14,12 @@ using System.Web.Mvc;
 
 namespace MovilShopStock.Controllers
 {
-    [Authorize(Roles = RoleConstants.Dealer + "," + RoleConstants.Editor + "," + RoleConstants.Administrator)]
     public class HomeController : GenericController
     {
         private ApplicationDbContext applicationDbContext = new ApplicationDbContext();
 
         [HttpPost]
+        [Authorize(Roles = RoleConstants.Dealer + "," + RoleConstants.Editor + "," + RoleConstants.Administrator)]
         public async Task<ActionResult> GetProductByCat(string category_id)
         {
             Guid categoryId = Guid.Parse(category_id);
@@ -31,6 +31,7 @@ namespace MovilShopStock.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = RoleConstants.Dealer + "," + RoleConstants.Editor + "," + RoleConstants.Administrator)]
         public async Task<ActionResult> GetSalePriceProduct(string product_id)
         {
             Guid productId = Guid.Parse(product_id);
@@ -41,6 +42,7 @@ namespace MovilShopStock.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = RoleConstants.Dealer + "," + RoleConstants.Editor + "," + RoleConstants.Administrator)]
         public async Task<ActionResult> GetExistProduct(string product_id)
         {
             Guid productId = Guid.Parse(product_id);
@@ -51,6 +53,7 @@ namespace MovilShopStock.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = RoleConstants.Dealer + "," + RoleConstants.Editor + "," + RoleConstants.Administrator)]
         public async Task<ActionResult> Dashboard()
         {
             DashboardModel model = new DashboardModel();
@@ -232,6 +235,7 @@ namespace MovilShopStock.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = RoleConstants.Dealer + "," + RoleConstants.Editor + "," + RoleConstants.Administrator)]
         public async Task<ActionResult> SetBusiness(string id, string returnUrl)
         {
             string userId = User.Identity.GetUserId();
@@ -247,12 +251,8 @@ namespace MovilShopStock.Controllers
             return Redirect(returnUrl);
         }
 
-        public ActionResult Index()
-        {
-            return View();
-        }
-
         [HttpPost]
+        [Authorize(Roles = RoleConstants.Dealer + "," + RoleConstants.Editor + "," + RoleConstants.Administrator)]
         public async Task<ActionResult> DashboardChart()
         {
             DateTime init_month = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 01);
@@ -507,6 +507,11 @@ namespace MovilShopStock.Controllers
             #endregion Radar Month
 
             return Json(new { inout_daily = inout_daily, inout_monthly = inout_monthly, radar_month = radar_month, model_daily_gain = model_daily_gain, model_monthly_gain = model_monthly_gain });
+        }
+
+        public ActionResult Index()
+        {
+            return View();
         }
     }
 }

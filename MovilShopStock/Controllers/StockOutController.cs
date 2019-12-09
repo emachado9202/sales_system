@@ -27,7 +27,11 @@ namespace MovilShopStock.Controllers
         [HttpGet]
         public async Task<ActionResult> Create()
         {
-            StockOutModel model = new StockOutModel();
+            StockOutModel model = new StockOutModel()
+            {
+                Quantity = 0,
+                SalePrice = "0.00"
+            };
 
             Guid business_working = Guid.Parse(Session["BusinessWorking"].ToString());
             ViewBag.Categories = await applicationDbContext.Categories.Where(x => x.Business_Id == business_working).OrderBy(x => x.Name).ToListAsync();
@@ -403,7 +407,7 @@ namespace MovilShopStock.Controllers
                     Quantity = stockOut.Quantity,
                     User = stockOut.User.UserName,
                     SalePrice = stockOut.SalePrice.ToString("#,##0.00"),
-                    Gain = stockOut.Gain,
+                    Gain = stockOut.Gain.ToString("#,##0.00"),
                     Receivered = stockOut.Receiver != null,
                     Receiver = stockOut.Receiver?.UserName,
                     Category = stockOut.Product.Category.Name

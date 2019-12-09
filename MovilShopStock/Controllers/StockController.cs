@@ -43,7 +43,13 @@ namespace MovilShopStock.Controllers
         [Authorize(Roles = RoleConstants.Editor + "," + RoleConstants.Administrator)]
         public async Task<ActionResult> Create()
         {
-            ProductModel model = new ProductModel();
+            ProductModel model = new ProductModel()
+            {
+                SalePrice = "0.00",
+                CurrentPrice = "0.00",
+                In = 0,
+                Out = 0
+            };
 
             Guid business_working = Guid.Parse(Session["BusinessWorking"].ToString());
 

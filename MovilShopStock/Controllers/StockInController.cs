@@ -39,7 +39,11 @@ namespace MovilShopStock.Controllers
         [HttpGet]
         public async Task<ActionResult> Create()
         {
-            StockInModel model = new StockInModel();
+            StockInModel model = new StockInModel()
+            {
+                ShopPrice = "0.00",
+                Quantity = 0
+            };
 
             Guid business_working = Guid.Parse(Session["BusinessWorking"].ToString());
             ViewBag.Categories = await applicationDbContext.Categories.Where(x => x.Business_Id == business_working).OrderBy(x => x.Name).ToListAsync();

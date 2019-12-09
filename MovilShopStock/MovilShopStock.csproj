@@ -259,6 +259,12 @@
     <Content Include="Content\DataTables\media\css\dataTables.bootstrap.min.css" />
     <Content Include="Content\DataTables\media\js\dataTables.bootstrap.min.js" />
     <Content Include="Content\DataTables\media\js\jquery.dataTables.js" />
+    <Content Include="Content\img\stats.jpg" />
+    <Content Include="Content\img\stats1.jpg" />
+    <Content Include="Content\img\stats2.jpg" />
+    <Content Include="Content\img\stats3.jpg" />
+    <Content Include="Content\img\stats4.jpg" />
+    <Content Include="Content\img\stats5.jpg" />
     <Content Include="Content\telerik.css" />
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />

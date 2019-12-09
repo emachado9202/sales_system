@@ -45,9 +45,8 @@ namespace MovilShopStock.Controllers
 
                 ViewBag.Business = businesses;
                 ViewBag.BusinessWorking = businesses.FirstOrDefault(x => x.Id == business_working);
-
-                Session["app_protocol"] = ConfigurationManager.AppSettings.Get("httpProtocol");
             }
+            Session["app_protocol"] = ConfigurationManager.AppSettings.Get("httpProtocol");
         }
     }
 }
