@@ -31,6 +31,6 @@ namespace MovilShopStock.Models
         public int Quantity { get; set; }
 
         [DisplayName("Total Compra")]
-        public decimal TotalShop { get { return decimal.Parse(ShopPrice) * Quantity; } }
+        public string TotalShop { get { return (decimal.Parse(ShopPrice) * Quantity).ToString("#,##0.00"); } }
     }
 }

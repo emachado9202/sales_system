@@ -24,6 +24,7 @@
 @section scripts{
     @Scripts.Render("~/bundles/chart")
     <script type="text/javascript">
+
         $(document).ready(function () {
             var white = "rgba(255,255,255,1.0)",
                 fillBlack = "rgba(45, 53, 60, 0.6)",
@@ -120,6 +121,61 @@
                     var d = document.getElementById("inout-chart-monthly").getContext("2d");
 
                     var e = (new Chart(d, { type: "line", data: lineChartDataMonthly }));
+
+                    var radarChartData = data.radar_month;
+
+                    var f = document.getElementById("radar-chart-month").getContext("2d");
+                    var g = new Chart(f, { type: "radar", data: radarChartData });
+
+                    var lineChartDataDailyGain = {
+                        labels: ["01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "21", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "31"],
+                        datasets: []
+                    };
+
+                    var dataset_m = {
+                        label: data.model_daily_gain.label,
+                        borderColor: data.model_daily_gain.borderColor,
+                        pointBackgroundColor: data.model_daily_gain.pointBackgroundColor,
+                        pointRadius: 2,
+                        borderWidth: 2,
+                        backgroundColor: data.model_daily_gain.backgroundColor,
+                        data: []
+                    }
+
+                    $.each(data.model_daily_gain.data,
+                        function (l, ele) {
+                            dataset_m.data.push(ele);
+                        });
+                    lineChartDataDailyGain.datasets.push(dataset_m);
+
+                    var h = document.getElementById("inout-chart-daily-gain").getContext("2d");
+
+                    var i = (new Chart(h, { type: "line", data: lineChartDataDailyGain }));
+
+                    var lineChartDataMonthlyGain = {
+                        labels: ["01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12"],
+                        datasets: []
+                    };
+
+                    var dataset_m = {
+                        label: data.model_monthly_gain.label,
+                        borderColor: data.model_monthly_gain.borderColor,
+                        pointBackgroundColor: data.model_monthly_gain.pointBackgroundColor,
+                        pointRadius: 2,
+                        borderWidth: 2,
+                        backgroundColor: data.model_monthly_gain.backgroundColor,
+                        data: []
+                    }
+
+                    $.each(data.model_monthly_gain.data,
+                        function (l, ele) {
+                            dataset_m.data.push(ele);
+                        });
+                    lineChartDataMonthlyGain.datasets.push(dataset_m);
+
+                    var k = document.getElementById("inout-chart-monthly-gain").getContext("2d");
+
+                    var l = (new Chart(k, { type: "line", data: lineChartDataMonthlyGain }));
                 }
             });
 
@@ -149,27 +205,6 @@
 
             //var c = (new Chart(a, { type: "line", data: lineChartData }));
 
-            var radarChartData = {
-                labels: ["Eating", "Drinking", "Sleeping", "Designing", "Coding", "Cycling", "Running"],
-                datasets: [{
-                    label: "Dataset 1",
-                    borderWidth: 2,
-                    borderColor: strokePurple,
-                    pointBackgroundColor: strokePurple,
-                    pointRadius: 2,
-                    backgroundColor: fillPurpleLight,
-                    data: [65, 59, 90, 81, 56, 55, 40]
-                },
-                {
-                    label: "Dataset 2",
-                    borderWidth: 2,
-                    borderColor: strokeBlack,
-                    pointBackgroundColor: strokeBlack,
-                    pointRadius: 2,
-                    backgroundColor: fillBlackLight,
-                    data: [28, 48, 40, 19, 96, 27, 100]
-                }]
-            };
             var polarAreaData = {
                 labels: ["Purple", "Blue", "Green", "Grey", "Black"],
                 datasets: [{

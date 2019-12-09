@@ -257,10 +257,11 @@ namespace MovilShopStock.Controllers
         {
             DateTime init_month = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 01);
             DateTime init_year = new DateTime(DateTime.Now.Year, 01, 01);
+            Guid business_working = Guid.Parse(Session["BusinessWorking"].ToString());
 
             #region Grahp Daily
 
-            List<IGrouping<int, StockIn>> stockIns = await applicationDbContext.StockIns.Include("Product.Category").Where(x => x.Date > init_month).GroupBy(x => x.Date.Day).ToListAsync();
+            List<IGrouping<int, StockIn>> stockIns = await applicationDbContext.StockIns.Include("Product.Category").Where(x => x.Date > init_month && x.Product.Category.Business_Id == business_working).GroupBy(x => x.Date.Day).ToListAsync();
 
             List<DashboardChartModel> inout_daily = new List<DashboardChartModel>();
 
@@ -299,7 +300,7 @@ namespace MovilShopStock.Controllers
             model_daily_in.data.AddRange(data_in);
             inout_daily.Add(model_daily_in);
 
-            List<IGrouping<int, StockOut>> stockOuts = await applicationDbContext.StockOuts.Include("Product.Category").Where(x => x.Date > init_month).GroupBy(x => x.Date.Day).ToListAsync();
+            List<IGrouping<int, StockOut>> stockOuts = await applicationDbContext.StockOuts.Include("Product.Category").Where(x => x.Date > init_month && x.Product.Category.Business_Id == business_working).GroupBy(x => x.Date.Day).ToListAsync();
 
             DashboardChartModel model_daily_out = new DashboardChartModel()
             {
@@ -310,12 +311,22 @@ namespace MovilShopStock.Controllers
                 data = new List<decimal>()
             };
 
+            DashboardChartModel model_daily_gain = new DashboardChartModel()
+            {
+                label = "Ganancia",
+                backgroundColor = "rgba(52, 143, 226, 0.2)",
+                borderColor = "rgba(52, 143, 226, 0.8)",
+                pointBackgroundColor = "rgba(52, 143, 226, 0.8)",
+                data = new List<decimal>()
+            };
+
             decimal[] data_out = new decimal[31];
+            decimal[] data_gain = new decimal[31];
             for (int i = 0; i < data_out.Length; i++)
             {
                 var element = stockOuts.FirstOrDefault(x => x.Key - 1 == i);
 
-                decimal total = 0;
+                decimal total = 0, total_gain = 0;
                 if (element != null)
                 {
                     foreach (var stock in element)
@@ -323,16 +334,20 @@ namespace MovilShopStock.Controllers
                         if (stock.Product.Category.SystemAction == ActionConstants.Sum)
                         {
                             total += stock.SalePrice * stock.Quantity;
+                            total_gain += stock.Gain * stock.Quantity;
                         }
                         else if (stock.Product.Category.SystemAction == ActionConstants.Rest)
                         {
                             total -= stock.SalePrice * stock.Quantity;
+                            total_gain -= stock.Gain * stock.Quantity;
                         }
                     }
                 }
 
                 data_out[i] = total;
+                data_gain[i] = total_gain;
             }
+            model_daily_gain.data.AddRange(data_gain);
             model_daily_out.data.AddRange(data_out);
             inout_daily.Add(model_daily_out);
 
@@ -340,7 +355,7 @@ namespace MovilShopStock.Controllers
 
             #region Grahp Monthly
 
-            List<IGrouping<int, StockIn>> stockIns_monthly = await applicationDbContext.StockIns.Include("Product.Category").Where(x => x.Date > init_year).GroupBy(x => x.Date.Month).ToListAsync();
+            List<IGrouping<int, StockIn>> stockIns_monthly = await applicationDbContext.StockIns.Include("Product.Category").Where(x => x.Date > init_year && x.Product.Category.Business_Id == business_working).GroupBy(x => x.Date.Month).ToListAsync();
 
             List<DashboardChartModel> inout_monthly = new List<DashboardChartModel>();
 
@@ -379,7 +394,7 @@ namespace MovilShopStock.Controllers
             model_monthly_in.data.AddRange(data_monthly_in);
             inout_monthly.Add(model_monthly_in);
 
-            List<IGrouping<int, StockOut>> stockOuts_monthly = await applicationDbContext.StockOuts.Include("Product.Category").Where(x => x.Date > init_year).GroupBy(x => x.Date.Month).ToListAsync();
+            List<IGrouping<int, StockOut>> stockOuts_monthly = await applicationDbContext.StockOuts.Include("Product.Category").Where(x => x.Date > init_year && x.Product.Category.Business_Id == business_working).GroupBy(x => x.Date.Month).ToListAsync();
 
             DashboardChartModel model_monthly_out = new DashboardChartModel()
             {
@@ -390,12 +405,22 @@ namespace MovilShopStock.Controllers
                 data = new List<decimal>()
             };
 
-            decimal[] data_monthly_out = new decimal[31];
+            DashboardChartModel model_monthly_gain = new DashboardChartModel()
+            {
+                label = "Entradas",
+                backgroundColor = "rgba(52, 143, 226, 0.2)",
+                borderColor = "rgba(52, 143, 226, 0.8)",
+                pointBackgroundColor = "rgba(52, 143, 226, 0.8)",
+                data = new List<decimal>()
+            };
+
+            decimal[] data_monthly_out = new decimal[12];
+            decimal[] data_monthly_gain = new decimal[12];
             for (int i = 0; i < data_monthly_out.Length; i++)
             {
                 var element = stockOuts_monthly.FirstOrDefault(x => x.Key - 1 == i);
 
-                decimal total = 0;
+                decimal total = 0, total_gain = 0;
                 if (element != null)
                 {
                     foreach (var stock in element)
@@ -403,22 +428,85 @@ namespace MovilShopStock.Controllers
                         if (stock.Product.Category.SystemAction == ActionConstants.Sum)
                         {
                             total += stock.SalePrice * stock.Quantity;
+                            total_gain += stock.Gain * stock.Quantity;
                         }
                         else if (stock.Product.Category.SystemAction == ActionConstants.Rest)
                         {
                             total -= stock.SalePrice * stock.Quantity;
+                            total_gain -= stock.Gain * stock.Quantity;
                         }
                     }
                 }
 
                 data_monthly_out[i] = total;
+                data_monthly_gain[i] = total_gain;
             }
+            model_monthly_gain.data.AddRange(data_monthly_gain);
             model_monthly_out.data.AddRange(data_monthly_out);
             inout_monthly.Add(model_monthly_out);
 
             #endregion Grahp Monthly
 
-            return Json(new { inout_daily = inout_daily, inout_monthly = inout_monthly });
+            #region Radar Month
+
+            DashboardRadarModel radar_month = new DashboardRadarModel();
+            radar_month.labels = new List<string>();
+            radar_month.datasets = new List<DashboardChartModel>();
+
+            List<Category> categories = await applicationDbContext.Categories.Where(x => x.Business_Id == business_working).ToListAsync();
+
+            DashboardChartModel radar_in = new DashboardChartModel()
+            {
+                label = "Entrada",
+                borderWidth = 2,
+                borderColor = "rgba(114, 124, 182, 0.8)",
+                pointBackgroundColor = "rgba(114, 124, 182, 0.8)",
+                backgroundColor = "rgba(114, 124, 182, 0.2)",
+                data = new List<decimal>()
+            };
+
+            DashboardChartModel radar_out = new DashboardChartModel()
+            {
+                label = "Salida",
+                borderWidth = 2,
+                borderColor = "rgba(45, 53, 60, 0.8)",
+                pointBackgroundColor = "rgba(45, 53, 60, 0.8)",
+                backgroundColor = "rgba(45, 53, 60, 0.2)",
+                data = new List<decimal>()
+            };
+            foreach (var cat in categories)
+            {
+                radar_month.labels.Add(cat.Name);
+
+                List<StockIn> stockIns1 = await applicationDbContext.StockIns.Include("Product").Where(x => x.Product.Category_Id == cat.Id).ToListAsync();
+
+                decimal number = 0;
+
+                foreach (var stockIn in stockIns1)
+                {
+                    number += stockIn.ShopPrice * stockIn.Quantity;
+                }
+
+                radar_in.data.Add(number);
+
+                List<StockOut> stockOut1 = await applicationDbContext.StockOuts.Include("Product").Where(x => x.Product.Category_Id == cat.Id).ToListAsync();
+
+                number = 0;
+
+                foreach (var stockOut in stockOut1)
+                {
+                    number += stockOut.SalePrice * stockOut.Quantity;
+                }
+
+                radar_out.data.Add(number);
+            }
+
+            radar_month.datasets.Add(radar_in);
+            radar_month.datasets.Add(radar_out);
+
+            #endregion Radar Month
+
+            return Json(new { inout_daily = inout_daily, inout_monthly = inout_monthly, radar_month = radar_month, model_daily_gain = model_daily_gain, model_monthly_gain = model_monthly_gain });
         }
     }
 }
