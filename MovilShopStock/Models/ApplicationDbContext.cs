@@ -1,13 +1,14 @@
 ﻿using System.Data.Entity;
+using System.Data.Entity.Core.Common;
 using System.Data.Entity.ModelConfiguration.Conventions;
-using System.Security.Claims;
-using System.Threading.Tasks;
-using Microsoft.AspNet.Identity;
+using EFCache;
 using Microsoft.AspNet.Identity.EntityFramework;
 using MovilShopStock.Models.Catalog;
+using MovilShopStock.Models.Handlers;
 
 namespace MovilShopStock.Models
 {
+    [DbConfigurationType(typeof(Configuration))]
     public class ApplicationDbContext : IdentityDbContext<User>
     {
         public ApplicationDbContext()
@@ -80,5 +81,19 @@ namespace MovilShopStock.Models
         public DbSet<BusinessUser> BusinessUsers { get; set; }
         public DbSet<TransferBusinessProduct> TransferBusinessProducts { get; set; }
         public DbSet<TransferMoneyUser> TransferMoneyUsers { get; set; }
+    }
+
+    public class Configuration : DbConfiguration
+    {
+        public Configuration()
+        {
+            var transactionHandler = new CacheTransactionHandler(CacheManager.Stock);
+
+            AddInterceptor(transactionHandler);
+
+            Loaded +=
+              (sender, args) => args.ReplaceService<DbProviderServices>(
+                (s, _) => new CachingProviderServices(s, transactionHandler));
+        }
     }
 }

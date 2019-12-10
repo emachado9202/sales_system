@@ -108,7 +108,7 @@
                         "render": function (data, type, JsonResultRow, meta) {
                             var actions = "";
                             if ('@(User.IsInRole(RoleConstants.Editor))'=='True' || '@(User.IsInRole(RoleConstants.Administrator))'=='True') {
-                                actions+='<a class=\'btn btn-warning btn-sm\' href=\'/Home/Edit/'+JsonResultRow.DT_RowId+'\'>Editar</a><br />';
+                                actions+='<a class=\'btn btn-warning btn-sm\' href=\'/Stock/Edit/'+JsonResultRow.DT_RowId+'\'>Editar</a><br />';
                             }
                             return actions;
                         }

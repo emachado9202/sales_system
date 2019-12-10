@@ -1,6 +1,8 @@
-﻿using Microsoft.AspNet.Identity;
+﻿using EFCache;
+using Microsoft.AspNet.Identity;
 using MovilShopStock.Models;
 using MovilShopStock.Models.Catalog;
+using MovilShopStock.Models.Handlers;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
