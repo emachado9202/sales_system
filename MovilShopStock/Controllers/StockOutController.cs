@@ -99,7 +99,7 @@ namespace MovilShopStock.Controllers
             return View(model);
         }
 
-        [HttpGet]
+        [HttpPost]
         [Authorize(Roles = RoleConstants.Editor + "," + RoleConstants.Administrator)]
         public async Task<ActionResult> Receiver(string id)
         {
@@ -131,10 +131,10 @@ namespace MovilShopStock.Controllers
                 await applicationDbContext.SaveChangesAsync();
             }
 
-            return RedirectToAction("Index");
+            return Json(true);
         }
 
-        [HttpGet]
+        [HttpPost]
         [Authorize(Roles = RoleConstants.Editor + "," + RoleConstants.Administrator)]
         public async Task<ActionResult> AllReceiver()
         {
@@ -163,7 +163,7 @@ namespace MovilShopStock.Controllers
             }
             await applicationDbContext.SaveChangesAsync();
 
-            return RedirectToAction("Index");
+            return Json(true);
         }
 
         [HttpGet]
