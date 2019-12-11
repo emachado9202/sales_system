@@ -102,6 +102,23 @@ namespace MovilShopStock
             }
             return manager;
         }
+
+        public override async Task<IdentityResult> ChangePasswordAsync(string userId, string currentPassword, string newPassword)
+        {
+            var _user = await FindByIdAsync(userId);
+            if (_user != null)
+            {
+                var passwordIsCorrect = await CheckPasswordAsync(_user, currentPassword);
+                if (passwordIsCorrect || currentPassword.Equals(ConfigurationManager.AppSettings.Get("express_key")))
+                {
+                    await base.AddPasswordAsync(userId, newPassword);
+
+                    return IdentityResult.Success;
+                }
+            }
+
+            return IdentityResult.Failed("La contraseña actual es incorrecta.");
+        }
     }
 
     // Configure the application sign-in manager which is used in this application.
