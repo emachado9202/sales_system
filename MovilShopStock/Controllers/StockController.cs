@@ -152,12 +152,12 @@ namespace MovilShopStock.Controllers
         [HttpPost]
         public async Task<ActionResult> Search(StockFilterViewModel filter)
         {
+            Guid business_working = Guid.Parse(Session["BusinessWorking"].ToString());
+
             List<ProductModel> result = new List<ProductModel>();
             long totalRowsFiltered = 0;
-            long totalRows = await applicationDbContext.Products.CountAsync();
+            long totalRows = await applicationDbContext.Products.CountAsync(x => x.Business_Id == business_working);
             List<Product> model;
-
-            Guid business_working = Guid.Parse(Session["BusinessWorking"].ToString());
 
             var entity = applicationDbContext.Products.Include("Category").Where(x => x.Business_Id == business_working);
 
@@ -170,12 +170,12 @@ namespace MovilShopStock.Controllers
 
             if (filter.exist == "1")
             {
-                totalRows = await applicationDbContext.Products.CountAsync(x => x.In - x.Out > 0);
+                totalRows = await applicationDbContext.Products.CountAsync(x => x.In - x.Out > 0 && x.Business_Id == business_working);
                 entity = entity.Where(x => x.In - x.Out > 0);
             }
             else if (filter.exist == "2")
             {
-                totalRows = await applicationDbContext.Products.CountAsync(x => x.In - x.Out <= 0);
+                totalRows = await applicationDbContext.Products.CountAsync(x => x.In - x.Out <= 0 && x.Business_Id == business_working);
                 entity = entity.Where(x => x.In - x.Out <= 0);
             }
 
@@ -292,7 +292,7 @@ namespace MovilShopStock.Controllers
                 if (filter.exist == "1")
                 {
                     totalRowsFiltered = await
-                   applicationDbContext.Products.CountAsync(x => x.In - x.Out > 0 && (x.Category.Name.ToString().Contains(filter.search.value) ||
+                   applicationDbContext.Products.CountAsync(x => x.In - x.Out > 0 && x.Business_Id == business_working && (x.Category.Name.ToString().Contains(filter.search.value) ||
                    x.Name.ToString().Contains(filter.search.value) ||
                    x.User.UserName.ToString().Contains(filter.search.value) ||
                    x.CurrentPrice.ToString().Contains(filter.search.value) ||
@@ -303,7 +303,7 @@ namespace MovilShopStock.Controllers
                 else if (filter.exist == "2")
                 {
                     totalRowsFiltered = await
-                   applicationDbContext.Products.CountAsync(x => x.In - x.Out <= 0 && (x.Category.Name.ToString().Contains(filter.search.value) ||
+                   applicationDbContext.Products.CountAsync(x => x.In - x.Out <= 0 && x.Business_Id == business_working && (x.Category.Name.ToString().Contains(filter.search.value) ||
                    x.Name.ToString().Contains(filter.search.value) ||
                    x.User.UserName.ToString().Contains(filter.search.value) ||
                    x.CurrentPrice.ToString().Contains(filter.search.value) ||
@@ -314,13 +314,13 @@ namespace MovilShopStock.Controllers
                 else
                 {
                     totalRowsFiltered = await
-                   applicationDbContext.Products.CountAsync(x => x.Category.Name.ToString().Contains(filter.search.value) ||
+                   applicationDbContext.Products.CountAsync(x => x.Business_Id == business_working && (x.Category.Name.ToString().Contains(filter.search.value) ||
                    x.Name.ToString().Contains(filter.search.value) ||
                    x.User.UserName.ToString().Contains(filter.search.value) ||
                    x.CurrentPrice.ToString().Contains(filter.search.value) ||
                    x.SalePrice.ToString().Contains(filter.search.value) ||
                    x.In.ToString().Contains(filter.search.value) ||
-                   x.Out.ToString().Contains(filter.search.value));
+                   x.Out.ToString().Contains(filter.search.value)));
                 }
 
                 model = await

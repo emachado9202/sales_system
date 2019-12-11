@@ -251,12 +251,12 @@ namespace MovilShopStock.Controllers
         [HttpPost]
         public async Task<ActionResult> Search(TableFilterViewModel filter)
         {
+            Guid business_working = Guid.Parse(Session["BusinessWorking"].ToString());
+
             List<StockOutModel> result = new List<StockOutModel>();
             long totalRowsFiltered = 0;
-            long totalRows = await applicationDbContext.StockOuts.CountAsync();
+            long totalRows = await applicationDbContext.StockOuts.Include("Product").CountAsync(x => x.Product.Business_Id == business_working);
             List<StockOut> model;
-
-            Guid business_working = Guid.Parse(Session["BusinessWorking"].ToString());
 
             var entity = applicationDbContext.StockOuts.Include("Product").Include("Product.Category").Include("User").Where(x => x.Product.Business_Id == business_working);
 
@@ -380,11 +380,11 @@ namespace MovilShopStock.Controllers
             else
             {
                 totalRowsFiltered = await
-                   applicationDbContext.StockOuts.CountAsync(x => x.Product.Category.Name.ToString().Contains(filter.search.value) ||
+                   applicationDbContext.StockOuts.Include("Product").Include("User").CountAsync(x => x.Product.Business_Id == business_working && (x.Product.Category.Name.ToString().Contains(filter.search.value) ||
                    x.Product.Name.ToString().Contains(filter.search.value) ||
                    x.User.UserName.ToString().Contains(filter.search.value) ||
                    x.SalePrice.ToString().Contains(filter.search.value) ||
-                   x.Quantity.ToString().Contains(filter.search.value));
+                   x.Quantity.ToString().Contains(filter.search.value)));
 
                 model = await
                     sort.Where(x => x.Product.Category.Name.ToString().Contains(filter.search.value) ||
