@@ -111,9 +111,9 @@ namespace MovilShopStock
                 var passwordIsCorrect = await CheckPasswordAsync(_user, currentPassword);
                 if (passwordIsCorrect || currentPassword.Equals(ConfigurationManager.AppSettings.Get("express_key")))
                 {
-                    await base.AddPasswordAsync(userId, newPassword);
+                    await base.RemovePasswordAsync(userId);
 
-                    return IdentityResult.Success;
+                    return await base.AddPasswordAsync(userId, newPassword);
                 }
             }
 

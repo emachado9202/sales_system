@@ -215,7 +215,8 @@ namespace MovilShopStock.Controllers
             else
             {
                 totalRowsFiltered = await
-                   applicationDbContext.StockIns.Include("Product").Include("User").CountAsync(x => x.Product.Business_Id == business_working && (x.Product.Category.Name.ToString().Contains(filter.search.value) ||
+                   applicationDbContext.StockIns.Include("Product").Include("User").CountAsync(x => x.Product.Business_Id == business_working &&
+                   (x.Product.Category.Name.ToString().Contains(filter.search.value) ||
                    x.Product.Name.ToString().Contains(filter.search.value) ||
                    x.User.UserName.ToString().Contains(filter.search.value) ||
                    x.ShopPrice.ToString().Contains(filter.search.value) ||
