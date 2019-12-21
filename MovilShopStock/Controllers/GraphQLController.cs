@@ -15,10 +15,16 @@ namespace MovilShopStock.Controllers
     [Route("graphql")]
     public class GraphQLController : ApiController
     {
+        [HttpGet]
+        public Task<IHttpActionResult> Get()
+        {
+            return Post(new GraphQLQuery { Query = "query catories { }", Variables = null });
+        }
+
         [System.Web.Mvc.HttpPost]
         public async Task<IHttpActionResult> Post([FromBody] GraphQLQuery query)
         {
-            var schema = new Schema { Query = new CategoryQuery(), Mutation = new CategoryMutation() };
+            var schema = new Schema { Query = new CategoryQuery()/*, Mutation = new CategoryMutation()*/ };
             var inputs = query.Variables.ToInputs();
             var result = await new DocumentExecuter().ExecuteAsync(_ =>
             {

@@ -14,10 +14,10 @@ namespace MovilShopStock.Models.GraphQL.Querys
         {
             Field<CategoryType>("category",
                   arguments: new QueryArguments(new QueryArgument<IntGraphType> { Name = "id" }),
-                  resolve: context => CategoryService.Get(context.GetArgument<int>("id")));
-            Field<CategoryType>("categories",
-                 arguments: new QueryArguments(new QueryArgument<IntGraphType> { Name = "id" }),
-                 resolve: context => CategoryService.));
+                  resolve: context => CategoryService.Get(context.GetArgument<Guid>("id")));
+            Field<ListGraphType<CategoryType>>(
+                "categories",
+                resolve: context => CategoryService.All());
         }
     }
 }

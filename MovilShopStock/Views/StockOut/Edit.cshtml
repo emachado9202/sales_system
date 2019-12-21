@@ -49,7 +49,7 @@
                 <input type="submit" value="Guardar" class="btn btn-dark" />
                 @if (!Model.Receivered)
                 {
-                    @Html.ActionLink("Eliminar", "Delete", new { id = Model.Id }, new { @class = "btn btn-danger" })
+                    @Html.ActionLink("Eliminar", "Delete", new { id = Model.DT_RowId }, new { @class = "btn btn-danger" })
                 }
             </div>
         </div>
