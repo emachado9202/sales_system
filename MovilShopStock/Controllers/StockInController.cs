@@ -47,6 +47,7 @@ namespace MovilShopStock.Controllers
 
             Guid business_working = Guid.Parse(Session["BusinessWorking"].ToString());
             ViewBag.Categories = await applicationDbContext.Categories.Where(x => x.Business_Id == business_working).OrderBy(x => x.Name).ToListAsync();
+            ViewBag.Providers = await applicationDbContext.Providers.Where(x => x.Business_Id == business_working).OrderBy(x => x.Name).ToListAsync();
 
             return View(model);
         }
@@ -66,7 +67,9 @@ namespace MovilShopStock.Controllers
                     Date = DateTime.Now,
                     Quantity = model.Quantity,
                     ShopPrice = decimal.Parse(model.ShopPrice.Replace(".", ",")),
-                    User_Id = User.Identity.GetUserId()
+                    User_Id = User.Identity.GetUserId(),
+                    Description = model.Description,
+                    Provider_Id = Guid.Parse(model.Provider)
                 };
 
                 applicationDbContext.StockIns.Add(stockIn);
@@ -101,6 +104,8 @@ namespace MovilShopStock.Controllers
             }
             Guid business_working = Guid.Parse(Session["BusinessWorking"].ToString());
             ViewBag.Categories = await applicationDbContext.Categories.Where(x => x.Business_Id == business_working).OrderBy(x => x.Name).ToListAsync();
+            ViewBag.Providers = await applicationDbContext.Providers.Where(x => x.Business_Id == business_working).OrderBy(x => x.Name).ToListAsync();
+
             return View(model);
         }
 
@@ -114,13 +119,13 @@ namespace MovilShopStock.Controllers
             long totalRows = await applicationDbContext.StockIns.Include("Product").CountAsync(x => x.Product.Business_Id == business_working);
             List<StockIn> model;
 
-            var entity = applicationDbContext.StockIns.Include("Product").Include("Product.Category").Include("User").Where(x => x.Product.Business_Id == business_working);
+            var entity = applicationDbContext.StockIns.Include("Product").Include("Product.Category").Include("User").Include("Provider").Where(x => x.Product.Business_Id == business_working);
 
             if (!string.IsNullOrEmpty(filter.type))
             {
                 Guid categoryId = Guid.Parse(filter.type);
 
-                entity = applicationDbContext.StockIns.Include("Product").Include("Product.Category").Include("User").Where(x => x.Product.Business_Id == business_working && x.Product.Category_Id == categoryId);
+                entity = applicationDbContext.StockIns.Include("Product").Include("Product.Category").Include("User").Include("Provider").Where(x => x.Product.Business_Id == business_working && x.Product.Category_Id == categoryId);
             }
 
             IOrderedQueryable<StockIn> sort = null;
@@ -150,6 +155,28 @@ namespace MovilShopStock.Controllers
             {
                 if (filter.order[0].dir.Equals("asc"))
                 {
+                    sort = entity.OrderBy(x => x.Description);
+                }
+                else
+                {
+                    sort = entity.OrderByDescending(x => x.Description);
+                }
+            }
+            else if (filter.order[0].column == 3)
+            {
+                if (filter.order[0].dir.Equals("asc"))
+                {
+                    sort = entity.OrderBy(x => x.Provider.Name);
+                }
+                else
+                {
+                    sort = entity.OrderByDescending(x => x.Provider.Name);
+                }
+            }
+            else if (filter.order[0].column == 4)
+            {
+                if (filter.order[0].dir.Equals("asc"))
+                {
                     sort = entity.OrderBy(x => x.Date);
                 }
                 else
@@ -157,7 +184,7 @@ namespace MovilShopStock.Controllers
                     sort = entity.OrderByDescending(x => x.Date);
                 }
             }
-            else if (filter.order[0].column == 3)
+            else if (filter.order[0].column == 5)
             {
                 if (filter.order[0].dir.Equals("asc"))
                 {
@@ -168,7 +195,7 @@ namespace MovilShopStock.Controllers
                     sort = entity.OrderByDescending(x => x.User.UserName);
                 }
             }
-            else if (filter.order[0].column == 4)
+            else if (filter.order[0].column == 6)
             {
                 if (filter.order[0].dir.Equals("asc"))
                 {
@@ -179,7 +206,7 @@ namespace MovilShopStock.Controllers
                     sort = entity.OrderByDescending(x => x.ShopPrice);
                 }
             }
-            else if (filter.order[0].column == 5)
+            else if (filter.order[0].column == 7)
             {
                 if (filter.order[0].dir.Equals("asc"))
                 {
@@ -190,7 +217,7 @@ namespace MovilShopStock.Controllers
                     sort = entity.OrderByDescending(x => x.Quantity);
                 }
             }
-            else if (filter.order[0].column == 6)
+            else if (filter.order[0].column == 8)
             {
                 if (filter.order[0].dir.Equals("asc"))
                 {
@@ -212,11 +239,12 @@ namespace MovilShopStock.Controllers
             else
             {
                 totalRowsFiltered = await
-                   applicationDbContext.StockIns.Include("Product").Include("User").CountAsync(x => x.Product.Business_Id == business_working &&
+                   applicationDbContext.StockIns.Include("Product").Include("User").Include("Provider").CountAsync(x => x.Product.Business_Id == business_working &&
                    (x.Product.Category.Name.ToString().Contains(filter.search.value) ||
                    x.Product.Name.ToString().Contains(filter.search.value) ||
                    x.User.UserName.ToString().Contains(filter.search.value) ||
                    x.ShopPrice.ToString().Contains(filter.search.value) ||
+                   x.Provider.Name.ToString().Contains(filter.search.value) ||
                    x.Quantity.ToString().Contains(filter.search.value)));
 
                 model = await
@@ -224,6 +252,7 @@ namespace MovilShopStock.Controllers
                    x.Product.Name.ToString().Contains(filter.search.value) ||
                    x.User.UserName.ToString().Contains(filter.search.value) ||
                    x.ShopPrice.ToString().Contains(filter.search.value) ||
+                   x.Provider.Name.ToString().Contains(filter.search.value) ||
                    x.Quantity.ToString().Contains(filter.search.value))
                         .Skip(filter.start)
                         .Take(filter.length)
@@ -240,7 +269,9 @@ namespace MovilShopStock.Controllers
                     Quantity = stockIn.Quantity,
                     User = stockIn.User.UserName,
                     ShopPrice = stockIn.ShopPrice.ToString("#,##0.00"),
-                    Category = stockIn.Product.Category.Name
+                    Category = stockIn.Product.Category.Name,
+                    Description = stockIn.Description,
+                    Provider = stockIn.Provider?.Name
                 });
             }
 

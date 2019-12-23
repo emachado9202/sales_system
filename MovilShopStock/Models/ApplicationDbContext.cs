@@ -75,6 +75,7 @@ namespace MovilShopStock.Models
 
         public DbSet<Category> Categories { get; set; }
         public DbSet<Product> Products { get; set; }
+        public DbSet<Provider> Providers { get; set; }
         public DbSet<StockIn> StockIns { get; set; }
         public DbSet<StockOut> StockOuts { get; set; }
         public DbSet<Business> Businesses { get; set; }

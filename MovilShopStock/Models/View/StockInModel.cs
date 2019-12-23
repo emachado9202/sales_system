@@ -30,6 +30,12 @@ namespace MovilShopStock.Models
         [DisplayName("Cantidad Compra")]
         public int Quantity { get; set; }
 
+        [DisplayName("Descripción")]
+        public string Description { get; set; }
+
+        [DisplayName("Proveedor")]
+        public string Provider { get; set; }
+
         [DisplayName("Total Compra")]
         public string TotalShop { get { return (decimal.Parse(ShopPrice) * Quantity).ToString("#,##0.00"); } }
     }

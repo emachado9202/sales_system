@@ -184,6 +184,7 @@
     <Compile Include="Controllers\GenericController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
+    <Compile Include="Controllers\ProviderController.cs" />
     <Compile Include="Controllers\StockController.cs" />
     <Compile Include="Controllers\StockInController.cs" />
     <Compile Include="Controllers\StockOutController.cs" />
@@ -196,6 +197,7 @@
       <DependentUpon>201911220719255_InitialCreate.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
+    <Compile Include="Models\Catalog\Provider.cs" />
     <Compile Include="Models\Handlers\CacheManager.cs" />
     <Compile Include="Models\View\AccountViewModels.cs" />
     <Compile Include="Models\Catalog\Business.cs" />
@@ -217,6 +219,7 @@
     <Compile Include="Models\Handlers\RoleConstants.cs" />
     <Compile Include="Models\View\ManageViewModels.cs" />
     <Compile Include="Models\View\ProductModel.cs" />
+    <Compile Include="Models\View\ProviderModel.cs" />
     <Compile Include="Models\View\StockOutModel.cs" />
     <Compile Include="Models\View\StockInModel.cs" />
     <Compile Include="Models\View\ToolModel.cs" />
@@ -379,6 +382,9 @@
     <Content Include="Views\Home\Index.cshtml" />
     <Content Include="Views\Home\_PartialDashboardAccounting.cshtml" />
     <Content Include="Views\Home\_PartialDashboardCharts.cshtml" />
+    <Content Include="Views\Provider\Index.cshtml" />
+    <Content Include="Views\Provider\Create.cshtml" />
+    <Content Include="Views\Provider\Edit.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

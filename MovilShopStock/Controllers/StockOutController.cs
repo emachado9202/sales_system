@@ -57,7 +57,8 @@ namespace MovilShopStock.Controllers
                     Quantity = model.Quantity,
                     SalePrice = decimal.Parse(model.SalePrice.Replace(".", ",")),
                     User_Id = User.Identity.GetUserId(),
-                    Gain = decimal.Parse(model.SalePrice.Replace(".", ",")) - product.CurrentPrice
+                    Gain = decimal.Parse(model.SalePrice.Replace(".", ",")) - product.CurrentPrice,
+                    Description = model.Description
                 };
 
                 if (User.IsInRole(RoleConstants.Editor) || User.IsInRole(RoleConstants.Administrator))
@@ -178,7 +179,7 @@ namespace MovilShopStock.Controllers
 
                 if (stockout.Receiver_Id != null)
                 {
-                    ViewBag.Msg = "La salida ha sido recibida y no puede ser eliminada";
+                    ViewBag.Msg = "La salida ha sido recibida y no puede ser editada";
 
                     return RedirectToAction("Index");
                 }
@@ -190,7 +191,8 @@ namespace MovilShopStock.Controllers
                     Quantity = stockout.Quantity,
                     SalePrice = stockout.SalePrice.ToString("#,##0.00"),
                     Category = stockout.Product.Category_Id.ToString(),
-                    Receivered = stockout.Receiver != null
+                    Receivered = stockout.Receiver != null,
+                    Description = stockout.Description
                 };
 
                 return View(model);
@@ -294,6 +296,17 @@ namespace MovilShopStock.Controllers
             {
                 if (filter.order[0].dir.Equals("asc"))
                 {
+                    sort = entity.OrderBy(x => x.Description);
+                }
+                else
+                {
+                    sort = entity.OrderByDescending(x => x.Description);
+                }
+            }
+            else if (filter.order[0].column == 3)
+            {
+                if (filter.order[0].dir.Equals("asc"))
+                {
                     sort = entity.OrderBy(x => x.Date);
                 }
                 else
@@ -301,7 +314,7 @@ namespace MovilShopStock.Controllers
                     sort = entity.OrderByDescending(x => x.Date);
                 }
             }
-            else if (filter.order[0].column == 3)
+            else if (filter.order[0].column == 4)
             {
                 if (filter.order[0].dir.Equals("asc"))
                 {
@@ -312,7 +325,7 @@ namespace MovilShopStock.Controllers
                     sort = entity.OrderByDescending(x => x.User.UserName);
                 }
             }
-            else if (filter.order[0].column == 4)
+            else if (filter.order[0].column == 5)
             {
                 if (filter.order[0].dir.Equals("asc"))
                 {
@@ -323,7 +336,7 @@ namespace MovilShopStock.Controllers
                     sort = entity.OrderByDescending(x => x.SalePrice);
                 }
             }
-            else if (filter.order[0].column == 5)
+            else if (filter.order[0].column == 6)
             {
                 if (filter.order[0].dir.Equals("asc"))
                 {
@@ -334,7 +347,7 @@ namespace MovilShopStock.Controllers
                     sort = entity.OrderByDescending(x => x.Quantity);
                 }
             }
-            else if (filter.order[0].column == 6)
+            else if (filter.order[0].column == 7)
             {
                 if (filter.order[0].dir.Equals("asc"))
                 {
@@ -345,7 +358,7 @@ namespace MovilShopStock.Controllers
                     sort = entity.OrderByDescending(x => x.Quantity * x.SalePrice);
                 }
             }
-            else if (filter.order[0].column == 7)
+            else if (filter.order[0].column == 8)
             {
                 if (filter.order[0].dir.Equals("asc"))
                 {
@@ -356,7 +369,7 @@ namespace MovilShopStock.Controllers
                     sort = entity.OrderByDescending(x => x.Gain);
                 }
             }
-            else if (filter.order[0].column == 8)
+            else if (filter.order[0].column == 9)
             {
                 if (filter.order[0].dir.Equals("asc"))
                 {
@@ -408,7 +421,8 @@ namespace MovilShopStock.Controllers
                     Gain = stockOut.Gain.ToString("#,##0.00"),
                     Receivered = stockOut.Receiver != null,
                     Receiver = stockOut.Receiver?.UserName,
-                    Category = stockOut.Product.Category.Name
+                    Category = stockOut.Product.Category.Name,
+                    Description = stockOut.Description
                 });
             }
 

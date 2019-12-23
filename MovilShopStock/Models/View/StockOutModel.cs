@@ -35,6 +35,9 @@ namespace MovilShopStock.Models
         [DisplayName("Cantidad Venta")]
         public int Quantity { get; set; }
 
+        [DisplayName("Descripción")]
+        public string Description { get; set; }
+
         [DisplayName("Venta Total")]
         public string TotalSale { get { return (decimal.Parse(SalePrice.Replace(".", ",")) * Quantity).ToString("#,##0.00"); } }
 

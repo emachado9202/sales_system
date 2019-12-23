@@ -39,6 +39,9 @@
                 Producto
             </th>
             <th>
+                Descripción
+            </th>
+            <th>
                 Fecha
             </th>
             <th>
@@ -129,6 +132,7 @@
                 columns: [
                     { data: 'Category' },
                     { data: 'ProductName' },
+                    { data: 'Description' },
                     { data: 'Date' },
                     { data: 'User' },
                     { data: 'SalePrice' },
@@ -185,7 +189,7 @@
                     "targets": 'no-sort',
                     "orderable": false
                 }],
-                "order": [[2, "desc"]]
+                "order": [[3, "desc"]]
             });
 
         });

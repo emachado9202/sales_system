@@ -8,6 +8,7 @@
         @if (User.IsInRole(RoleConstants.Editor) || User.IsInRole(RoleConstants.Administrator))
         {
             <li class="nav-item">@Html.ActionLink("Categorias", "Index", "Category", routeValues: null, htmlAttributes: new { @class = "nav-link" })</li>
+            <li class="nav-item">@Html.ActionLink("Proveedores", "Index", "Provider", routeValues: null, htmlAttributes: new { @class = "nav-link" })</li>
         }
         <li class="nav-item">@Html.ActionLink("Transferencias", "Index", "Transfer", routeValues: null, htmlAttributes: new { @class = "nav-link" })</li>
     </ul>

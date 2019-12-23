@@ -23,6 +23,8 @@ namespace MovilShopStock.Models.Catalog
 
         public int Quantity { get; set; }
 
+        public string Description { get; set; }
+
         [ForeignKey("User")]
         [Required]
         public string User_Id { get; set; }

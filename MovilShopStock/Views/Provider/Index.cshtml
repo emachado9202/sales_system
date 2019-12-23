@@ -1,52 +1,25 @@
-﻿@model IEnumerable<MovilShopStock.Models.StockInModel>
-
-@{
-    ViewBag.Title = "Entradas";
+﻿@{
+    ViewBag.Title = "Proveedores";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2>Entradas</h2>
+<h2>Proveedores</h2>
 
-@if (User.IsInRole(RoleConstants.Editor) || User.IsInRole(RoleConstants.Administrator))
-{
-    <div class="pull-right btn-editions mt-2">
-        <a class="btn btn-success btn-sm ml-lg-1" href="@Url.Action("Create")">Crear Entrada</a>
-    </div>
-}
-
-<div class="pull-left btn-editions mt-2 mr-1">
-    @Html.DropDownList("filter-datatable", new SelectList(ViewBag.Categories, "Item1", "Item2", ViewBag.Category), new { @class = "custom-select custom-select-sm form-control form-control-sm" })
+<div class="pull-right btn-editions mt-2">
+    <a class="btn btn-success btn-sm ml-lg-1" href="@Url.Action("Create")">Crear Proveedor</a>
 </div>
 
 <table id="data-table" class="table table-striped table-bordered" width="100%">
     <thead>
         <tr>
             <th>
-                Categoría
+                Nombre
             </th>
             <th>
-                Producto
+                Contacto (Email / Teléfono)
             </th>
             <th>
-                Descripción
-            </th>
-            <th>
-                Proveedor
-            </th>
-            <th>
-                Fecha
-            </th>
-            <th>
-                Usuario
-            </th>
-            <th>
-                Precio Compra
-            </th>
-            <th>
-                Cantidad
-            </th>
-            <th>
-                Compra Total
+                Última Actualización
             </th>
             <th class="no-sort">
             </th>
@@ -58,12 +31,6 @@
 @section scripts{
     <script type="text/javascript">
         $(document).ready(function () {
-            $("#filter-datatable").change(function () {
-                table.ajax.reload();
-                var newurl = window.location.protocol + "//" + window.location.host + window.location.pathname + '?id=' + $(this).val();
-                window.history.pushState({ path: newurl }, '', newurl);
-            });
-
             var table = $("#data-table").DataTable({
                 dom: "lBfrtip",
                 buttons: [],
@@ -71,30 +38,22 @@
                 select: 0,
                 fixedHeader: !0,
                 ajax: {
-                    "url": "/StockIn/Search",
+                    "url": "/Provider/Search",
                     "type": "POST",
                     "data": function (d) {
-                        d.type = $("#filter-datatable").val()
                     }
                 },
                 "processing": true,
                 "serverSide": true,
                 columns: [
-
-                    { data: 'Category' },
-                    { data: 'ProductName' },
-                    { data: 'Description' },
-                    { data: 'Provider' },
-                    { data: 'Date' },
-                    { data: 'User' },
-                    { data: 'ShopPrice' },
-                    { data: 'Quantity' },
-                    { data: 'TotalShop' },
+                    { data: 'Name' },
+                    { data: 'Contact' },
+                    { data: 'LastUpdated' },
                     {
                         "render": function (data, type, JsonResultRow, meta) {
                             var actions = "";
                             if ('@(User.IsInRole(RoleConstants.Editor))'=='True' || '@(User.IsInRole(RoleConstants.Administrator))'=='True') {
-                                actions+='<a class=\'btn btn-warning btn-sm\' href=\'/StockIn/Edit/'+JsonResultRow.DT_RowId+'\'>Editar</a><br />';
+                                actions+='<a class=\'btn btn-warning btn-sm\' href=\'/Provider/Edit/'+JsonResultRow.DT_RowId+'\'>Editar</a><br />';
                             }
                             return actions;
                         }
@@ -135,7 +94,7 @@
                     "targets": 'no-sort',
                     "orderable": false
                 }],
-                "order": [[4, "desc"]]
+                "order": [[2, "desc"]]
             });
 
         });

@@ -13,6 +13,9 @@ namespace MovilShopStock.Models.Catalog
         [Required]
         public Guid Product_Id { get; set; }
 
+        [ForeignKey("Provider")]
+        public Guid? Provider_Id { get; set; }
+
         public DateTime Date { get; set; }
 
         [DataType(DataType.Currency)]
@@ -20,10 +23,13 @@ namespace MovilShopStock.Models.Catalog
 
         public int Quantity { get; set; }
 
+        public string Description { get; set; }
+
         [ForeignKey("User")]
         [Required]
         public string User_Id { get; set; }
 
+        public virtual Provider Provider { get; set; }
         public virtual Product Product { get; set; }
 
         public virtual User User { get; set; }
