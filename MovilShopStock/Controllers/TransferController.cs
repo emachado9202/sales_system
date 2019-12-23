@@ -398,7 +398,7 @@ namespace MovilShopStock.Controllers
                 TransferMoneyUser transfer = new TransferMoneyUser()
                 {
                     Id = Guid.NewGuid(),
-                    Amount = decimal.Parse(model.Amount),
+                    Amount = decimal.Parse(model.Amount.Replace(".", ",")),
                     Date = DateTime.Now,
                     UserFrom_Id = userId,
                     UserTo_Id = model.FromTo

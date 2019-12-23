@@ -64,30 +64,28 @@ namespace MovilShopStock.Controllers
                 {
                     stockOut.Receiver_Id = User.Identity.GetUserId();
 
-                    if (!product.NoCountOut)
+                    User user = await applicationDbContext.Users.FirstOrDefaultAsync(x => x.Id == stockOut.Receiver_Id);
+
+                    if (product.Category.ActionOut == ActionConstants.Sum)
                     {
-                        User user = await applicationDbContext.Users.FirstOrDefaultAsync(x => x.Id == stockOut.Receiver_Id);
-
-                        if (product.Category.ActionOut == ActionConstants.Sum)
-                        {
-                            user.Cash += stockOut.SalePrice * stockOut.Quantity;
-                        }
-                        else if (product.Category.ActionOut == ActionConstants.Rest)
-                        {
-                            user.Cash -= stockOut.SalePrice * stockOut.Quantity;
-                        }
-
-                        applicationDbContext.Entry(user).State = System.Data.Entity.EntityState.Modified;
+                        user.Cash += stockOut.SalePrice * stockOut.Quantity;
                     }
+                    else if (product.Category.ActionOut == ActionConstants.Rest)
+                    {
+                        user.Cash -= stockOut.SalePrice * stockOut.Quantity;
+                    }
+
+                    applicationDbContext.Entry(user).State = System.Data.Entity.EntityState.Modified;
                 }
 
                 applicationDbContext.StockOuts.Add(stockOut);
+                if (!product.NoCountOut)
+                {
+                    product.Out += stockOut.Quantity;
+                    product.LastUpdated = DateTime.Now;
 
-                product.Out += stockOut.Quantity;
-                product.LastUpdated = DateTime.Now;
-
-                applicationDbContext.Entry(product).State = System.Data.Entity.EntityState.Modified;
-
+                    applicationDbContext.Entry(product).State = System.Data.Entity.EntityState.Modified;
+                }
                 await applicationDbContext.SaveChangesAsync();
 
                 return RedirectToAction("Index");

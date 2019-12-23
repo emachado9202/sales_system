@@ -74,26 +74,23 @@ namespace MovilShopStock.Controllers
                 Product product = await applicationDbContext.Products.Include("Category").FirstOrDefaultAsync(x => x.Id == productId);
 
                 product.In += stockIn.Quantity;
-                product.CurrentPrice = (product.CurrentPrice + stockIn.ShopPrice) / 2;
+                product.CurrentPrice = ((product.CurrentPrice * (product.In - product.Out)) + (stockIn.ShopPrice * stockIn.Quantity)) / product.In - product.Out + stockIn.Quantity;
                 product.LastUpdated = DateTime.Now;
 
                 if (User.IsInRole(RoleConstants.Editor) || User.IsInRole(RoleConstants.Administrator))
                 {
-                    if (!product.NoCountOut)
+                    User user = await applicationDbContext.Users.FirstOrDefaultAsync(x => x.Id == stockIn.User_Id);
+
+                    if (product.Category.ActionIn == ActionConstants.Sum)
                     {
-                        User user = await applicationDbContext.Users.FirstOrDefaultAsync(x => x.Id == stockIn.User_Id);
-
-                        if (product.Category.ActionIn == ActionConstants.Sum)
-                        {
-                            user.Cash += stockIn.ShopPrice * stockIn.Quantity;
-                        }
-                        else if (product.Category.ActionIn == ActionConstants.Rest)
-                        {
-                            user.Cash -= stockIn.ShopPrice * stockIn.Quantity;
-                        }
-
-                        applicationDbContext.Entry(user).State = System.Data.Entity.EntityState.Modified;
+                        user.Cash += stockIn.ShopPrice * stockIn.Quantity;
                     }
+                    else if (product.Category.ActionIn == ActionConstants.Rest)
+                    {
+                        user.Cash -= stockIn.ShopPrice * stockIn.Quantity;
+                    }
+
+                    applicationDbContext.Entry(user).State = System.Data.Entity.EntityState.Modified;
                 }
 
                 applicationDbContext.Entry(product).State = System.Data.Entity.EntityState.Modified;
