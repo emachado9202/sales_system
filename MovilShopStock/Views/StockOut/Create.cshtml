@@ -83,7 +83,8 @@
                 $.ajax({
                     type: 'POST',
                     data: {
-                        category_id: $("#Category").val()
+                        category_id: $("#Category").val(),
+                        exist: true
                     },
                     url: "/Home/GetProductByCat",
                     dataType: 'json',

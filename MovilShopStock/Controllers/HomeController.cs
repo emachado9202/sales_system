@@ -20,12 +20,12 @@ namespace MovilShopStock.Controllers
 
         [HttpPost]
         [Authorize(Roles = RoleConstants.Dealer + "," + RoleConstants.Editor + "," + RoleConstants.Administrator)]
-        public async Task<ActionResult> GetProductByCat(string category_id)
+        public async Task<ActionResult> GetProductByCat(string category_id, bool exist)
         {
             Guid categoryId = Guid.Parse(category_id);
             Guid business_working = Guid.Parse(Session["BusinessWorking"].ToString());
 
-            List<ProductModel> products = await applicationDbContext.Products.Where(x => x.Category_Id == categoryId && x.Business_Id == business_working).OrderBy(x => x.Name).Select(x => new ProductModel { DT_RowId = x.Id.ToString(), Product = x.Name }).ToListAsync();
+            List<ProductModel> products = exist ? await applicationDbContext.Products.Where(x => x.Category_Id == categoryId && x.Business_Id == business_working && x.In - x.Out > 0).OrderBy(x => x.Name).Select(x => new ProductModel { DT_RowId = x.Id.ToString(), Product = x.Name }).ToListAsync() : await applicationDbContext.Products.Where(x => x.Category_Id == categoryId && x.Business_Id == business_working).OrderBy(x => x.Name).Select(x => new ProductModel { DT_RowId = x.Id.ToString(), Product = x.Name }).ToListAsync();
 
             return Json(products);
         }

@@ -265,7 +265,7 @@ namespace MovilShopStock.Controllers
                 {
                     DT_RowId = stockIn.Id.ToString(),
                     ProductName = stockIn.Product.Name,
-                    Date = stockIn.Date.ToString("yyyy-MM-dd hh:mm"),
+                    Date = stockIn.Date.ToString("yyyy-MM-dd hh:mm tt"),
                     Quantity = stockIn.Quantity,
                     User = stockIn.User.UserName,
                     ShopPrice = stockIn.ShopPrice.ToString("#,##0.00"),

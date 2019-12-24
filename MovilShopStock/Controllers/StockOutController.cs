@@ -414,7 +414,7 @@ namespace MovilShopStock.Controllers
                 {
                     DT_RowId = stockOut.Id.ToString(),
                     ProductName = stockOut.Product.Name,
-                    Date = stockOut.Date.ToString("yyyy-MM-dd hh:mm"),
+                    Date = stockOut.Date.ToString("yyyy-MM-dd hh:mm tt"),
                     Quantity = stockOut.Quantity,
                     User = stockOut.User.UserName,
                     SalePrice = stockOut.SalePrice.ToString("#,##0.00"),

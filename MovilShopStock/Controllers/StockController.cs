@@ -342,7 +342,7 @@ namespace MovilShopStock.Controllers
                 {
                     DT_RowId = product.Id.ToString(),
                     Product = product.Name,
-                    LatestUpdated = product.LastUpdated.ToString("yyyy-MM-dd hh:mm"),
+                    LatestUpdated = product.LastUpdated.ToString("yyyy-MM-dd hh:mm tt"),
                     CurrentPrice = product.CurrentPrice.ToString("#,##0.00"),
                     SalePrice = product.SalePrice.ToString("#,##0.00"),
                     NoCountOut = product.NoCountOut,

@@ -151,7 +151,7 @@ namespace MovilShopStock.Controllers
                     Category = tbp.ProductFrom.Category.Name,
                     ProductName = tbp.ProductFrom.Name,
                     Quantity = tbp.Quantity,
-                    Date = tbp.Date.ToString("yyyy-MM-dd hh:mm"),
+                    Date = tbp.Date.ToString("yyyy-MM-dd hh:mm tt"),
                     User = tbp.User.UserName,
                     FromTo = fromto,
                     Sent = sent
@@ -350,7 +350,7 @@ namespace MovilShopStock.Controllers
                 result.Add(new TransferPrivateModel
                 {
                     DT_RowId = tbp.Id.ToString(),
-                    Date = tbp.Date.ToString("yyyy-MM-dd hh:mm"),
+                    Date = tbp.Date.ToString("yyyy-MM-dd hh:mm tt"),
                     Amount = tbp.Amount.ToString("#,##0.00"),
                     FromTo = fromto,
                     Sent = sent
