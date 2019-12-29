@@ -162,7 +162,14 @@ namespace MovilShopStock.Controllers
 
                 foreach (var stockOut in stockOuts.Where(x => x.User_Id == u.Id && x.Receiver_Id == null))
                 {
-                    money += stockOut.Quantity * stockOut.SalePrice;
+                    if (stockOut.Product.Category.SystemAction == ActionConstants.Sum)
+                    {
+                        money += stockOut.Quantity * stockOut.SalePrice;
+                    }
+                    else if (stockOut.Product.Category.SystemAction == ActionConstants.Rest)
+                    {
+                        money -= stockOut.Quantity * stockOut.SalePrice;
+                    }
                 }
                 netprofit += money;
                 model.PendentMoney.Add(new Tuple<string, decimal>(u.UserName, money));

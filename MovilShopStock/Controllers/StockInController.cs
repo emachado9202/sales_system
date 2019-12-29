@@ -47,7 +47,17 @@ namespace MovilShopStock.Controllers
 
             Guid business_working = Guid.Parse(Session["BusinessWorking"].ToString());
             ViewBag.Categories = await applicationDbContext.Categories.Where(x => x.Business_Id == business_working).OrderBy(x => x.Name).ToListAsync();
-            ViewBag.Providers = await applicationDbContext.Providers.Where(x => x.Business_Id == business_working).OrderBy(x => x.Name).ToListAsync();
+
+            List<Provider> providers = new List<Provider>();
+
+            providers.Add(new Provider()
+            {
+                Id = Guid.Empty,
+                Name = "Ninguno"
+            });
+            providers.AddRange(await applicationDbContext.Providers.Where(x => x.Business_Id == business_working).OrderBy(x => x.Name).ToListAsync());
+
+            ViewBag.Providers = providers;
 
             return View(model);
         }
@@ -68,9 +78,13 @@ namespace MovilShopStock.Controllers
                     Quantity = model.Quantity,
                     ShopPrice = decimal.Parse(model.ShopPrice.Replace(".", ",")),
                     User_Id = User.Identity.GetUserId(),
-                    Description = model.Description,
-                    Provider_Id = Guid.Parse(model.Provider)
+                    Description = model.Description
                 };
+
+                if (Guid.Parse(model.Provider) != Guid.Empty)
+                {
+                    stockIn.Provider_Id = Guid.Parse(model.Provider);
+                }
 
                 applicationDbContext.StockIns.Add(stockIn);
 

@@ -113,19 +113,17 @@ namespace MovilShopStock.Controllers
                 applicationDbContext.Entry(stockOut).State = System.Data.Entity.EntityState.Modified;
 
                 User user = await applicationDbContext.Users.FirstOrDefaultAsync(x => x.Id == stockOut.Receiver_Id);
-                if (!stockOut.Product.NoCountOut)
-                {
-                    if (stockOut.Product.Category.ActionOut == ActionConstants.Sum)
-                    {
-                        user.Cash += stockOut.SalePrice * stockOut.Quantity;
-                    }
-                    else if (stockOut.Product.Category.ActionOut == ActionConstants.Rest)
-                    {
-                        user.Cash -= stockOut.SalePrice * stockOut.Quantity;
-                    }
 
-                    applicationDbContext.Entry(user).State = System.Data.Entity.EntityState.Modified;
+                if (stockOut.Product.Category.ActionOut == ActionConstants.Sum)
+                {
+                    user.Cash += stockOut.SalePrice * stockOut.Quantity;
                 }
+                else if (stockOut.Product.Category.ActionOut == ActionConstants.Rest)
+                {
+                    user.Cash -= stockOut.SalePrice * stockOut.Quantity;
+                }
+
+                applicationDbContext.Entry(user).State = System.Data.Entity.EntityState.Modified;
 
                 await applicationDbContext.SaveChangesAsync();
             }
@@ -146,19 +144,17 @@ namespace MovilShopStock.Controllers
                 applicationDbContext.Entry(stockOut).State = System.Data.Entity.EntityState.Modified;
 
                 User user = await applicationDbContext.Users.FirstOrDefaultAsync(x => x.Id == stockOut.Receiver_Id);
-                if (!stockOut.Product.NoCountOut)
-                {
-                    if (stockOut.Product.Category.ActionOut == ActionConstants.Sum)
-                    {
-                        user.Cash += stockOut.SalePrice * stockOut.Quantity;
-                    }
-                    else if (stockOut.Product.Category.ActionOut == ActionConstants.Rest)
-                    {
-                        user.Cash -= stockOut.SalePrice * stockOut.Quantity;
-                    }
 
-                    applicationDbContext.Entry(user).State = System.Data.Entity.EntityState.Modified;
+                if (stockOut.Product.Category.ActionOut == ActionConstants.Sum)
+                {
+                    user.Cash += stockOut.SalePrice * stockOut.Quantity;
                 }
+                else if (stockOut.Product.Category.ActionOut == ActionConstants.Rest)
+                {
+                    user.Cash -= stockOut.SalePrice * stockOut.Quantity;
+                }
+
+                applicationDbContext.Entry(user).State = System.Data.Entity.EntityState.Modified;
             }
             await applicationDbContext.SaveChangesAsync();
 

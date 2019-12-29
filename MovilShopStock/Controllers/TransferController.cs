@@ -236,7 +236,11 @@ namespace MovilShopStock.Controllers
                     product_to.In += model.Quantity;
                     product_to.LastUpdated = DateTime.Now;
 
+                    product.In -= model.Quantity;
+                    product.LastUpdated = DateTime.Now;
+
                     applicationDbContext.Entry(product).State = System.Data.Entity.EntityState.Modified;
+                    applicationDbContext.Entry(product_to).State = System.Data.Entity.EntityState.Modified;
                 }
 
                 TransferBusinessProduct transfer = new TransferBusinessProduct()

@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Web;
 
 namespace MovilShopStock.Models
 {
@@ -33,6 +29,7 @@ namespace MovilShopStock.Models
         public string SalePrice { get; set; }
 
         [DisplayName("Cantidad Venta")]
+        [Range(1, 1000, ErrorMessage = "La cantidad tiene que ser entre 1 y 1000")]
         public int Quantity { get; set; }
 
         [DisplayName("Descripción")]
