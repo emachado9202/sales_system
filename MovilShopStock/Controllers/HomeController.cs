@@ -205,12 +205,12 @@ namespace MovilShopStock.Controllers
 
                 List<string> roles_ids = await applicationDbContext.Roles.Where(x => x.Name.Equals(RoleConstants.Editor) || x.Name.Equals(RoleConstants.Administrator)).Select(x => x.Id).ToListAsync();
 
-                List<User> users = await applicationDbContext.Users.Where(x => x.Roles.FirstOrDefault(r => roles_ids.Contains(r.RoleId)) != null && x.BusinessUsers.FirstOrDefault(y => y.Business_Id == business_working) != null).ToListAsync();
+                List<BusinessUser> users = await applicationDbContext.BusinessUsers.Include("User").Where(x => x.User.Roles.FirstOrDefault(r => roles_ids.Contains(r.RoleId)) != null && x.Business_Id == business_working).ToListAsync();
                 model.UserMoney = new List<Tuple<string, decimal>>();
                 foreach (var u in users)
                 {
                     netprofit += u.Cash;
-                    model.UserMoney.Add(new Tuple<string, decimal>(u.UserName, u.Cash));
+                    model.UserMoney.Add(new Tuple<string, decimal>(u.User.UserName, u.Cash));
                 }
 
                 model.Categories = new List<Tuple<string, List<Tuple<string, decimal>>>>();

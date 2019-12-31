@@ -388,11 +388,12 @@ namespace MovilShopStock.Controllers
         public async Task<ActionResult> CreatePrivate(TransferPrivateModel model)
         {
             string userId = User.Identity.GetUserId();
+            Guid business_working = Guid.Parse(Session["BusinessWorking"].ToString());
 
             if (ModelState.IsValid)
             {
-                User user_from = await applicationDbContext.Users.FirstOrDefaultAsync(x => x.Id == userId);
-                User user_to = await applicationDbContext.Users.FirstOrDefaultAsync(x => x.Id == model.FromTo);
+                BusinessUser user_from = await applicationDbContext.BusinessUsers.FirstOrDefaultAsync(x => x.User_Id == userId && x.Business_Id == business_working);
+                BusinessUser user_to = await applicationDbContext.BusinessUsers.FirstOrDefaultAsync(x => x.User_Id == model.FromTo && x.Business_Id == business_working);
 
                 user_from.Cash -= decimal.Parse(model.Amount);
                 user_to.Cash += decimal.Parse(model.Amount);
@@ -414,8 +415,6 @@ namespace MovilShopStock.Controllers
 
                 return RedirectToAction("Index", new { selectedTab = "nav-private" });
             }
-
-            Guid business_working = Guid.Parse(Session["BusinessWorking"].ToString());
 
             ViewBag.BusinessUsers = await applicationDbContext.BusinessUsers.Where(x => x.Business_Id == business_working && x.User_Id != userId).Select(x => x.User).OrderBy(x => x.UserName).ToListAsync();
 

@@ -66,6 +66,8 @@ namespace MovilShopStock.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Create(StockInModel model)
         {
+            Guid business_working = Guid.Parse(Session["BusinessWorking"].ToString());
+
             if (ModelState.IsValid)
             {
                 Guid productId = Guid.Parse(model.ProductName);
@@ -96,18 +98,18 @@ namespace MovilShopStock.Controllers
 
                 if (User.IsInRole(RoleConstants.Editor) || User.IsInRole(RoleConstants.Administrator))
                 {
-                    User user = await applicationDbContext.Users.FirstOrDefaultAsync(x => x.Id == stockIn.User_Id);
+                    BusinessUser businessUser = await applicationDbContext.BusinessUsers.FirstOrDefaultAsync(x => x.User_Id == stockIn.User_Id && x.Business_Id == business_working);
 
                     if (product.Category.ActionIn == ActionConstants.Sum)
                     {
-                        user.Cash += stockIn.ShopPrice * stockIn.Quantity;
+                        businessUser.Cash += stockIn.ShopPrice * stockIn.Quantity;
                     }
                     else if (product.Category.ActionIn == ActionConstants.Rest)
                     {
-                        user.Cash -= stockIn.ShopPrice * stockIn.Quantity;
+                        businessUser.Cash -= stockIn.ShopPrice * stockIn.Quantity;
                     }
 
-                    applicationDbContext.Entry(user).State = System.Data.Entity.EntityState.Modified;
+                    applicationDbContext.Entry(businessUser).State = System.Data.Entity.EntityState.Modified;
                 }
 
                 applicationDbContext.Entry(product).State = System.Data.Entity.EntityState.Modified;
@@ -116,7 +118,7 @@ namespace MovilShopStock.Controllers
 
                 return RedirectToAction("Index");
             }
-            Guid business_working = Guid.Parse(Session["BusinessWorking"].ToString());
+
             ViewBag.Categories = await applicationDbContext.Categories.Where(x => x.Business_Id == business_working).OrderBy(x => x.Name).ToListAsync();
             ViewBag.Providers = await applicationDbContext.Providers.Where(x => x.Business_Id == business_working).OrderBy(x => x.Name).ToListAsync();
 

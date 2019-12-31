@@ -19,9 +19,6 @@ namespace MovilShopStock.Models.Catalog
             return userIdentity;
         }
 
-        [DataType(DataType.Currency)]
-        public decimal Cash { get; set; }
-
         [ForeignKey("CurrentBusiness")]
         public Guid? CurrentBusiness_Id { get; set; }
 

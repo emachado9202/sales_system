@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Web;
 
 namespace MovilShopStock.Models.Catalog
 {
@@ -18,6 +15,9 @@ namespace MovilShopStock.Models.Catalog
         [ForeignKey("User")]
         [Column(Order = 1)]
         public string User_Id { get; set; }
+
+        [DataType(DataType.Currency)]
+        public decimal Cash { get; set; }
 
         public bool IsRoot { get; set; }
         public DateTime LastUpdated { get; set; }

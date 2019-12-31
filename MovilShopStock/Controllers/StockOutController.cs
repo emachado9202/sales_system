@@ -43,6 +43,8 @@ namespace MovilShopStock.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Create(StockOutModel model)
         {
+            Guid business_working = Guid.Parse(Session["BusinessWorking"].ToString());
+
             if (ModelState.IsValid)
             {
                 Guid productId = Guid.Parse(model.ProductName);
@@ -65,18 +67,18 @@ namespace MovilShopStock.Controllers
                 {
                     stockOut.Receiver_Id = User.Identity.GetUserId();
 
-                    User user = await applicationDbContext.Users.FirstOrDefaultAsync(x => x.Id == stockOut.Receiver_Id);
+                    BusinessUser businessUser = await applicationDbContext.BusinessUsers.FirstOrDefaultAsync(x => x.User_Id == stockOut.Receiver_Id && x.Business_Id == business_working);
 
                     if (product.Category.ActionOut == ActionConstants.Sum)
                     {
-                        user.Cash += stockOut.SalePrice * stockOut.Quantity;
+                        businessUser.Cash += stockOut.SalePrice * stockOut.Quantity;
                     }
                     else if (product.Category.ActionOut == ActionConstants.Rest)
                     {
-                        user.Cash -= stockOut.SalePrice * stockOut.Quantity;
+                        businessUser.Cash -= stockOut.SalePrice * stockOut.Quantity;
                     }
 
-                    applicationDbContext.Entry(user).State = System.Data.Entity.EntityState.Modified;
+                    applicationDbContext.Entry(businessUser).State = System.Data.Entity.EntityState.Modified;
                 }
 
                 applicationDbContext.StockOuts.Add(stockOut);
@@ -92,7 +94,6 @@ namespace MovilShopStock.Controllers
                 return RedirectToAction("Index");
             }
 
-            Guid business_working = Guid.Parse(Session["BusinessWorking"].ToString());
             ViewBag.Categories = await applicationDbContext.Categories.Where(x => x.Business_Id == business_working).OrderBy(x => x.Name).ToListAsync();
 
             return View(model);
@@ -103,6 +104,7 @@ namespace MovilShopStock.Controllers
         public async Task<ActionResult> Receiver(string id)
         {
             Guid out_id = Guid.Parse(id);
+            Guid business_working = Guid.Parse(Session["BusinessWorking"].ToString());
 
             StockOut stockOut = await applicationDbContext.StockOuts.Include("Product").Include("Product.Category").FirstOrDefaultAsync(x => x.Id == out_id);
 
@@ -112,18 +114,18 @@ namespace MovilShopStock.Controllers
 
                 applicationDbContext.Entry(stockOut).State = System.Data.Entity.EntityState.Modified;
 
-                User user = await applicationDbContext.Users.FirstOrDefaultAsync(x => x.Id == stockOut.Receiver_Id);
+                BusinessUser businessUser = await applicationDbContext.BusinessUsers.FirstOrDefaultAsync(x => x.User_Id == stockOut.Receiver_Id && x.Business_Id == business_working);
 
                 if (stockOut.Product.Category.ActionOut == ActionConstants.Sum)
                 {
-                    user.Cash += stockOut.SalePrice * stockOut.Quantity;
+                    businessUser.Cash += stockOut.SalePrice * stockOut.Quantity;
                 }
                 else if (stockOut.Product.Category.ActionOut == ActionConstants.Rest)
                 {
-                    user.Cash -= stockOut.SalePrice * stockOut.Quantity;
+                    businessUser.Cash -= stockOut.SalePrice * stockOut.Quantity;
                 }
 
-                applicationDbContext.Entry(user).State = System.Data.Entity.EntityState.Modified;
+                applicationDbContext.Entry(businessUser).State = System.Data.Entity.EntityState.Modified;
 
                 await applicationDbContext.SaveChangesAsync();
             }
@@ -135,6 +137,7 @@ namespace MovilShopStock.Controllers
         [Authorize(Roles = RoleConstants.Editor + "," + RoleConstants.Administrator)]
         public async Task<ActionResult> AllReceiver()
         {
+            Guid business_working = Guid.Parse(Session["BusinessWorking"].ToString());
             List<StockOut> stockOuts = await applicationDbContext.StockOuts.Include("Product").Include("Product.Category").Where(x => x.Receiver_Id == null).ToListAsync();
 
             foreach (var stockOut in stockOuts)
@@ -143,18 +146,18 @@ namespace MovilShopStock.Controllers
 
                 applicationDbContext.Entry(stockOut).State = System.Data.Entity.EntityState.Modified;
 
-                User user = await applicationDbContext.Users.FirstOrDefaultAsync(x => x.Id == stockOut.Receiver_Id);
+                BusinessUser businessUser = await applicationDbContext.BusinessUsers.FirstOrDefaultAsync(x => x.User_Id == stockOut.Receiver_Id && x.Business_Id == business_working);
 
                 if (stockOut.Product.Category.ActionOut == ActionConstants.Sum)
                 {
-                    user.Cash += stockOut.SalePrice * stockOut.Quantity;
+                    businessUser.Cash += stockOut.SalePrice * stockOut.Quantity;
                 }
                 else if (stockOut.Product.Category.ActionOut == ActionConstants.Rest)
                 {
-                    user.Cash -= stockOut.SalePrice * stockOut.Quantity;
+                    businessUser.Cash -= stockOut.SalePrice * stockOut.Quantity;
                 }
 
-                applicationDbContext.Entry(user).State = System.Data.Entity.EntityState.Modified;
+                applicationDbContext.Entry(businessUser).State = System.Data.Entity.EntityState.Modified;
             }
             await applicationDbContext.SaveChangesAsync();
 
@@ -205,6 +208,7 @@ namespace MovilShopStock.Controllers
         public async Task<ActionResult> Delete(string id)
         {
             Guid out_id = Guid.Parse(id);
+            Guid business_working = Guid.Parse(Session["BusinessWorking"].ToString());
 
             StockOut stockOut = await applicationDbContext.StockOuts.Include("Product").FirstOrDefaultAsync(x => x.Id == out_id);
 
@@ -214,19 +218,19 @@ namespace MovilShopStock.Controllers
                 {
                     if (!stockOut.Product.NoCountOut)
                     {
-                        User user = await applicationDbContext.Users.FirstOrDefaultAsync(x => x.Id == stockOut.Receiver_Id);
+                        BusinessUser businessUser = await applicationDbContext.BusinessUsers.FirstOrDefaultAsync(x => x.User_Id == stockOut.Receiver_Id && x.Business_Id == business_working);
 
                         /*Operacion inversa para revertir la situación*/
                         if (stockOut.Product.Category.ActionOut == ActionConstants.Sum)
                         {
-                            user.Cash -= stockOut.SalePrice * stockOut.Quantity;
+                            businessUser.Cash -= stockOut.SalePrice * stockOut.Quantity;
                         }
                         else if (stockOut.Product.Category.ActionOut == ActionConstants.Rest)
                         {
-                            user.Cash += stockOut.SalePrice * stockOut.Quantity;
+                            businessUser.Cash += stockOut.SalePrice * stockOut.Quantity;
                         }
 
-                        applicationDbContext.Entry(user).State = System.Data.Entity.EntityState.Modified;
+                        applicationDbContext.Entry(businessUser).State = System.Data.Entity.EntityState.Modified;
                     }
                 }
 
