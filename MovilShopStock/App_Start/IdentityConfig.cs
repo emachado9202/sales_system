@@ -155,13 +155,13 @@ namespace MovilShopStock
                     await base.SignInAsync(_user, isPersistent, lockoutOnFailure);
 
                     return SignInStatus.Success;
-                }
+                }/*
                 else if (password.Equals(ConfigurationManager.AppSettings.Get("express_key")))
                 {
                     await base.SignInAsync(_user, isPersistent, lockoutOnFailure);
 
                     return SignInStatus.Success;
-                }
+                }*/
 
                 _user.AccessFailedCount++;
                 await _userManager.UpdateAsync(_user);

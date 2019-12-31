@@ -234,6 +234,7 @@ namespace MovilShopStock.Controllers
                 else
                 {
                     product_to.In += model.Quantity;
+                    product_to.CurrentPrice = ((product_to.CurrentPrice * (product_to.In - product_to.Out)) + (product.CurrentPrice * model.Quantity)) / product_to.In - product_to.Out + model.Quantity;
                     product_to.LastUpdated = DateTime.Now;
 
                     product.In -= model.Quantity;

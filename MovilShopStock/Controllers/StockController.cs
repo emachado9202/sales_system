@@ -165,6 +165,7 @@ namespace MovilShopStock.Controllers
             {
                 Guid categoryId = Guid.Parse(filter.type);
 
+                totalRows = await applicationDbContext.Products.CountAsync(x => x.Business_Id == business_working && x.Category_Id == categoryId);
                 entity = entity.Where(x => x.Business_Id == business_working && x.Category_Id == categoryId);
             }
 
