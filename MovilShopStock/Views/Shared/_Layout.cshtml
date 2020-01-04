@@ -42,6 +42,7 @@
             if (location.protocol != '@(Session["app_protocol"])') {
                 location.href = '@(Session["app_protocol"])' + window.location.href.substring(window.location.protocol.length);
             }
+            $('[data-toggle="tooltip"]').tooltip();
         });
     </script>
 </body>

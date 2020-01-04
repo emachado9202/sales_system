@@ -27,7 +27,7 @@ namespace MovilShopStock
                         "~/Scripts/modernizr-*"));
 
             bundles.Add(new ScriptBundle("~/bundles/bootstrap").Include(
-                      "~/Scripts/bootstrap.js"));
+                      "~/Scripts/bootstrap.bundle.js"));
 
             bundles.Add(new ScriptBundle("~/bundles/table").Include(
                 "~/Content/DataTables/media/js/jquery.dataTables.js",

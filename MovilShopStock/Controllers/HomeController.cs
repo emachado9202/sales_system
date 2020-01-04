@@ -68,10 +68,10 @@ namespace MovilShopStock.Controllers
             long quantity_in_month = (await applicationDbContext.StockIns.Include("Product").Where(x => x.Date > month_init && x.Product.Business_Id == business_working).SumAsync(x => (int?)x.Quantity)) ?? 0;
             decimal percent_quantity_in = quantity_in == 0 ? 0 : (quantity_in_month * 100) / quantity_in;
 
-            model.InQuantity = new Tuple<long, decimal>(quantity_in, percent_quantity_in);
+            model.InQuantity = new Tuple<long, decimal>(quantity_in_month, percent_quantity_in);
 
-            List<StockIn> stockIns = await applicationDbContext.StockIns.Include("Product").Include("Product.Category").Where(x => x.Product.Business_Id == business_working).ToListAsync();
-            decimal money_in = 0, money_in_month = 0;
+            List<StockIn> stockIns = await applicationDbContext.StockIns.Include("Product").Include("Product.Category").Where(x => x.Product.Business_Id == business_working && x.Date > month_init).ToListAsync();
+            decimal money_in = 0;
 
             foreach (var stockIn in stockIns)
             {
@@ -83,31 +83,17 @@ namespace MovilShopStock.Controllers
                 {
                     money_in -= stockIn.ShopPrice * stockIn.Quantity;
                 }
-
-                if (stockIn.Date > month_init)
-                {
-                    if (stockIn.Product.Category.SystemAction == ActionConstants.Sum)
-                    {
-                        money_in_month += stockIn.ShopPrice * stockIn.Quantity;
-                    }
-                    else if (stockIn.Product.Category.SystemAction == ActionConstants.Rest)
-                    {
-                        money_in_month -= stockIn.ShopPrice * stockIn.Quantity;
-                    }
-                }
             }
 
-            decimal percent_money_in = money_in == 0 ? 0 : (money_in_month * 100) / money_in;
-
-            model.InMoney = new Tuple<decimal, decimal>(money_in, percent_money_in);
+            model.InMoney = money_in;
 
             long quantity_out = (await applicationDbContext.StockOuts.Include("Product").Where(x => x.Product.Business_Id == business_working).SumAsync(x => (int?)x.Quantity)) ?? 0;
             long quantity_out_month = (await applicationDbContext.StockOuts.Include("Product").Where(x => x.Date > month_init && x.Product.Business_Id == business_working).SumAsync(x => (int?)x.Quantity)) ?? 0;
             decimal percent_quantity_out = quantity_out == 0 ? 0 : (quantity_out_month * 100) / quantity_out;
 
-            model.OutQuantity = new Tuple<long, decimal>(quantity_out, percent_quantity_out);
+            model.OutQuantity = new Tuple<long, decimal>(quantity_out_month, percent_quantity_out);
 
-            List<StockOut> stockOuts = await applicationDbContext.StockOuts.Include("Product").Include("Product.Category").Where(x => x.Product.Business_Id == business_working).ToListAsync();
+            List<StockOut> stockOuts = await applicationDbContext.StockOuts.Include("Product").Include("Product.Category").Where(x => x.Product.Business_Id == business_working && x.Date > month_init).ToListAsync();
             decimal money_out = 0, money_out_month = 0;
 
             foreach (var stockOut in stockOuts)
@@ -120,23 +106,9 @@ namespace MovilShopStock.Controllers
                 {
                     money_out -= stockOut.SalePrice * stockOut.Quantity;
                 }
-
-                if (stockOut.Date > month_init)
-                {
-                    if (stockOut.Product.Category.SystemAction == ActionConstants.Sum)
-                    {
-                        money_out_month += stockOut.SalePrice * stockOut.Quantity;
-                    }
-                    else if (stockOut.Product.Category.SystemAction == ActionConstants.Rest)
-                    {
-                        money_out_month -= stockOut.SalePrice * stockOut.Quantity;
-                    }
-                }
             }
 
-            decimal percent_money_out = money_out == 0 ? 0 : (money_out_month * 100) / money_out;
-
-            model.OutMoney = new Tuple<decimal, decimal>(money_out, percent_money_out);
+            model.OutMoney = money_out;
 
             long quantity_stock = (await applicationDbContext.Products.Where(x => x.Business_Id == business_working).SumAsync(x => (int?)x.In - x.Out)) ?? 0;
             long quantity_stock_month = (await applicationDbContext.Products.Where(x => x.LastUpdated > month_init && x.Business_Id == business_working).SumAsync(x => (int?)x.In - x.Out)) ?? 0;
@@ -159,8 +131,9 @@ namespace MovilShopStock.Controllers
             foreach (var u in dealers)
             {
                 decimal money = 0;
+                List<StockOut> dealer_stockOuts = await applicationDbContext.StockOuts.Where(x => x.User_Id == u.Id && x.Receiver_Id == null).ToListAsync();
 
-                foreach (var stockOut in stockOuts.Where(x => x.User_Id == u.Id && x.Receiver_Id == null))
+                foreach (var stockOut in dealer_stockOuts)
                 {
                     if (stockOut.Product.Category.SystemAction == ActionConstants.Sum)
                     {
@@ -519,6 +492,34 @@ namespace MovilShopStock.Controllers
         public ActionResult Index()
         {
             return View();
+        }
+
+        public string TotalMoneyUser()
+        {
+            string userId = User.Identity.GetUserId();
+            decimal result = 0;
+
+            if (User.IsInRole(RoleConstants.Administrator) || User.IsInRole(RoleConstants.Editor))
+            {
+                result = applicationDbContext.BusinessUsers.Where(x => x.User_Id == userId).Sum(x => x.Cash);
+            }
+            else
+            {
+                List<StockOut> stockOuts = applicationDbContext.StockOuts.Where(x => x.User_Id == userId && x.Receiver_Id == null).ToList();
+
+                foreach (var stockOut in stockOuts)
+                {
+                    if (stockOut.Product.Category.SystemAction == ActionConstants.Sum)
+                    {
+                        result += stockOut.Quantity * stockOut.SalePrice;
+                    }
+                    else if (stockOut.Product.Category.SystemAction == ActionConstants.Rest)
+                    {
+                        result -= stockOut.Quantity * stockOut.SalePrice;
+                    }
+                }
+            }
+            return result.ToString("#,##0.00");
         }
     }
 }

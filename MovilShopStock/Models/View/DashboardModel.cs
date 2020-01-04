@@ -8,9 +8,9 @@ namespace MovilShopStock.Models
     public class DashboardModel
     {
         public Tuple<long, decimal> InQuantity { get; set; }
-        public Tuple<decimal, decimal> InMoney { get; set; }
+        public decimal InMoney { get; set; }
         public Tuple<long, decimal> OutQuantity { get; set; }
-        public Tuple<decimal, decimal> OutMoney { get; set; }
+        public decimal OutMoney { get; set; }
 
         public Tuple<long, decimal> StockQuantity { get; set; }
         public Tuple<decimal, decimal> StockMoney { get; set; }
