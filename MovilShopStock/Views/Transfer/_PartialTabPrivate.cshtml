@@ -1,5 +1,5 @@
 ﻿<div class="pull-right btn-editions">
-    @if (User.IsInRole(RoleConstants.Editor) || User.IsInRole(RoleConstants.Administrator))
+    @if (User.IsInRole(RoleConstants.Dealer) || User.IsInRole(RoleConstants.Editor) || User.IsInRole(RoleConstants.Administrator))
     {
         <a class="btn btn-sm btn-success ml-1" href="@Url.Action("CreatePrivate")">Crear Transferencia</a>
     }

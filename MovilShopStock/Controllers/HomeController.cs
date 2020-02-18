@@ -144,6 +144,8 @@ namespace MovilShopStock.Controllers
                         money -= stockOut.Quantity * stockOut.SalePrice;
                     }
                 }
+                BusinessUser bu = await applicationDbContext.BusinessUsers.FirstOrDefaultAsync(x => x.User_Id == u.Id && x.Business_Id == business_working);
+                money += bu.Cash;
                 netprofit += money;
                 model.PendentMoney.Add(new Tuple<string, decimal>(u.UserName, money));
             }
@@ -186,29 +188,29 @@ namespace MovilShopStock.Controllers
                     model.UserMoney.Add(new Tuple<string, decimal>(u.User.UserName, u.Cash));
                 }
 
-                model.Categories = new List<Tuple<string, List<Tuple<string, decimal>>>>();
-                var outs_categories = await applicationDbContext.StockOuts.Include("Product").Include("Product.Category").Where(x => x.Product.Category.ShowDashboard && x.Date > month_init && x.Product.Business_Id == business_working).GroupBy(x => x.Product.Category).ToListAsync();
+                model.NetProfit = netprofit;
+            }
 
-                foreach (var ocat in outs_categories)
+            model.Categories = new List<Tuple<string, List<Tuple<string, decimal>>>>();
+            var outs_categories = await applicationDbContext.StockOuts.Include("Product").Include("Product.Category").Where(x => x.Product.Category.ShowDashboard && x.Date > month_init && x.Product.Business_Id == business_working).GroupBy(x => x.Product.Category).ToListAsync();
+
+            foreach (var ocat in outs_categories)
+            {
+                List<Tuple<string, decimal>> temp = new List<Tuple<string, decimal>>();
+
+                foreach (var oup in ocat.GroupBy(x => x.Product))
                 {
-                    List<Tuple<string, decimal>> temp = new List<Tuple<string, decimal>>();
+                    decimal money_out_sale = 0;
 
-                    foreach (var oup in ocat.GroupBy(x => x.Product))
+                    foreach (var ou in oup)
                     {
-                        decimal money_out_sale = 0;
-
-                        foreach (var ou in oup)
-                        {
-                            money_out_sale += Math.Abs(ou.SalePrice) * ou.Quantity;
-                        }
-
-                        temp.Add(new Tuple<string, decimal>(oup.Key.Name, money_out_sale));
+                        money_out_sale += Math.Abs(ou.SalePrice) * ou.Quantity;
                     }
 
-                    model.Categories.Add(new Tuple<string, List<Tuple<string, decimal>>>($"{ocat.Key.Name} (Mes)", temp));
+                    temp.Add(new Tuple<string, decimal>(oup.Key.Name, money_out_sale));
                 }
 
-                model.NetProfit = netprofit;
+                model.Categories.Add(new Tuple<string, List<Tuple<string, decimal>>>($"{ocat.Key.Name} (Mes)", temp));
             }
 
             return View(model);
