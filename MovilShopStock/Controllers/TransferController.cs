@@ -223,21 +223,21 @@ namespace MovilShopStock.Controllers
                         Name = product.Name,
                         CurrentPrice = product.CurrentPrice,
                         Description = "",
-                        In = model.Quantity,
+                        Stock = model.Quantity,
                         SalePrice = product.SalePrice,
                         User_Id = userId,
                         LastUpdated = DateTime.Now,
-                        Out = 0
+                        isAccesory = product.isAccesory
                     };
                     applicationDbContext.Products.Add(product_to);
                 }
                 else
                 {
-                    product_to.In += model.Quantity;
-                    product_to.CurrentPrice = ((product_to.CurrentPrice * (product_to.In - product_to.Out)) + (product.CurrentPrice * model.Quantity)) / product_to.In - product_to.Out + model.Quantity;
+                    product_to.Stock += model.Quantity;
+                    product_to.CurrentPrice = ((product_to.CurrentPrice * product_to.Stock) + (product.CurrentPrice * model.Quantity)) / product_to.Stock + model.Quantity;
                     product_to.LastUpdated = DateTime.Now;
 
-                    product.In -= model.Quantity;
+                    product.Stock -= model.Quantity;
                     product.LastUpdated = DateTime.Now;
 
                     applicationDbContext.Entry(product).State = System.Data.Entity.EntityState.Modified;

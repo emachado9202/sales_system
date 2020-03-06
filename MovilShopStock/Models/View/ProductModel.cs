@@ -25,19 +25,16 @@ namespace MovilShopStock.Models
         [DisplayName("Precio Venta")]
         public string SalePrice { get; set; }
 
-        [DisplayName("Entrada")]
-        public int In { get; set; }
-
-        [DisplayName("Salida")]
-        public int Out { get; set; }
-
         [DisplayName("Existencia")]
-        public int Exist { get { return In - Out; } }
+        public int Stock { get; set; }
 
         [DisplayName("Última Modificación")]
         public string LatestUpdated { get; set; }
 
         [DisplayName("No Contar en Salida")]
         public bool NoCountOut { get; set; }
+
+        [DisplayName("Es Accesorio?")]
+        public bool isAccesory { get; set; }
     }
 }

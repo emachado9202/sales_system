@@ -55,16 +55,26 @@
         </div>
 
         <div class="form-group">
+            <label class="control-label col-md-2">Accesorios</label>
+            <div class="col-md-10">
+                @foreach (var acc in Model.Accesories)
+                {
+                    <div class="custom-control custom-checkbox">
+                        <input type="checkbox" class="custom-control-input" id="@acc.Id" name="AccesoriesIds" value="@acc.Id">
+                        <label class="custom-control-label" for="@acc.Id">@acc.Name</label>
+                    </div>
+                }
+            </div>
+        </div>
+
+        <div class="form-group">
             <div class="col-md-offset-2 col-md-10">
                 <input type="submit" value="Agregar" class="btn btn-dark" />
+                @Html.ActionLink("Cancelar", "Index", null, htmlAttributes: new { @class = " btn btn-light" })
             </div>
         </div>
     </div>
 }
-
-<div>
-    @Html.ActionLink("Regresar", "Index")
-</div>
 
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")

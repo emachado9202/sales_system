@@ -91,9 +91,9 @@ namespace MovilShopStock.Controllers
                 applicationDbContext.StockIns.Add(stockIn);
 
                 Product product = await applicationDbContext.Products.Include("Category").FirstOrDefaultAsync(x => x.Id == productId);
-                
-                product.CurrentPrice = ((product.CurrentPrice * (product.In - product.Out)) + (stockIn.ShopPrice * stockIn.Quantity)) / (product.In - product.Out + stockIn.Quantity);
-                product.In += stockIn.Quantity;
+
+                product.CurrentPrice = ((product.CurrentPrice * product.Stock) + (stockIn.ShopPrice * stockIn.Quantity)) / (product.Stock + stockIn.Quantity);
+                product.Stock += stockIn.Quantity;
                 product.LastUpdated = DateTime.Now;
 
                 if (User.IsInRole(RoleConstants.Editor) || User.IsInRole(RoleConstants.Administrator))

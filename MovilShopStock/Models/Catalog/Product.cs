@@ -19,8 +19,7 @@ namespace MovilShopStock.Models.Catalog
         [DataType(DataType.Currency)]
         public decimal SalePrice { get; set; }
 
-        public int In { get; set; }
-        public int Out { get; set; }
+        public int Stock { get; set; }
 
         [ForeignKey("Category")]
         [Required]
@@ -35,6 +34,7 @@ namespace MovilShopStock.Models.Catalog
 
         public DateTime LastUpdated { get; set; }
         public bool NoCountOut { get; set; }
+        public bool isAccesory { get; set; }
 
         public virtual Business Business { get; set; }
         public virtual Category Category { get; set; }

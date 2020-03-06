@@ -47,8 +47,7 @@ namespace MovilShopStock.Controllers
             {
                 SalePrice = "0.00",
                 CurrentPrice = "0.00",
-                In = 0,
-                Out = 0
+                Stock = 0
             };
 
             Guid business_working = Guid.Parse(Session["BusinessWorking"].ToString());
@@ -72,14 +71,14 @@ namespace MovilShopStock.Controllers
                     Name = model.Product,
                     Category_Id = Guid.Parse(model.Category),
                     Description = "",
-                    In = model.In,
-                    Out = model.Out,
+                    Stock = model.Stock,
                     User_Id = User.Identity.GetUserId(),
                     CurrentPrice = decimal.Parse(model.CurrentPrice.Replace(".", ",")),
                     LastUpdated = DateTime.Now,
                     NoCountOut = model.NoCountOut,
                     Business_Id = business_working,
-                    SalePrice = decimal.Parse(model.SalePrice.Replace(".", ","))
+                    SalePrice = decimal.Parse(model.SalePrice.Replace(".", ",")),
+                    isAccesory = model.isAccesory
                 };
 
                 applicationDbContext.Products.Add(product);
@@ -112,7 +111,9 @@ namespace MovilShopStock.Controllers
                 Product = product.Name,
                 CurrentPrice = product.CurrentPrice.ToString("#,##0.00"),
                 SalePrice = product.SalePrice.ToString("#,##0.00"),
-                In = product.In
+                Stock = product.Stock,
+                NoCountOut = product.NoCountOut,
+                isAccesory = product.isAccesory
             };
 
             return View(model);
@@ -131,11 +132,12 @@ namespace MovilShopStock.Controllers
 
                 product.Name = model.Product;
                 product.Category_Id = Guid.Parse(model.Category);
-                product.In = model.In;
+                product.Stock = model.Stock;
                 product.CurrentPrice = decimal.Parse(model.CurrentPrice.Replace(".", ","));
                 product.SalePrice = decimal.Parse(model.SalePrice.Replace(".", ","));
                 product.LastUpdated = DateTime.Now;
                 product.NoCountOut = model.NoCountOut;
+                product.isAccesory = model.isAccesory;
 
                 applicationDbContext.Entry(product).State = System.Data.Entity.EntityState.Modified;
 
@@ -171,13 +173,13 @@ namespace MovilShopStock.Controllers
 
             if (filter.exist == "1")
             {
-                totalRows = await applicationDbContext.Products.CountAsync(x => x.In - x.Out > 0 && x.Business_Id == business_working);
-                entity = entity.Where(x => x.In - x.Out > 0);
+                totalRows = await applicationDbContext.Products.CountAsync(x => x.Stock > 0 && x.Business_Id == business_working);
+                entity = entity.Where(x => x.Stock > 0);
             }
             else if (filter.exist == "2")
             {
-                totalRows = await applicationDbContext.Products.CountAsync(x => x.In - x.Out <= 0 && x.Business_Id == business_working);
-                entity = entity.Where(x => x.In - x.Out <= 0);
+                totalRows = await applicationDbContext.Products.CountAsync(x => x.Stock <= 0 && x.Business_Id == business_working);
+                entity = entity.Where(x => x.Stock <= 0);
             }
 
             IOrderedQueryable<Product> sort = null;
@@ -229,36 +231,14 @@ namespace MovilShopStock.Controllers
             {
                 if (filter.order[0].dir.Equals("asc"))
                 {
-                    sort = entity.OrderBy(x => x.In);
+                    sort = entity.OrderBy(x => x.Stock);
                 }
                 else
                 {
-                    sort = entity.OrderByDescending(x => x.In);
+                    sort = entity.OrderByDescending(x => x.Stock);
                 }
             }
             else if (filter.order[0].column == 5)
-            {
-                if (filter.order[0].dir.Equals("asc"))
-                {
-                    sort = entity.OrderBy(x => x.Out);
-                }
-                else
-                {
-                    sort = entity.OrderByDescending(x => x.Out);
-                }
-            }
-            else if (filter.order[0].column == 6)
-            {
-                if (filter.order[0].dir.Equals("asc"))
-                {
-                    sort = entity.OrderBy(x => x.In - x.Out);
-                }
-                else
-                {
-                    sort = entity.OrderByDescending(x => x.In * x.Out);
-                }
-            }
-            else if (filter.order[0].column == 7)
             {
                 if (filter.order[0].dir.Equals("asc"))
                 {
@@ -269,7 +249,7 @@ namespace MovilShopStock.Controllers
                     sort = entity.OrderByDescending(x => x.LastUpdated);
                 }
             }
-            else if (filter.order[0].column == 8)
+            else if (filter.order[0].column == 6)
             {
                 if (filter.order[0].dir.Equals("asc"))
                 {
@@ -278,6 +258,17 @@ namespace MovilShopStock.Controllers
                 else
                 {
                     sort = entity.OrderByDescending(x => x.NoCountOut);
+                }
+            }
+            else if (filter.order[0].column == 7)
+            {
+                if (filter.order[0].dir.Equals("asc"))
+                {
+                    sort = entity.OrderBy(x => x.isAccesory);
+                }
+                else
+                {
+                    sort = entity.OrderByDescending(x => x.isAccesory);
                 }
             }
 
@@ -293,24 +284,22 @@ namespace MovilShopStock.Controllers
                 if (filter.exist == "1")
                 {
                     totalRowsFiltered = await
-                   applicationDbContext.Products.CountAsync(x => x.In - x.Out > 0 && x.Business_Id == business_working && (x.Category.Name.ToString().Contains(filter.search.value) ||
+                   applicationDbContext.Products.CountAsync(x => x.Stock > 0 && x.Business_Id == business_working && (x.Category.Name.ToString().Contains(filter.search.value) ||
                    x.Name.ToString().Contains(filter.search.value) ||
                    x.User.UserName.ToString().Contains(filter.search.value) ||
                    x.CurrentPrice.ToString().Contains(filter.search.value) ||
                    x.SalePrice.ToString().Contains(filter.search.value) ||
-                   x.In.ToString().Contains(filter.search.value) ||
-                   x.Out.ToString().Contains(filter.search.value)));
+                   x.Stock.ToString().Contains(filter.search.value)));
                 }
                 else if (filter.exist == "2")
                 {
                     totalRowsFiltered = await
-                   applicationDbContext.Products.CountAsync(x => x.In - x.Out <= 0 && x.Business_Id == business_working && (x.Category.Name.ToString().Contains(filter.search.value) ||
+                   applicationDbContext.Products.CountAsync(x => x.Stock <= 0 && x.Business_Id == business_working && (x.Category.Name.ToString().Contains(filter.search.value) ||
                    x.Name.ToString().Contains(filter.search.value) ||
                    x.User.UserName.ToString().Contains(filter.search.value) ||
                    x.CurrentPrice.ToString().Contains(filter.search.value) ||
                    x.SalePrice.ToString().Contains(filter.search.value) ||
-                   x.In.ToString().Contains(filter.search.value) ||
-                   x.Out.ToString().Contains(filter.search.value)));
+                   x.Stock.ToString().Contains(filter.search.value)));
                 }
                 else
                 {
@@ -320,8 +309,7 @@ namespace MovilShopStock.Controllers
                    x.User.UserName.ToString().Contains(filter.search.value) ||
                    x.CurrentPrice.ToString().Contains(filter.search.value) ||
                    x.SalePrice.ToString().Contains(filter.search.value) ||
-                   x.In.ToString().Contains(filter.search.value) ||
-                   x.Out.ToString().Contains(filter.search.value)));
+                   x.Stock.ToString().Contains(filter.search.value)));
                 }
 
                 model = await
@@ -330,8 +318,7 @@ namespace MovilShopStock.Controllers
                    x.User.UserName.ToString().Contains(filter.search.value) ||
                    x.CurrentPrice.ToString().Contains(filter.search.value) ||
                    x.SalePrice.ToString().Contains(filter.search.value) ||
-                   x.In.ToString().Contains(filter.search.value) ||
-                   x.Out.ToString().Contains(filter.search.value))
+                   x.Stock.ToString().Contains(filter.search.value))
                         .Skip(filter.start)
                         .Take(filter.length)
                         .ToListAsync();
@@ -347,8 +334,8 @@ namespace MovilShopStock.Controllers
                     CurrentPrice = product.CurrentPrice.ToString("#,##0.00"),
                     SalePrice = product.SalePrice.ToString("#,##0.00"),
                     NoCountOut = product.NoCountOut,
-                    In = product.In,
-                    Out = product.Out,
+                    Stock = product.Stock,
+                    isAccesory = product.isAccesory,
                     Category = product.Category.Name
                 });
             }

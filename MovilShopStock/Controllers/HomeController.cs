@@ -25,7 +25,7 @@ namespace MovilShopStock.Controllers
             Guid categoryId = Guid.Parse(category_id);
             Guid business_working = Guid.Parse(Session["BusinessWorking"].ToString());
 
-            List<ProductModel> products = exist ? await applicationDbContext.Products.Where(x => x.Category_Id == categoryId && x.Business_Id == business_working && x.In - x.Out > 0).OrderBy(x => x.Name).Select(x => new ProductModel { DT_RowId = x.Id.ToString(), Product = x.Name }).ToListAsync() : await applicationDbContext.Products.Where(x => x.Category_Id == categoryId && x.Business_Id == business_working).OrderBy(x => x.Name).Select(x => new ProductModel { DT_RowId = x.Id.ToString(), Product = x.Name }).ToListAsync();
+            List<ProductModel> products = exist ? await applicationDbContext.Products.Where(x => x.Category_Id == categoryId && x.Business_Id == business_working && x.Stock > 0).OrderBy(x => x.Name).Select(x => new ProductModel { DT_RowId = x.Id.ToString(), Product = x.Name }).ToListAsync() : await applicationDbContext.Products.Where(x => x.Category_Id == categoryId && x.Business_Id == business_working).OrderBy(x => x.Name).Select(x => new ProductModel { DT_RowId = x.Id.ToString(), Product = x.Name }).ToListAsync();
 
             return Json(products);
         }
@@ -49,7 +49,7 @@ namespace MovilShopStock.Controllers
 
             Product product = await applicationDbContext.Products.FirstOrDefaultAsync(x => x.Id == productId);
 
-            return Json(product?.In - product?.Out);
+            return Json(product?.Stock);
         }
 
         [HttpGet]
@@ -110,14 +110,14 @@ namespace MovilShopStock.Controllers
 
             model.OutMoney = money_out;
 
-            long quantity_stock = (await applicationDbContext.Products.Where(x => x.Business_Id == business_working).SumAsync(x => (int?)x.In - x.Out)) ?? 0;
-            long quantity_stock_month = (await applicationDbContext.Products.Where(x => x.LastUpdated > month_init && x.Business_Id == business_working).SumAsync(x => (int?)x.In - x.Out)) ?? 0;
+            long quantity_stock = (await applicationDbContext.Products.Where(x => x.Business_Id == business_working).SumAsync(x => (int?)x.Stock)) ?? 0;
+            long quantity_stock_month = (await applicationDbContext.Products.Where(x => x.LastUpdated > month_init && x.Business_Id == business_working).SumAsync(x => (int?)x.Stock)) ?? 0;
             decimal percent_quantity_stock = quantity_stock == 0 ? 0 : (quantity_stock_month * 100) / quantity_stock;
 
             model.StockQuantity = new Tuple<long, decimal>(quantity_stock, percent_quantity_stock);
 
-            decimal money_stock = (await applicationDbContext.Products.Where(x => x.Business_Id == business_working).SumAsync(x => (decimal?)x.CurrentPrice * (x.In - x.Out))) ?? 0;
-            decimal money_stock_month = (await applicationDbContext.Products.Where(x => x.LastUpdated > month_init && x.Business_Id == business_working).SumAsync(x => (decimal?)x.CurrentPrice * (x.In - x.Out))) ?? 0;
+            decimal money_stock = (await applicationDbContext.Products.Where(x => x.Business_Id == business_working).SumAsync(x => (decimal?)x.CurrentPrice * (x.Stock))) ?? 0;
+            decimal money_stock_month = (await applicationDbContext.Products.Where(x => x.LastUpdated > month_init && x.Business_Id == business_working).SumAsync(x => (decimal?)x.CurrentPrice * (x.Stock))) ?? 0;
             decimal percent_money_stock = money_stock == 0 ? 0 : (money_stock_month * 100) / money_stock;
 
             netprofit += money_stock;

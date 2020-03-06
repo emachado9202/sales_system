@@ -27,13 +27,26 @@ namespace MovilShopStock.Controllers
         [HttpGet]
         public async Task<ActionResult> Create()
         {
+            Guid business_working = Guid.Parse(Session["BusinessWorking"].ToString());
+
+            List<Product> accesories = await applicationDbContext.Products.Include("Category").Where(x => x.Business_Id == business_working && x.Stock > 0 && x.isAccesory).OrderBy(x => x.Name).ToListAsync();
+
             StockOutModel model = new StockOutModel()
             {
                 Quantity = 0,
-                SalePrice = "0.00"
+                SalePrice = "0.00",
+                Accesories = new List<AccesoryModel>()
             };
 
-            Guid business_working = Guid.Parse(Session["BusinessWorking"].ToString());
+            foreach (var acc in accesories)
+            {
+                model.Accesories.Add(new AccesoryModel()
+                {
+                    Id = acc.Id.ToString(),
+                    Name = $"{acc.Category.Name} - {acc.Name}"
+                });
+            }
+
             ViewBag.Categories = await applicationDbContext.Categories.Where(x => x.Business_Id == business_working).OrderBy(x => x.Name).ToListAsync();
 
             return View(model);
@@ -84,11 +97,41 @@ namespace MovilShopStock.Controllers
                 applicationDbContext.StockOuts.Add(stockOut);
                 if (!product.NoCountOut)
                 {
-                    product.Out += stockOut.Quantity;
+                    product.Stock -= stockOut.Quantity;
                     product.LastUpdated = DateTime.Now;
 
                     applicationDbContext.Entry(product).State = System.Data.Entity.EntityState.Modified;
                 }
+
+                if (model.AccesoriesIds != null)
+                {
+                    foreach (var acc in model.AccesoriesIds)
+                    {
+                        Guid accesory = Guid.Parse(acc);
+                        Product acc_product = await applicationDbContext.Products.Include("Category").FirstOrDefaultAsync(x => x.Id == accesory);
+
+                        StockOut acc_stockOut = new StockOut()
+                        {
+                            Id = Guid.NewGuid(),
+                            Product_Id = accesory,
+                            Date = DateTime.Now,
+                            Quantity = 1,
+                            SalePrice = 0,
+                            User_Id = User.Identity.GetUserId(),
+                            Gain = 0 - acc_product.CurrentPrice,
+                            Description = $"Con producto {product.Name}"
+                        };
+                        applicationDbContext.StockOuts.Add(acc_stockOut);
+                        if (!acc_product.NoCountOut)
+                        {
+                            acc_product.Stock -= acc_stockOut.Quantity;
+                            acc_product.LastUpdated = DateTime.Now;
+
+                            applicationDbContext.Entry(acc_product).State = System.Data.Entity.EntityState.Modified;
+                        }
+                    }
+                }
+
                 await applicationDbContext.SaveChangesAsync();
 
                 return RedirectToAction("Index");
@@ -191,7 +234,8 @@ namespace MovilShopStock.Controllers
                     SalePrice = stockout.SalePrice.ToString("#,##0.00"),
                     Category = stockout.Product.Category_Id.ToString(),
                     Receivered = stockout.Receiver != null,
-                    Description = stockout.Description
+                    Description = stockout.Description,
+                    Accesories = new List<AccesoryModel>()
                 };
 
                 return View(model);
@@ -234,7 +278,7 @@ namespace MovilShopStock.Controllers
                     }
                 }
 
-                stockOut.Product.Out -= stockOut.Quantity;
+                stockOut.Product.Stock += stockOut.Quantity;
                 stockOut.Product.LastUpdated = DateTime.Now;
 
                 applicationDbContext.Entry(stockOut.Product).State = System.Data.Entity.EntityState.Modified;

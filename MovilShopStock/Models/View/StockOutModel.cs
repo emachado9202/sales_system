@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
 namespace MovilShopStock.Models
@@ -43,5 +44,15 @@ namespace MovilShopStock.Models
 
         [DisplayName("Ganancia Total")]
         public string TotalGain { get { return (decimal.Parse(Gain.Replace(".", ",")) * Quantity).ToString("#,##0.00"); } }
+
+        public List<AccesoryModel> Accesories { get; set; }
+        public List<string> AccesoriesIds { get; set; }
+    }
+
+    public class AccesoryModel
+    {
+        public string Id { get; set; }
+        public string Name { get; set; }
+        public bool Selected { get; set; }
     }
 }
