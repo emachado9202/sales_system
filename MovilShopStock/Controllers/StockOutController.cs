@@ -12,11 +12,9 @@ using System.Web.Mvc;
 
 namespace MovilShopStock.Controllers
 {
-    [Authorize(Roles = RoleConstants.Dealer + "," + RoleConstants.Editor + "," + RoleConstants.Administrator)]
+    [Models.Handlers.Authorize(Roles = RoleConstants.Dealer + "," + RoleConstants.Editor + "," + RoleConstants.Administrator)]
     public class StockOutController : GenericController
     {
-        private ApplicationDbContext applicationDbContext = new ApplicationDbContext();
-
         public async Task<ActionResult> Index()
         {
             Guid business_working = Guid.Parse(Session["BusinessWorking"].ToString());
@@ -143,7 +141,7 @@ namespace MovilShopStock.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = RoleConstants.Editor + "," + RoleConstants.Administrator)]
+        [Models.Handlers.Authorize(Roles = RoleConstants.Editor + "," + RoleConstants.Administrator)]
         public async Task<ActionResult> Receiver(string id)
         {
             Guid out_id = Guid.Parse(id);
@@ -177,7 +175,7 @@ namespace MovilShopStock.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = RoleConstants.Editor + "," + RoleConstants.Administrator)]
+        [Models.Handlers.Authorize(Roles = RoleConstants.Editor + "," + RoleConstants.Administrator)]
         public async Task<ActionResult> AllReceiver()
         {
             Guid business_working = Guid.Parse(Session["BusinessWorking"].ToString());

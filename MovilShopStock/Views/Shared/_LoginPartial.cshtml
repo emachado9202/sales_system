@@ -5,12 +5,22 @@
         <li class="nav-item">@Html.ActionLink("Inventario", "Index", "Stock", routeValues: null, htmlAttributes: new { @class = "nav-link" })</li>
         <li class="nav-item">@Html.ActionLink("Entradas", "Index", "StockIn", routeValues: null, htmlAttributes: new { @class = "nav-link" })</li>
         <li class="nav-item">@Html.ActionLink("Salidas", "Index", "StockOut", routeValues: null, htmlAttributes: new { @class = "nav-link" })</li>
-        @if (User.IsInRole(RoleConstants.Editor) || User.IsInRole(RoleConstants.Administrator))
-        {
-            <li class="nav-item">@Html.ActionLink("Categorias", "Index", "Category", routeValues: null, htmlAttributes: new { @class = "nav-link" })</li>
-            <li class="nav-item">@Html.ActionLink("Proveedores", "Index", "Provider", routeValues: null, htmlAttributes: new { @class = "nav-link" })</li>
-        }
         <li class="nav-item">@Html.ActionLink("Transferencias", "Index", "Transfer", routeValues: null, htmlAttributes: new { @class = "nav-link" })</li>
+
+        <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                Configuración
+            </a>
+            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                @if (User.IsInRole(RoleConstants.Editor) || User.IsInRole(RoleConstants.Administrator))
+                {
+                    @Html.ActionLink("Categorias", "Index", "Category", routeValues: null, htmlAttributes: new { @class = "dropdown-item" })
+                    @Html.ActionLink("Proveedores", "Index", "Provider", routeValues: null, htmlAttributes: new { @class = "dropdown-item" })
+
+                }
+                @Html.ActionLink("Negocios", "Index", "Business", routeValues: null, htmlAttributes: new { @class = "dropdown-item" })
+            </div>
+        </li>
     </ul>
     using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { id = "logoutForm", @class = "navbar-right" }))
     {
@@ -48,6 +58,6 @@ else
         <li class="nav-item"><a class="nav-link" href="/#prices">Precios</a></li>
     </ul>
     <ul class="navbar-nav mr-auto navbar-right">
-        <li class="nav-item">@Html.ActionLink("Entrar", "Login", "Account", routeValues: null, htmlAttributes: new { id = "loginLink", @class = "nav-link" })</li>
+        <li class="nav-item">@Html.ActionLink("Entrar", "Login", "Account", routeValues: new { returnUrl = Request.Url.AbsoluteUri }, htmlAttributes: new { id = "loginLink", @class = "nav-link" })</li>
     </ul>
 }

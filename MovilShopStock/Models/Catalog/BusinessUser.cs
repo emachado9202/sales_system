@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.AspNet.Identity.EntityFramework;
 
 namespace MovilShopStock.Models.Catalog
 {
@@ -16,6 +17,9 @@ namespace MovilShopStock.Models.Catalog
         [Column(Order = 1)]
         public string User_Id { get; set; }
 
+        [ForeignKey("Role")]
+        public string Role_Id { get; set; }
+
         [DataType(DataType.Currency)]
         public decimal Cash { get; set; }
 
@@ -25,5 +29,6 @@ namespace MovilShopStock.Models.Catalog
         public virtual Business Business { get; set; }
 
         public virtual User User { get; set; }
+        public virtual IdentityRole Role { get; set; }
     }
 }

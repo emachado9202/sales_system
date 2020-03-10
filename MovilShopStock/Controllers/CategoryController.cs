@@ -11,11 +11,9 @@ using System.Web.Mvc;
 
 namespace MovilShopStock.Controllers
 {
-    [Authorize(Roles = RoleConstants.Editor + "," + RoleConstants.Administrator)]
+    [Models.Handlers.Authorize(Roles = RoleConstants.Editor + "," + RoleConstants.Administrator)]
     public class CategoryController : GenericController
     {
-        private ApplicationDbContext applicationDbContext = new ApplicationDbContext();
-
         [HttpGet]
         public async Task<ActionResult> Index()
         {

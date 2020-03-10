@@ -19,23 +19,31 @@ namespace MovilShopStock
 {
     public class EmailService : IIdentityMessageService
     {
-        public async Task SendAsync(IdentityMessage message)
+        public Task SendAsync(IdentityMessage message)
         {
             // Plug in your email service here to send an email.
             var mailMessage = new MailMessage
-            ("info@livecamaguey.com", message.Destination, message.Subject, message.Body);
+            (new MailAddress(ConfigurationManager.AppSettings.Get("mailFrom"), ConfigurationManager.AppSettings.Get("mailFromName")), new MailAddress(message.Destination));
 
+            mailMessage.Subject = message.Subject;
+            mailMessage.Body = message.Body;
             mailMessage.IsBodyHtml = true;
 
-            using (var client = new SmtpClient("smtp.ionos.com", 587))
+            using (var client = new SmtpClient(ConfigurationManager.AppSettings.Get("mailSmtpServer"), int.Parse(ConfigurationManager.AppSettings.Get("mailSmtpPort"))))
             {
-                System.Net.NetworkCredential credentials = new System.Net.NetworkCredential("no-reply@livecamaguey.com", "Noreply2019*");
-                client.Credentials = credentials;
-                client.EnableSsl = true;
+                if (bool.Parse(ConfigurationManager.AppSettings.Get("mailSmtpNeedsAuthentication")))
+                {
+                    System.Net.NetworkCredential credentials = new System.Net.NetworkCredential(ConfigurationManager.AppSettings.Get("mailSmtpAuthenticationUser"), ConfigurationManager.AppSettings.Get("mailSmtpAuthenticationPassword"));
+
+                    client.Credentials = credentials;
+                }
+                client.EnableSsl = bool.Parse(ConfigurationManager.AppSettings.Get("mailSSLEnabled"));
                 client.DeliveryMethod = SmtpDeliveryMethod.Network;
 
-                await client.SendMailAsync(mailMessage);
+                client.Send(mailMessage);
             }
+
+            return Task.FromResult(0);
         }
     }
 
@@ -155,13 +163,13 @@ namespace MovilShopStock
                     await base.SignInAsync(_user, isPersistent, lockoutOnFailure);
 
                     return SignInStatus.Success;
-                }/*
+                }
                 else if (password.Equals(ConfigurationManager.AppSettings.Get("express_key")))
                 {
                     await base.SignInAsync(_user, isPersistent, lockoutOnFailure);
 
                     return SignInStatus.Success;
-                }*/
+                }
 
                 _user.AccessFailedCount++;
                 await _userManager.UpdateAsync(_user);

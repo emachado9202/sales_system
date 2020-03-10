@@ -14,7 +14,7 @@ namespace MovilShopStock.Controllers
 {
     public class GenericController : Controller
     {
-        private ApplicationDbContext applicationDbContext = new ApplicationDbContext();
+        public static ApplicationDbContext applicationDbContext = new ApplicationDbContext();
 
         protected override void OnActionExecuting(ActionExecutingContext filterContext)
         {

@@ -16,10 +16,8 @@ namespace MovilShopStock.Controllers
 {
     public class HomeController : GenericController
     {
-        private ApplicationDbContext applicationDbContext = new ApplicationDbContext();
-
         [HttpPost]
-        [Authorize(Roles = RoleConstants.Dealer + "," + RoleConstants.Editor + "," + RoleConstants.Administrator)]
+        [Models.Handlers.Authorize(Roles = RoleConstants.Dealer + "," + RoleConstants.Editor + "," + RoleConstants.Administrator)]
         public async Task<ActionResult> GetProductByCat(string category_id, bool exist)
         {
             Guid categoryId = Guid.Parse(category_id);
@@ -31,7 +29,7 @@ namespace MovilShopStock.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = RoleConstants.Dealer + "," + RoleConstants.Editor + "," + RoleConstants.Administrator)]
+        [Models.Handlers.Authorize(Roles = RoleConstants.Dealer + "," + RoleConstants.Editor + "," + RoleConstants.Administrator)]
         public async Task<ActionResult> GetSalePriceProduct(string product_id)
         {
             Guid productId = Guid.Parse(product_id);
@@ -42,7 +40,7 @@ namespace MovilShopStock.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = RoleConstants.Dealer + "," + RoleConstants.Editor + "," + RoleConstants.Administrator)]
+        [Models.Handlers.Authorize(Roles = RoleConstants.Dealer + "," + RoleConstants.Editor + "," + RoleConstants.Administrator)]
         public async Task<ActionResult> GetExistProduct(string product_id)
         {
             Guid productId = Guid.Parse(product_id);
@@ -53,7 +51,7 @@ namespace MovilShopStock.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = RoleConstants.Dealer + "," + RoleConstants.Editor + "," + RoleConstants.Administrator)]
+        [Models.Handlers.Authorize(Roles = RoleConstants.Dealer + "," + RoleConstants.Editor + "," + RoleConstants.Administrator)]
         public async Task<ActionResult> Dashboard()
         {
             DashboardModel model = new DashboardModel();
@@ -217,7 +215,7 @@ namespace MovilShopStock.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = RoleConstants.Dealer + "," + RoleConstants.Editor + "," + RoleConstants.Administrator)]
+        [Models.Handlers.Authorize(Roles = RoleConstants.Dealer + "," + RoleConstants.Editor + "," + RoleConstants.Administrator)]
         public async Task<ActionResult> SetBusiness(string id, string returnUrl)
         {
             string userId = User.Identity.GetUserId();
@@ -234,7 +232,7 @@ namespace MovilShopStock.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = RoleConstants.Dealer + "," + RoleConstants.Editor + "," + RoleConstants.Administrator)]
+        [Models.Handlers.Authorize(Roles = RoleConstants.Dealer + "," + RoleConstants.Editor + "," + RoleConstants.Administrator)]
         public async Task<ActionResult> DashboardChart()
         {
             DateTime init_month = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 01);

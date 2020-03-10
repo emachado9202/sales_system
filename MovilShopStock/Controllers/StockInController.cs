@@ -7,16 +7,13 @@ using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Web;
 using System.Web.Mvc;
 
 namespace MovilShopStock.Controllers
 {
-    [Authorize(Roles = RoleConstants.Editor + "," + RoleConstants.Administrator)]
+    [Models.Handlers.Authorize(Roles = RoleConstants.Editor + "," + RoleConstants.Administrator)]
     public class StockInController : GenericController
     {
-        private ApplicationDbContext applicationDbContext = new ApplicationDbContext();
-
         public async Task<ActionResult> Index(string id)
         {
             List<Tuple<string, string>> categories = new List<Tuple<string, string>>();

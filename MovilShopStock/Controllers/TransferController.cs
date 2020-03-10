@@ -13,11 +13,9 @@ using System.Web.Mvc;
 
 namespace MovilShopStock.Controllers
 {
-    [Authorize(Roles = RoleConstants.Dealer + "," + RoleConstants.Editor + "," + RoleConstants.Administrator)]
+    [Models.Handlers.Authorize(Roles = RoleConstants.Dealer + "," + RoleConstants.Editor + "," + RoleConstants.Administrator)]
     public class TransferController : GenericController
     {
-        private ApplicationDbContext applicationDbContext = new ApplicationDbContext();
-
         public ActionResult Index(string selectedTab)
         {
             ViewBag.selectedTab = selectedTab;

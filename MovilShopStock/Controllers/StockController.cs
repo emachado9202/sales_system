@@ -12,11 +12,9 @@ using System.Web.Mvc;
 
 namespace MovilShopStock.Controllers
 {
-    [Authorize(Roles = RoleConstants.Dealer + "," + RoleConstants.Editor + "," + RoleConstants.Administrator)]
+    [Models.Handlers.Authorize(Roles = RoleConstants.Dealer + "," + RoleConstants.Editor + "," + RoleConstants.Administrator)]
     public class StockController : GenericController
     {
-        private ApplicationDbContext applicationDbContext = new ApplicationDbContext();
-
         [HttpGet]
         public async Task<ActionResult> Index(string id)
         {
@@ -40,7 +38,7 @@ namespace MovilShopStock.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = RoleConstants.Editor + "," + RoleConstants.Administrator)]
+        [Models.Handlers.Authorize(Roles = RoleConstants.Editor + "," + RoleConstants.Administrator)]
         public async Task<ActionResult> Create()
         {
             ProductModel model = new ProductModel()
@@ -59,7 +57,7 @@ namespace MovilShopStock.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = RoleConstants.Editor + "," + RoleConstants.Administrator)]
+        [Models.Handlers.Authorize(Roles = RoleConstants.Editor + "," + RoleConstants.Administrator)]
         public async Task<ActionResult> Create(ProductModel model)
         {
             Guid business_working = Guid.Parse(Session["BusinessWorking"].ToString());
@@ -94,7 +92,7 @@ namespace MovilShopStock.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = RoleConstants.Editor + "," + RoleConstants.Administrator)]
+        [Models.Handlers.Authorize(Roles = RoleConstants.Editor + "," + RoleConstants.Administrator)]
         public async Task<ActionResult> Edit(string id)
         {
             Guid prod_id = Guid.Parse(id);
@@ -121,7 +119,7 @@ namespace MovilShopStock.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = RoleConstants.Editor + "," + RoleConstants.Administrator)]
+        [Models.Handlers.Authorize(Roles = RoleConstants.Editor + "," + RoleConstants.Administrator)]
         public async Task<ActionResult> Edit(string id, ProductModel model)
         {
             if (ModelState.IsValid)
