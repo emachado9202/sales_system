@@ -12,7 +12,7 @@ using System.Web.Mvc;
 
 namespace MovilShopStock.Controllers
 {
-    [Models.Handlers.Authorize(Roles = RoleConstants.Dealer + "," + RoleConstants.Editor + "," + RoleConstants.Administrator)]
+    [Models.Handlers.Authorize(Roles = RoleManager.Dealer + "," + RoleManager.Editor + "," + RoleManager.Administrator)]
     public class StockController : GenericController
     {
         [HttpGet]
@@ -38,7 +38,7 @@ namespace MovilShopStock.Controllers
         }
 
         [HttpGet]
-        [Models.Handlers.Authorize(Roles = RoleConstants.Editor + "," + RoleConstants.Administrator)]
+        [Models.Handlers.Authorize(Roles = RoleManager.Editor + "," + RoleManager.Administrator)]
         public async Task<ActionResult> Create()
         {
             ProductModel model = new ProductModel()
@@ -57,7 +57,7 @@ namespace MovilShopStock.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Models.Handlers.Authorize(Roles = RoleConstants.Editor + "," + RoleConstants.Administrator)]
+        [Models.Handlers.Authorize(Roles = RoleManager.Editor + "," + RoleManager.Administrator)]
         public async Task<ActionResult> Create(ProductModel model)
         {
             Guid business_working = Guid.Parse(Session["BusinessWorking"].ToString());
@@ -92,7 +92,7 @@ namespace MovilShopStock.Controllers
         }
 
         [HttpGet]
-        [Models.Handlers.Authorize(Roles = RoleConstants.Editor + "," + RoleConstants.Administrator)]
+        [Models.Handlers.Authorize(Roles = RoleManager.Editor + "," + RoleManager.Administrator)]
         public async Task<ActionResult> Edit(string id)
         {
             Guid prod_id = Guid.Parse(id);
@@ -119,7 +119,7 @@ namespace MovilShopStock.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Models.Handlers.Authorize(Roles = RoleConstants.Editor + "," + RoleConstants.Administrator)]
+        [Models.Handlers.Authorize(Roles = RoleManager.Editor + "," + RoleManager.Administrator)]
         public async Task<ActionResult> Edit(string id, ProductModel model)
         {
             if (ModelState.IsValid)

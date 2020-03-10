@@ -12,7 +12,7 @@
                 Configuración
             </a>
             <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                @if (User.IsInRole(RoleConstants.Editor) || User.IsInRole(RoleConstants.Administrator))
+                @if (RoleManager.IsInRole(RoleManager.Editor) || RoleManager.IsInRole(RoleManager.Administrator))
                 {
                     @Html.ActionLink("Categorias", "Index", "Category", routeValues: null, htmlAttributes: new { @class = "dropdown-item" })
                     @Html.ActionLink("Proveedores", "Index", "Provider", routeValues: null, htmlAttributes: new { @class = "dropdown-item" })

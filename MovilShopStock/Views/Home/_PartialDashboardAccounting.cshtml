@@ -179,7 +179,7 @@
         </div>
     </div>
 </div>
-@if (User.IsInRole(RoleConstants.Editor) || User.IsInRole(RoleConstants.Administrator))
+@if (RoleManager.IsInRole(RoleManager.Editor) || RoleManager.IsInRole(RoleManager.Administrator))
 {
     <div class="row">
         <div class="col-12 col-lg-4 col-xl">
@@ -298,7 +298,7 @@
     </div>
 }
 
-@if (User.IsInRole(RoleConstants.Editor) || User.IsInRole(RoleConstants.Administrator))
+@if (RoleManager.IsInRole(RoleManager.Editor) || RoleManager.IsInRole(RoleManager.Administrator))
 {
     <h4 class="text-center">Dinero Personas</h4>
     <div class="row">

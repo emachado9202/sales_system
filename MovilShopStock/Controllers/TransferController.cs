@@ -13,7 +13,7 @@ using System.Web.Mvc;
 
 namespace MovilShopStock.Controllers
 {
-    [Models.Handlers.Authorize(Roles = RoleConstants.Dealer + "," + RoleConstants.Editor + "," + RoleConstants.Administrator)]
+    [Models.Handlers.Authorize(Roles = RoleManager.Dealer + "," + RoleManager.Editor + "," + RoleManager.Administrator)]
     public class TransferController : GenericController
     {
         public ActionResult Index(string selectedTab)

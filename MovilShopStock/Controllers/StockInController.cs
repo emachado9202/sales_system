@@ -11,7 +11,7 @@ using System.Web.Mvc;
 
 namespace MovilShopStock.Controllers
 {
-    [Models.Handlers.Authorize(Roles = RoleConstants.Editor + "," + RoleConstants.Administrator)]
+    [Models.Handlers.Authorize(Roles = RoleManager.Editor + "," + RoleManager.Administrator)]
     public class StockInController : GenericController
     {
         public async Task<ActionResult> Index(string id)
@@ -93,7 +93,7 @@ namespace MovilShopStock.Controllers
                 product.Stock += stockIn.Quantity;
                 product.LastUpdated = DateTime.Now;
 
-                if (User.IsInRole(RoleConstants.Editor) || User.IsInRole(RoleConstants.Administrator))
+                if (RoleManager.IsInRole(RoleManager.Editor) || RoleManager.IsInRole(RoleManager.Administrator))
                 {
                     BusinessUser businessUser = await applicationDbContext.BusinessUsers.FirstOrDefaultAsync(x => x.User_Id == stockIn.User_Id && x.Business_Id == business_working);
 

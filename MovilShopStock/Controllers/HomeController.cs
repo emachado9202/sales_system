@@ -17,7 +17,7 @@ namespace MovilShopStock.Controllers
     public class HomeController : GenericController
     {
         [HttpPost]
-        [Models.Handlers.Authorize(Roles = RoleConstants.Dealer + "," + RoleConstants.Editor + "," + RoleConstants.Administrator)]
+        [Models.Handlers.Authorize(Roles = RoleManager.Dealer + "," + RoleManager.Editor + "," + RoleManager.Administrator)]
         public async Task<ActionResult> GetProductByCat(string category_id, bool exist)
         {
             Guid categoryId = Guid.Parse(category_id);
@@ -29,7 +29,7 @@ namespace MovilShopStock.Controllers
         }
 
         [HttpPost]
-        [Models.Handlers.Authorize(Roles = RoleConstants.Dealer + "," + RoleConstants.Editor + "," + RoleConstants.Administrator)]
+        [Models.Handlers.Authorize(Roles = RoleManager.Dealer + "," + RoleManager.Editor + "," + RoleManager.Administrator)]
         public async Task<ActionResult> GetSalePriceProduct(string product_id)
         {
             Guid productId = Guid.Parse(product_id);
@@ -40,7 +40,7 @@ namespace MovilShopStock.Controllers
         }
 
         [HttpPost]
-        [Models.Handlers.Authorize(Roles = RoleConstants.Dealer + "," + RoleConstants.Editor + "," + RoleConstants.Administrator)]
+        [Models.Handlers.Authorize(Roles = RoleManager.Dealer + "," + RoleManager.Editor + "," + RoleManager.Administrator)]
         public async Task<ActionResult> GetExistProduct(string product_id)
         {
             Guid productId = Guid.Parse(product_id);
@@ -51,7 +51,7 @@ namespace MovilShopStock.Controllers
         }
 
         [HttpGet]
-        [Models.Handlers.Authorize(Roles = RoleConstants.Dealer + "," + RoleConstants.Editor + "," + RoleConstants.Administrator)]
+        [Models.Handlers.Authorize(Roles = RoleManager.Dealer + "," + RoleManager.Editor + "," + RoleManager.Administrator)]
         public async Task<ActionResult> Dashboard()
         {
             DashboardModel model = new DashboardModel();
@@ -123,7 +123,7 @@ namespace MovilShopStock.Controllers
             model.StockMoney = new Tuple<decimal, decimal>(money_stock, percent_money_stock);
 
             model.PendentMoney = new List<Tuple<string, decimal>>();
-            List<string> dealer_ids = await applicationDbContext.Roles.Where(x => x.Name.Equals(RoleConstants.Dealer)).Select(x => x.Id).ToListAsync();
+            List<string> dealer_ids = await applicationDbContext.Roles.Where(x => x.Name.Equals(RoleManager.Dealer)).Select(x => x.Id).ToListAsync();
             List<User> dealers = await applicationDbContext.Users.Where(x => x.Roles.FirstOrDefault(r => dealer_ids.Contains(r.RoleId)) != null && x.BusinessUsers.FirstOrDefault(y => y.Business_Id == business_working) != null).ToListAsync();
             model.UserMoney = new List<Tuple<string, decimal>>();
             foreach (var u in dealers)
@@ -148,7 +148,7 @@ namespace MovilShopStock.Controllers
                 model.PendentMoney.Add(new Tuple<string, decimal>(u.UserName, money));
             }
 
-            if (User.IsInRole(RoleConstants.Administrator) || User.IsInRole(RoleConstants.Editor))
+            if (RoleManager.IsInRole(RoleManager.Administrator) || RoleManager.IsInRole(RoleManager.Editor))
             {
                 DateTime today = DateTime.Today;
 
@@ -176,7 +176,7 @@ namespace MovilShopStock.Controllers
                     }
                 }
 
-                List<string> roles_ids = await applicationDbContext.Roles.Where(x => x.Name.Equals(RoleConstants.Editor) || x.Name.Equals(RoleConstants.Administrator)).Select(x => x.Id).ToListAsync();
+                List<string> roles_ids = await applicationDbContext.Roles.Where(x => x.Name.Equals(RoleManager.Editor) || x.Name.Equals(RoleManager.Administrator)).Select(x => x.Id).ToListAsync();
 
                 List<BusinessUser> users = await applicationDbContext.BusinessUsers.Include("User").Where(x => x.User.Roles.FirstOrDefault(r => roles_ids.Contains(r.RoleId)) != null && x.Business_Id == business_working).ToListAsync();
                 model.UserMoney = new List<Tuple<string, decimal>>();
@@ -215,7 +215,7 @@ namespace MovilShopStock.Controllers
         }
 
         [HttpGet]
-        [Models.Handlers.Authorize(Roles = RoleConstants.Dealer + "," + RoleConstants.Editor + "," + RoleConstants.Administrator)]
+        [Models.Handlers.Authorize(Roles = RoleManager.Dealer + "," + RoleManager.Editor + "," + RoleManager.Administrator)]
         public async Task<ActionResult> SetBusiness(string id, string returnUrl)
         {
             string userId = User.Identity.GetUserId();
@@ -232,7 +232,7 @@ namespace MovilShopStock.Controllers
         }
 
         [HttpPost]
-        [Models.Handlers.Authorize(Roles = RoleConstants.Dealer + "," + RoleConstants.Editor + "," + RoleConstants.Administrator)]
+        [Models.Handlers.Authorize(Roles = RoleManager.Dealer + "," + RoleManager.Editor + "," + RoleManager.Administrator)]
         public async Task<ActionResult> DashboardChart()
         {
             DateTime init_month = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 01);
@@ -499,7 +499,7 @@ namespace MovilShopStock.Controllers
             string userId = User.Identity.GetUserId();
             decimal result = 0;
 
-            if (User.IsInRole(RoleConstants.Administrator) || User.IsInRole(RoleConstants.Editor))
+            if (RoleManager.IsInRole(RoleManager.Administrator) || RoleManager.IsInRole(RoleManager.Editor))
             {
                 result = applicationDbContext.BusinessUsers.Where(x => x.User_Id == userId).Sum(x => x.Cash);
             }

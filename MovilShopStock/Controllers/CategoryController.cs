@@ -11,7 +11,7 @@ using System.Web.Mvc;
 
 namespace MovilShopStock.Controllers
 {
-    [Models.Handlers.Authorize(Roles = RoleConstants.Editor + "," + RoleConstants.Administrator)]
+    [Models.Handlers.Authorize(Roles = RoleManager.Editor + "," + RoleManager.Administrator)]
     public class CategoryController : GenericController
     {
         [HttpGet]

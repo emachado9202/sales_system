@@ -12,7 +12,7 @@ using System.Web.Mvc;
 
 namespace MovilShopStock.Controllers
 {
-    [Models.Handlers.Authorize(Roles = RoleConstants.Dealer + "," + RoleConstants.Editor + "," + RoleConstants.Administrator)]
+    [Models.Handlers.Authorize(Roles = RoleManager.Dealer + "," + RoleManager.Editor + "," + RoleManager.Administrator)]
     public class StockOutController : GenericController
     {
         public async Task<ActionResult> Index()
@@ -74,7 +74,7 @@ namespace MovilShopStock.Controllers
                     Description = model.Description
                 };
 
-                if (User.IsInRole(RoleConstants.Editor) || User.IsInRole(RoleConstants.Administrator))
+                if (RoleManager.IsInRole(RoleManager.Editor) || RoleManager.IsInRole(RoleManager.Administrator))
                 {
                     stockOut.Receiver_Id = User.Identity.GetUserId();
 
@@ -141,7 +141,7 @@ namespace MovilShopStock.Controllers
         }
 
         [HttpPost]
-        [Models.Handlers.Authorize(Roles = RoleConstants.Editor + "," + RoleConstants.Administrator)]
+        [Models.Handlers.Authorize(Roles = RoleManager.Editor + "," + RoleManager.Administrator)]
         public async Task<ActionResult> Receiver(string id)
         {
             Guid out_id = Guid.Parse(id);
@@ -175,7 +175,7 @@ namespace MovilShopStock.Controllers
         }
 
         [HttpPost]
-        [Models.Handlers.Authorize(Roles = RoleConstants.Editor + "," + RoleConstants.Administrator)]
+        [Models.Handlers.Authorize(Roles = RoleManager.Editor + "," + RoleManager.Administrator)]
         public async Task<ActionResult> AllReceiver()
         {
             Guid business_working = Guid.Parse(Session["BusinessWorking"].ToString());

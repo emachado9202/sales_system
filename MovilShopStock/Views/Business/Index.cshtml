@@ -4,7 +4,7 @@
 }
 
 <h2>Negocios</h2>
-@if (User.IsInRole(RoleConstants.Editor) || User.IsInRole(RoleConstants.Administrator))
+@if (RoleManager.IsInRole(RoleManager.Editor) || RoleManager.IsInRole(RoleManager.Administrator))
 {
     <div class="pull-right btn-editions mt-2">
         <a class="btn btn-success btn-sm ml-lg-1" href="@Url.Action("Create")">Nuevo Producto</a>

@@ -221,7 +221,7 @@
     <Compile Include="Models\Handlers\ActionConstants.cs" />
     <Compile Include="Models\Handlers\Extensions\RouteExtensions.cs" />
     <Compile Include="Models\Handlers\Extensions\TelerikExtensions.cs" />
-    <Compile Include="Models\Handlers\RoleConstants.cs" />
+    <Compile Include="Models\Handlers\RoleManager.cs" />
     <Compile Include="Models\View\ManageViewModels.cs" />
     <Compile Include="Models\View\BusinessModel.cs" />
     <Compile Include="Models\View\ProductModel.cs" />

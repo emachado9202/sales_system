@@ -14,7 +14,7 @@
 }
 
 <div class="pull-right btn-editions mt-2">
-    @if (User.IsInRole(RoleConstants.Editor) || User.IsInRole(RoleConstants.Administrator))
+    @if (RoleManager.IsInRole(RoleManager.Editor) || RoleManager.IsInRole(RoleManager.Administrator))
     {
         <a id="btn-option-receiver" class="btn btn-primary ml-lg-1 btn-sm" href="javascript:allreceiver();">Recibir Ventas</a>
     }
@@ -145,7 +145,7 @@
                         "render": function (data, type, JsonResultRow, meta) {
                             var actions = "";
                             if (!JsonResultRow.Receivered) {
-                                if ('@(User.IsInRole(RoleConstants.Editor))'=='True' || '@(User.IsInRole(RoleConstants.Administrator))'=='True') {
+                                if ('@(RoleManager.IsInRole(RoleManager.Editor))'=='True' || '@(RoleManager.IsInRole(RoleManager.Administrator))'=='True') {
                                     actions += '<a id=\'row-rec-'+JsonResultRow.DT_RowId+'\' class=\'btn btn-primary btn-sm\' href=\'javascript:receiver("'+JsonResultRow.DT_RowId+'");\'>Recibir Venta</a><br /><br />';
                                 }
                                 actions+='<a class=\'btn btn-warning btn-sm\' href=\'/StockOut/Edit/'+JsonResultRow.DT_RowId+'\'>Editar</a><br />';

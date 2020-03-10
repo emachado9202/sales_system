@@ -26,28 +26,16 @@ namespace MovilShopStock.Models.Handlers
                     return;
                 }
 
-                ApplicationDbContext applicationDbContext = new ApplicationDbContext();
+                string[] roles = this.Roles.Split(',');
 
-                //Get User Id from HttpContext
-                UserId = HttpContext.Current.User.Identity.GetUserId();
-                User user = applicationDbContext.Users.Include("BusinessUsers").Include("BusinessUsers.Role").Include("BusinessUsers.Business").FirstOrDefault(x => x.Id == UserId);
-
-                if (user != null)
+                foreach (var role in roles)
                 {
-                    BusinessUser businessUser = user.BusinessUsers.FirstOrDefault(x => x.Business_Id == user.CurrentBusiness_Id);
-
-                    if (businessUser == null)
-                    {
-                        businessUser = user.BusinessUsers.FirstOrDefault(x => x.Business.IsPrimary);
-                    }
-
-                    if (Roles.Contains(businessUser.Role.Name))
+                    if (RoleManager.IsInRole(role))
                     {
                         flag = true;
+                        break;
                     }
                 }
-
-                string[] roles = this.Roles.Split(',');
             }
 
             if (flag == false)
