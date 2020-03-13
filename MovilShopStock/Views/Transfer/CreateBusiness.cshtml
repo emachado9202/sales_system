@@ -50,14 +50,11 @@
         <div class="form-group">
             <div class="col-md-offset-2 col-md-10">
                 <input type="submit" value="Transferir" class="btn btn-dark" />
+                @Html.ActionLink("Regresar", "Index", new { selectedTab = "nav-business" }, new { @class = "btn btn-light" })
             </div>
         </div>
     </div>
 }
-
-<div>
-    @Html.ActionLink("Regresar", "Index", new { selectedTab = "nav-business" })
-</div>
 
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")

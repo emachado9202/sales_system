@@ -6,7 +6,7 @@ namespace MovilShopStock.Models.View
     {
         public string DT_RowId { get; set; }
 
-        [DisplayName("Destino")]
+        [DisplayName("Trabajador Destino")]
         public string FromTo { get; set; }
 
         [DisplayName("Monto de la Transferencia")]

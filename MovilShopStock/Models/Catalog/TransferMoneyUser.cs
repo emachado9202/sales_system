@@ -20,6 +20,12 @@ namespace MovilShopStock.Models.Catalog
         [Required]
         public string UserTo_Id { get; set; }
 
+        [ForeignKey("BusinessFrom")]
+        public Guid BusinessFrom_Id { get; set; }
+
+        [ForeignKey("BusinessTo")]
+        public Guid BusinessTo_Id { get; set; }
+
         [Required]
         public DateTime Date { get; set; }
 
@@ -27,7 +33,9 @@ namespace MovilShopStock.Models.Catalog
         [DataType(DataType.Currency)]
         public decimal Amount { get; set; }
 
-        public User UserFrom { get; set; }
-        public User UserTo { get; set; }
+        public virtual User UserFrom { get; set; }
+        public virtual User UserTo { get; set; }
+        public virtual Business BusinessFrom { get; set; }
+        public virtual Business BusinessTo { get; set; }
     }
 }

@@ -13,7 +13,7 @@ using System.Web.Mvc;
 
 namespace MovilShopStock.Controllers
 {
-    [Models.Handlers.Authorize(Roles = RoleManager.Dealer + "," + RoleManager.Editor + "," + RoleManager.Administrator)]
+    [Models.Handlers.Authorize(Roles = RoleManager.Dealer + "," + RoleManager.Editor + "," + RoleManager.Administrator + "," + RoleManager.Reading)]
     public class TransferController : GenericController
     {
         public ActionResult Index(string selectedTab)
@@ -342,12 +342,12 @@ namespace MovilShopStock.Controllers
                 bool sent = false;
                 if (tbp.UserFrom_Id == userId)
                 {
-                    fromto = $"Hacia {tbp.UserTo.UserName}";
+                    fromto = tbp.BusinessTo == null ? $"Hacia {tbp.UserTo.UserName}" : $"Hacia {tbp.BusinessTo.Name} -> {tbp.UserTo.UserName}";
                     sent = true;
                 }
                 else
                 {
-                    fromto = $"Desde {tbp.UserFrom.UserName}";
+                    fromto = tbp.BusinessFrom == null ? $"Desde {tbp.UserFrom.UserName}" : $"Desde {tbp.BusinessFrom.Name} -> {tbp.UserFrom.UserName}";
                 }
 
                 result.Add(new TransferPrivateModel
@@ -376,9 +376,38 @@ namespace MovilShopStock.Controllers
             Guid business_working = Guid.Parse(Session["BusinessWorking"].ToString());
             string userId = User.Identity.GetUserId();
 
-            ViewBag.BusinessUsers = await applicationDbContext.BusinessUsers.Where(x => x.Business_Id == business_working && x.User_Id != userId).Select(x => x.User).OrderBy(x => x.UserName).ToListAsync();
+            ViewBag.BusinessUsers = await GetSelect();
 
             return View(model);
+        }
+
+        private async Task<List<TransferSelectModel>> GetSelect()
+        {
+            string userId = User.Identity.GetUserId();
+            Guid business_working = Guid.Parse(Session["BusinessWorking"].ToString());
+
+            List<BusinessUser> businessUsers = await applicationDbContext.BusinessUsers.Where(x => x.User_Id == userId).ToListAsync();
+
+            List<TransferSelectModel> selects = new List<TransferSelectModel>();
+
+            foreach (var businessUser in businessUsers)
+            {
+                List<BusinessUser> anotherUsers = await applicationDbContext.BusinessUsers.Include("Business").Include("User").Where(x => (x.Business_Id == businessUser.Business_Id && x.User_Id != userId) || x.Business_Id != business_working).ToListAsync();
+
+                foreach (var anotherUser in anotherUsers)
+                {
+                    if (selects.FirstOrDefault(x => x.Id == $"{anotherUser.User_Id}_{anotherUser.Business_Id}") == null)
+                    {
+                        selects.Add(new TransferSelectModel()
+                        {
+                            Id = $"{anotherUser.User_Id}_{anotherUser.Business_Id}",
+                            Name = $"{anotherUser.Business.Name} -> {anotherUser.User.UserName}"
+                        });
+                    }
+                }
+            }
+
+            return selects.OrderBy(x => x.Name).ToList();
         }
 
         [HttpPost]
@@ -391,13 +420,18 @@ namespace MovilShopStock.Controllers
             if (ModelState.IsValid)
             {
                 BusinessUser user_from = await applicationDbContext.BusinessUsers.FirstOrDefaultAsync(x => x.User_Id == userId && x.Business_Id == business_working);
-                BusinessUser user_to = await applicationDbContext.BusinessUsers.FirstOrDefaultAsync(x => x.User_Id == model.FromTo && x.Business_Id == business_working);
+
+                var ids = model.FromTo.Split('_');
+                string toUserId = ids[0];
+                Guid toBusinessId = Guid.Parse(ids[1]);
+
+                BusinessUser user_to = await applicationDbContext.BusinessUsers.FirstOrDefaultAsync(x => x.User_Id == toUserId && x.Business_Id == toBusinessId);
 
                 user_from.Cash -= decimal.Parse(model.Amount);
                 user_to.Cash += decimal.Parse(model.Amount);
 
                 applicationDbContext.Entry(user_from).State = System.Data.Entity.EntityState.Modified;
-                applicationDbContext.Entry(user_from).State = System.Data.Entity.EntityState.Modified;
+                applicationDbContext.Entry(user_to).State = System.Data.Entity.EntityState.Modified;
 
                 TransferMoneyUser transfer = new TransferMoneyUser()
                 {
@@ -405,16 +439,18 @@ namespace MovilShopStock.Controllers
                     Amount = decimal.Parse(model.Amount.Replace(".", ",")),
                     Date = DateTime.Now,
                     UserFrom_Id = userId,
-                    UserTo_Id = model.FromTo
+                    UserTo_Id = toUserId,
+                    BusinessTo_Id = toBusinessId,
+                    BusinessFrom_Id = business_working
                 };
                 applicationDbContext.TransferMoneyUsers.Add(transfer);
 
                 await applicationDbContext.SaveChangesAsync();
 
-                return RedirectToAction("Index", new { selectedTab = "nav-private" });
+                return RedirectToAction("Index", new { selectedTab = "nav-private-tab" });
             }
 
-            ViewBag.BusinessUsers = await applicationDbContext.BusinessUsers.Where(x => x.Business_Id == business_working && x.User_Id != userId).Select(x => x.User).OrderBy(x => x.UserName).ToListAsync();
+            ViewBag.BusinessUsers = await GetSelect();
 
             return View(model);
         }

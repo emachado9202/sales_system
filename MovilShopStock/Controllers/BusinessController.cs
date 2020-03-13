@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNet.Identity;
+using Microsoft.AspNet.Identity.EntityFramework;
 using Microsoft.AspNet.Identity.Owin;
 using MovilShopStock.Models;
 using MovilShopStock.Models.Catalog;
@@ -172,6 +173,9 @@ namespace MovilShopStock.Controllers
             if (!string.IsNullOrEmpty(invitation))
                 ViewBag.Invitation = invitation;
 
+            List<IdentityRole> roles = await applicationDbContext.Roles.ToListAsync();
+            ViewBag.Roles = roles;
+
             return View(result);
         }
 
@@ -186,7 +190,7 @@ namespace MovilShopStock.Controllers
             IdentityMessage identityMessage = new IdentityMessage();
             identityMessage.Subject = $"Invitación de {model.Name}";
             identityMessage.Body = $"Ha recibido una invitación para unirse al grupo de trabajo de {model.Name} en <a href=\"{Url.Action("Index", "Home", null, protocol: Request.Url.Scheme)}\">{ConfigurationManager.AppSettings.Get("mailFromName")}</a>." +
-                $"<br/>Por favor, presione <a href=\"{Url.Action("WorkerInvitationConfig", "Business", new { businessId = model.DT_RowId, ownerId = current_user_id, email = model.EmailInvitation }, protocol: Request.Url.Scheme)}\">AQUÍ</a> para aceptar la invitación, en caso contrario obvie este Email." +
+                $"<br/>Por favor, presione <a href=\"{Url.Action("WorkerInvitationConfig", "Business", new { businessId = model.DT_RowId, ownerId = current_user_id, roleId = model.RoleInvitation, email = model.EmailInvitation }, protocol: Request.Url.Scheme)}\">AQUÍ</a> para aceptar la invitación, en caso contrario obvie este Email." +
                 $"<br/><br/><br/>Atentamente,<br/>Equipo Minventario.";
             identityMessage.Destination = model.EmailInvitation;
 
@@ -284,7 +288,7 @@ namespace MovilShopStock.Controllers
         }
 
         [AllowAnonymous]
-        public async Task<ActionResult> WorkerInvitationConfig(string businessId, string ownerId, string email)
+        public async Task<ActionResult> WorkerInvitationConfig(string businessId, string ownerId, string email, string roleId)
         {
             Guid business_id = Guid.Parse(businessId);
 
@@ -293,6 +297,8 @@ namespace MovilShopStock.Controllers
             User user = await applicationDbContext.Users.FirstOrDefaultAsync(x => x.Id == ownerId);
 
             User worker = await applicationDbContext.Users.FirstOrDefaultAsync(x => x.Email == email);
+
+            IdentityRole role = await applicationDbContext.Roles.FirstOrDefaultAsync(x => x.Id == roleId);
 
             bool exist = false;
 
@@ -313,7 +319,8 @@ namespace MovilShopStock.Controllers
                     Name = business.Name
                 },
                 AlreadySubscribed = exist,
-                AlreadySystem = worker != null
+                AlreadySystem = worker != null,
+                Role = role
             };
 
             return View(result);
@@ -321,9 +328,9 @@ namespace MovilShopStock.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> AcceptInvitation(string businessId)
+        public async Task<ActionResult> AcceptInvitation(string BusinessId, string RoleId)
         {
-            Guid business_id = Guid.Parse(businessId);
+            Guid business_id = Guid.Parse(BusinessId);
             string userId = User.Identity.GetUserId();
 
             applicationDbContext.BusinessUsers.Add(new BusinessUser()
@@ -332,7 +339,8 @@ namespace MovilShopStock.Controllers
                 Business_Id = business_id,
                 IsRoot = false,
                 LastUpdated = DateTime.Now,
-                Cash = 0
+                Cash = 0,
+                Role_Id = RoleId
             });
             await applicationDbContext.SaveChangesAsync();
 
@@ -359,13 +367,14 @@ namespace MovilShopStock.Controllers
                         Business_Id = business_id,
                         IsRoot = false,
                         LastUpdated = DateTime.Now,
-                        Cash = 0
+                        Cash = 0,
+                        Role_Id = model.RoleId
                     });
                     await applicationDbContext.SaveChangesAsync();
 
                     await SignInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
 
-                    return RedirectToAction("SetBusiness", "Home", new { id = business_id, returnUrl = "/" });
+                    return RedirectToAction("Index", "Stock");
                 }
                 foreach (var error in result.Errors)
                 {

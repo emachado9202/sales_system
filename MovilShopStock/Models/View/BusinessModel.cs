@@ -23,6 +23,10 @@ namespace MovilShopStock.Models
         [DisplayName("Creado el")]
         public string CreatedOn { get; set; }
 
+        [DisplayName("Correo")]
         public string EmailInvitation { get; set; }
+
+        [DisplayName("Role Trabajador")]
+        public string RoleInvitation { get; set; }
     }
 }

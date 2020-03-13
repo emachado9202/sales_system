@@ -71,6 +71,12 @@ namespace MovilShopStock.Models
                     .WithMany(ul => ul.TransferMoneyUsers)
                     .HasForeignKey(ul => ul.UserTo_Id)
                     .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<TransferMoneyUser>()
+                    .HasRequired(u => u.BusinessTo)
+                    .WithMany(ul => ul.BusinessTos)
+                    .HasForeignKey(ul => ul.BusinessTo_Id)
+                    .WillCascadeOnDelete(false);
         }
 
         public DbSet<Category> Categories { get; set; }

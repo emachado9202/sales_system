@@ -24,7 +24,8 @@ else
         using (Html.BeginForm("AcceptInvitation", "Business", FormMethod.Post))
         {
             @Html.AntiForgeryToken()
-            <input type="hidden" name="businessId" value="@Model.Business.DT_RowId" />
+            <input type="hidden" name="BusinessId" value="@Model.Business.DT_RowId" />
+            <input type="hidden" name="RoleId" value="@Model.Role.Id" />
 
             <button type="submit" class="btn btn-primary">Aceptar Invitación</button>
         }
@@ -45,6 +46,7 @@ else
             @Html.ValidationSummary("", new { @class = "text-danger" })
             <input type="hidden" name="BusinessId" value="@Model.Business.DT_RowId" />
             <input type="hidden" name="OwnerId" value="@Model.Owner.Id" />
+            <input type="hidden" name="RoleId" value="@Model.Role.Id" />
             <div class="form-group">
                 @Html.LabelFor(m => m.Email, new { @class = "col-md-2 control-label" })
                 <div class="col-md-10">

@@ -1,4 +1,5 @@
-﻿using MovilShopStock.Models.Catalog;
+﻿using Microsoft.AspNet.Identity.EntityFramework;
+using MovilShopStock.Models.Catalog;
 using System.ComponentModel.DataAnnotations;
 
 namespace MovilShopStock.Models.View
@@ -7,6 +8,7 @@ namespace MovilShopStock.Models.View
     {
         public BusinessModel Business { get; set; }
         public User Owner { get; set; }
+        public IdentityRole Role { get; set; }
 
         public bool AlreadySubscribed { get; set; }
         public bool AlreadySystem { get; set; }
@@ -33,5 +35,6 @@ namespace MovilShopStock.Models.View
 
         public string BusinessId { get; set; }
         public string OwnerId { get; set; }
+        public string RoleId { get; set; }
     }
 }

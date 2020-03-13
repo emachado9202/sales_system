@@ -1,8 +1,6 @@
 ﻿using Microsoft.AspNet.Identity;
+using Microsoft.AspNet.Identity.EntityFramework;
 using MovilShopStock.Models.Catalog;
-using System;
-using System.Collections.Generic;
-using System.Data.Entity;
 using System.Linq;
 using System.Web;
 
@@ -13,31 +11,33 @@ namespace MovilShopStock.Models.Handlers
         public const string Administrator = "Administrador";
         public const string Editor = "Editor";
         public const string Dealer = "Vendedor";
+        public const string Reading = "Lectura";
 
         public static bool IsInRole(string role)
         {
+            ApplicationDbContext applicationDbContext = new ApplicationDbContext();
             bool flag = false;
             string UserId;
 
             //Check if Http Context
             if (HttpContext.Current.User.Identity.IsAuthenticated)
             {
-                ApplicationDbContext applicationDbContext = new ApplicationDbContext();
-
                 //Get User Id from HttpContext
                 UserId = HttpContext.Current.User.Identity.GetUserId();
-                User user = applicationDbContext.Users.Include("BusinessUsers").Include("BusinessUsers.Role").Include("BusinessUsers.Business").FirstOrDefault(x => x.Id == UserId);
+                User user = applicationDbContext.Users.FirstOrDefault(x => x.Id == UserId);
 
                 if (user != null)
                 {
-                    BusinessUser businessUser = user.BusinessUsers.FirstOrDefault(x => x.Business_Id == user.CurrentBusiness_Id);
+                    BusinessUser businessUser = applicationDbContext.BusinessUsers.FirstOrDefault(x => x.Business_Id == user.CurrentBusiness_Id && x.User_Id == user.Id);
 
                     if (businessUser == null)
                     {
-                        businessUser = user.BusinessUsers.FirstOrDefault(x => x.Business.IsPrimary);
+                        businessUser = applicationDbContext.BusinessUsers.FirstOrDefault(x => x.Business.IsPrimary && x.User_Id == user.Id);
                     }
 
-                    if (role.Equals(businessUser.Role.Name))
+                    IdentityRole role1 = applicationDbContext.Roles.FirstOrDefault(x => x.Id == businessUser.Role_Id);
+
+                    if (role.Equals(role1.Name))
                     {
                         flag = true;
                     }

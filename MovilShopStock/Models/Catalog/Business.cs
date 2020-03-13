@@ -19,5 +19,6 @@ namespace MovilShopStock.Models.Catalog
         public bool IsPrimary { get; set; }
 
         public virtual List<BusinessUser> BusinessUsers { get; set; }
+        public virtual List<TransferMoneyUser> BusinessTos { get; set; }
     }
 }

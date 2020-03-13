@@ -32,8 +32,12 @@
             <th>
                 Producto
             </th>
+
             <th>
-                Precio Actual
+                @if (!RoleManager.IsInRole(RoleManager.Reading))
+                {
+                    <span>Precio Actual</span>
+                }
             </th>
             <th>
                 Precio Venta
@@ -90,7 +94,15 @@
 
                     { data: 'Category' },
                     { data: 'Product' },
-                    { data: 'CurrentPrice' },
+                    {
+                        "render": function (data, type, JsonResultRow, meta) {
+                            var actions = "";
+                            if ('@(RoleManager.IsInRole(RoleManager.Reading))'=='False') {
+                                actions+= JsonResultRow.CurrentPrice;
+                            }
+                            return actions;
+                        }
+                    },
                     { data: 'SalePrice' },
                     { data: 'Stock' },
                     { data: 'LatestUpdated' },

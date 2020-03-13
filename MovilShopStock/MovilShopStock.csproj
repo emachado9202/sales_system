@@ -231,6 +231,7 @@
     <Compile Include="Models\View\ToolModel.cs" />
     <Compile Include="Models\View\TransferPrivateModel.cs" />
     <Compile Include="Models\View\TransferBusinessModel.cs" />
+    <Compile Include="Models\View\TransferSelectModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
   </ItemGroup>

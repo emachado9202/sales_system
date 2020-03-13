@@ -124,7 +124,7 @@ namespace MovilShopStock.Controllers
 
             model.PendentMoney = new List<Tuple<string, decimal>>();
             List<string> dealer_ids = await applicationDbContext.Roles.Where(x => x.Name.Equals(RoleManager.Dealer)).Select(x => x.Id).ToListAsync();
-            List<User> dealers = await applicationDbContext.Users.Where(x => x.Roles.FirstOrDefault(r => dealer_ids.Contains(r.RoleId)) != null && x.BusinessUsers.FirstOrDefault(y => y.Business_Id == business_working) != null).ToListAsync();
+            List<User> dealers = await applicationDbContext.Users.Where(x => x.BusinessUsers.FirstOrDefault(r => dealer_ids.Contains(r.Role_Id)) != null && x.BusinessUsers.FirstOrDefault(y => y.Business_Id == business_working) != null).ToListAsync();
             model.UserMoney = new List<Tuple<string, decimal>>();
             foreach (var u in dealers)
             {
@@ -178,7 +178,7 @@ namespace MovilShopStock.Controllers
 
                 List<string> roles_ids = await applicationDbContext.Roles.Where(x => x.Name.Equals(RoleManager.Editor) || x.Name.Equals(RoleManager.Administrator)).Select(x => x.Id).ToListAsync();
 
-                List<BusinessUser> users = await applicationDbContext.BusinessUsers.Include("User").Where(x => x.User.Roles.FirstOrDefault(r => roles_ids.Contains(r.RoleId)) != null && x.Business_Id == business_working).ToListAsync();
+                List<BusinessUser> users = await applicationDbContext.BusinessUsers.Include("User").Where(x => x.User.BusinessUsers.FirstOrDefault(r => roles_ids.Contains(r.Role_Id)) != null && x.Business_Id == business_working).ToListAsync();
                 model.UserMoney = new List<Tuple<string, decimal>>();
                 foreach (var u in users)
                 {

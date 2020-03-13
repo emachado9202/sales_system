@@ -358,3 +358,7 @@ code {
 .img-stats-5 {
     background-image: url('img/stats5.jpg');
 }
+
+.pending-class {
+    background-color: rgba(75, 153, 240, 0.3) !important;
+}

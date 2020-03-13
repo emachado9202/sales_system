@@ -18,7 +18,7 @@
         <div class="form-group">
             @Html.LabelFor(model => model.FromTo, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.DropDownList("FromTo", new SelectList(ViewBag.BusinessUsers, "Id", "UserName"), new { @class = "custom-select form-control" })
+                @Html.DropDownList("FromTo", new SelectList(ViewBag.BusinessUsers, "Id", "Name"), new { @class = "custom-select form-control" })
                 @Html.ValidationMessageFor(model => model.FromTo, "", new { @class = "text-danger" })
             </div>
         </div>
@@ -34,11 +34,8 @@
         <div class="form-group">
             <div class="col-md-offset-2 col-md-10">
                 <input type="submit" value="Transferir" class="btn btn-dark" />
+                @Html.ActionLink("Regresar", "Index", new { selectedTab = "nav-private-tab" }, new { @class = "btn btn-light" })
             </div>
         </div>
     </div>
 }
-
-<div>
-    @Html.ActionLink("Regresar", "Index", new { selectedTab = "nav-private" })
-</div>

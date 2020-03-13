@@ -14,6 +14,13 @@ namespace MovilShopStock.Models.Handlers
     {
         public override void OnAuthorization(AuthorizationContext filterContext)
         {
+            var custom_attributes = filterContext.ActionDescriptor.GetCustomAttributes(true);
+
+            if (custom_attributes.FirstOrDefault(x => x.GetType().Name == "AllowAnonymousAttribute") != null)
+            {
+                return;
+            }
+
             //base.OnAuthorization(filterContext);
             bool flag = false;
             string UserId;

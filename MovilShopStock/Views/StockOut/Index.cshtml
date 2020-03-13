@@ -155,6 +155,9 @@
                     }
                 ],
                 "rowCallback": function (row, data) {
+                    if (!data.Receivered) {
+                        $(row).addClass('pending-class');
+                    }
                     /* mainView.contents.push(new dataModel(data));*/
                 },
                 "iDisplayLength": 25,
