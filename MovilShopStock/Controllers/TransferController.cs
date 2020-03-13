@@ -335,12 +335,13 @@ namespace MovilShopStock.Controllers
                         .Take(filter.length)
                         .ToListAsync();
             }
+            Guid business_working = Guid.Parse(Session["BusinessWorking"].ToString());
 
             foreach (var tbp in model)
             {
                 string fromto = "";
                 bool sent = false;
-                if (tbp.UserFrom_Id == userId)
+                if (tbp.UserFrom_Id == userId && tbp.BusinessFrom_Id == business_working)
                 {
                     fromto = tbp.BusinessTo == null ? $"Hacia {tbp.UserTo.UserName}" : $"Hacia {tbp.BusinessTo.Name} -> {tbp.UserTo.UserName}";
                     sent = true;
@@ -372,9 +373,6 @@ namespace MovilShopStock.Controllers
         public async Task<ActionResult> CreatePrivate()
         {
             TransferPrivateModel model = new TransferPrivateModel();
-
-            Guid business_working = Guid.Parse(Session["BusinessWorking"].ToString());
-            string userId = User.Identity.GetUserId();
 
             ViewBag.BusinessUsers = await GetSelect();
 
