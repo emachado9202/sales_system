@@ -18,8 +18,6 @@ namespace MovilShopStock.Controllers
         [HttpGet]
         public async Task<ActionResult> Index(string id)
         {
-            List<ProductModel> result = new List<ProductModel>();
-
             List<Tuple<string, string>> categories = new List<Tuple<string, string>>();
 
             categories.Add(new Tuple<string, string>("", "Categoría Todas"));
@@ -83,6 +81,8 @@ namespace MovilShopStock.Controllers
 
                 await applicationDbContext.SaveChangesAsync();
 
+                await ActivityPublisher.Publish(User.Identity.GetUserId(), ActivityTypeConstants.Stock_Create, product.Id, model.Product, business_working);
+
                 return RedirectToAction("Index");
             }
 
@@ -122,6 +122,7 @@ namespace MovilShopStock.Controllers
         [Models.Handlers.Authorize(Roles = RoleManager.Editor + "," + RoleManager.Administrator)]
         public async Task<ActionResult> Edit(string id, ProductModel model)
         {
+            Guid business_working = Guid.Parse(Session["BusinessWorking"].ToString());
             if (ModelState.IsValid)
             {
                 Guid prod_id = Guid.Parse(id);
@@ -140,10 +141,10 @@ namespace MovilShopStock.Controllers
                 applicationDbContext.Entry(product).State = System.Data.Entity.EntityState.Modified;
 
                 await applicationDbContext.SaveChangesAsync();
+                await ActivityPublisher.Publish(User.Identity.GetUserId(), ActivityTypeConstants.Stock_Edit, product.Id, model.Product, business_working);
 
                 return RedirectToAction("Index");
             }
-            Guid business_working = Guid.Parse(Session["BusinessWorking"].ToString());
             ViewBag.Categories = await applicationDbContext.Categories.Where(x => x.Business_Id == business_working).OrderBy(x => x.Name).ToListAsync();
 
             return View(model);

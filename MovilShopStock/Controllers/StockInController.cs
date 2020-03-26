@@ -112,6 +112,7 @@ namespace MovilShopStock.Controllers
                 applicationDbContext.Entry(product).State = System.Data.Entity.EntityState.Modified;
 
                 await applicationDbContext.SaveChangesAsync();
+                await ActivityPublisher.Publish(User.Identity.GetUserId(), ActivityTypeConstants.Stock_In_Create, stockIn.Id, product.Name, business_working);
 
                 return RedirectToAction("Index");
             }

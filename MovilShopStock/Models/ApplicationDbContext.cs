@@ -88,6 +88,8 @@ namespace MovilShopStock.Models
         public DbSet<BusinessUser> BusinessUsers { get; set; }
         public DbSet<TransferBusinessProduct> TransferBusinessProducts { get; set; }
         public DbSet<TransferMoneyUser> TransferMoneyUsers { get; set; }
+        public DbSet<ActivityLogType> ActivityLogTypes { get; set; }
+        public DbSet<ActivityLog> ActivityLogs { get; set; }
     }
 
     public class Configuration : DbConfiguration

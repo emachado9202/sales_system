@@ -7,7 +7,6 @@ using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Web;
 using System.Web.Mvc;
 
 namespace MovilShopStock.Controllers
@@ -131,6 +130,7 @@ namespace MovilShopStock.Controllers
                 }
 
                 await applicationDbContext.SaveChangesAsync();
+                await ActivityPublisher.Publish(User.Identity.GetUserId(), ActivityTypeConstants.Stock_Out_Create, product.Id, product.Name, business_working);
 
                 return RedirectToAction("Index");
             }
@@ -169,6 +169,8 @@ namespace MovilShopStock.Controllers
                 applicationDbContext.Entry(businessUser).State = System.Data.Entity.EntityState.Modified;
 
                 await applicationDbContext.SaveChangesAsync();
+
+                await ActivityPublisher.Publish(User.Identity.GetUserId(), ActivityTypeConstants.Stock_Out_Receive, stockOut.Id, stockOut.Product.Name, business_working);
             }
 
             return Json(true);
@@ -199,6 +201,8 @@ namespace MovilShopStock.Controllers
                 }
 
                 applicationDbContext.Entry(businessUser).State = System.Data.Entity.EntityState.Modified;
+
+                await ActivityPublisher.Publish(User.Identity.GetUserId(), ActivityTypeConstants.Stock_Out_Receive, stockOut.Id, stockOut.Product.Name, business_working);
             }
             await applicationDbContext.SaveChangesAsync();
 
@@ -281,6 +285,7 @@ namespace MovilShopStock.Controllers
 
                 applicationDbContext.Entry(stockOut.Product).State = System.Data.Entity.EntityState.Modified;
                 applicationDbContext.Entry(stockOut).State = System.Data.Entity.EntityState.Deleted;
+                await ActivityPublisher.Publish(User.Identity.GetUserId(), ActivityTypeConstants.Stock_Out_Remove, stockOut.Id, stockOut.Product.Name, business_working);
 
                 await applicationDbContext.SaveChangesAsync();
             }

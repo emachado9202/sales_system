@@ -199,7 +199,10 @@
       <DependentUpon>201911220719255_InitialCreate.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
+    <Compile Include="Models\Catalog\ActivityLog.cs" />
+    <Compile Include="Models\Catalog\ActivityLogType.cs" />
     <Compile Include="Models\Catalog\Provider.cs" />
+    <Compile Include="Models\Handlers\ActivityPublisher.cs" />
     <Compile Include="Models\Handlers\AuthorizeAttribute.cs" />
     <Compile Include="Models\Handlers\CacheManager.cs" />
     <Compile Include="Models\View\AccountViewModels.cs" />
@@ -222,6 +225,7 @@
     <Compile Include="Models\Handlers\Extensions\RouteExtensions.cs" />
     <Compile Include="Models\Handlers\Extensions\TelerikExtensions.cs" />
     <Compile Include="Models\Handlers\RoleManager.cs" />
+    <Compile Include="Models\View\LogModel.cs" />
     <Compile Include="Models\View\ManageViewModels.cs" />
     <Compile Include="Models\View\BusinessModel.cs" />
     <Compile Include="Models\View\ProductModel.cs" />
@@ -460,6 +464,7 @@
     <Content Include="Scripts\popper-utils.min.js.map" />
     <Content Include="Scripts\popper-utils.js.map" />
     <Content Include="Views\Business\WorkerInvitationConfig.cshtml" />
+    <Content Include="Views\Home\Logs.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

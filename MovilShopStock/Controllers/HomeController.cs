@@ -7,6 +7,7 @@ using MovilShopStock.Models.View;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
@@ -54,6 +55,9 @@ namespace MovilShopStock.Controllers
         [Models.Handlers.Authorize(Roles = RoleManager.Dealer + "," + RoleManager.Editor + "," + RoleManager.Administrator)]
         public async Task<ActionResult> Dashboard()
         {
+            var stopWatch = new Stopwatch();
+            stopWatch.Start();
+
             DashboardModel model = new DashboardModel();
 
             DateTime month_init = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 01);
@@ -68,7 +72,9 @@ namespace MovilShopStock.Controllers
 
             model.InQuantity = new Tuple<long, decimal>(quantity_in_month, percent_quantity_in);
 
-            List<StockIn> stockIns = await applicationDbContext.StockIns.Include("Product").Include("Product.Category").Where(x => x.Product.Business_Id == business_working && x.Date > month_init).ToListAsync();
+            var stockIns = await applicationDbContext.StockIns.Include("Product").Include("Product.Category").Where(x => x.Product.Business_Id == business_working && x.Date > month_init).ToListAsync();
+            var stockOuts = await applicationDbContext.StockOuts.Include("Product").Include("Product.Category").Where(x => x.Product.Business_Id == business_working && x.Date > month_init).ToListAsync();
+
             decimal money_in = 0;
 
             foreach (var stockIn in stockIns)
@@ -91,7 +97,6 @@ namespace MovilShopStock.Controllers
 
             model.OutQuantity = new Tuple<long, decimal>(quantity_out_month, percent_quantity_out);
 
-            List<StockOut> stockOuts = await applicationDbContext.StockOuts.Include("Product").Include("Product.Category").Where(x => x.Product.Business_Id == business_working && x.Date > month_init).ToListAsync();
             decimal money_out = 0, money_out_month = 0;
 
             foreach (var stockOut in stockOuts)
@@ -210,6 +215,10 @@ namespace MovilShopStock.Controllers
 
                 model.Categories.Add(new Tuple<string, List<Tuple<string, decimal>>>($"{ocat.Key.Name} (Mes)", temp));
             }
+
+            stopWatch.Stop();
+
+            ViewBag.Time = stopWatch.ElapsedMilliseconds;
 
             return View(model);
         }
@@ -520,6 +529,138 @@ namespace MovilShopStock.Controllers
                 }
             }
             return result.ToString("#,##0.00");
+        }
+
+        [Models.Handlers.Authorize]
+        public async Task<ActionResult> Logs(string id)
+        {
+            List<Tuple<string, string>> activities = new List<Tuple<string, string>>();
+
+            activities.Add(new Tuple<string, string>("", "Todas"));
+
+            Guid business_working = Guid.Parse(Session["BusinessWorking"].ToString());
+
+            foreach (var cat in await applicationDbContext.ActivityLogTypes.OrderBy(x => x.SystemKeybord).ToListAsync())
+            {
+                activities.Add(new Tuple<string, string>(cat.Id.ToString(), cat.Name));
+            }
+
+            ViewBag.Activities = activities;
+            ViewBag.Activity = id;
+
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> SearchLogs(StockFilterViewModel filter)
+        {
+            Guid business_working = Guid.Parse(Session["BusinessWorking"].ToString());
+
+            List<LogModel> result = new List<LogModel>();
+            long totalRowsFiltered = 0;
+            long totalRows = await applicationDbContext.ActivityLogs.CountAsync(x => x.Business_Id == business_working);
+            List<ActivityLog> model;
+
+            var entity = applicationDbContext.ActivityLogs.Include("User").Include("ActivityLogType").Where(x => x.Business_Id == business_working);
+
+            if (!string.IsNullOrEmpty(filter.type))
+            {
+                int typeId = int.Parse(filter.type);
+
+                totalRows = await applicationDbContext.ActivityLogs.CountAsync(x => x.Business_Id == business_working && x.ActivityLogType_Id == typeId);
+                entity = entity.Where(x => x.Business_Id == business_working && x.ActivityLogType_Id == typeId);
+            }
+
+            IOrderedQueryable<ActivityLog> sort = null;
+            if (filter.order[0].column == 0)
+            {
+                if (filter.order[0].dir.Equals("asc"))
+                {
+                    sort = entity.OrderBy(x => x.User.UserName);
+                }
+                else
+                {
+                    sort = entity.OrderByDescending(x => x.User.UserName);
+                }
+            }
+            else if (filter.order[0].column == 1)
+            {
+                if (filter.order[0].dir.Equals("asc"))
+                {
+                    sort = entity.OrderBy(x => x.ActivityLogType.Name);
+                }
+                else
+                {
+                    sort = entity.OrderByDescending(x => x.ActivityLogType.Name);
+                }
+            }
+            else if (filter.order[0].column == 2)
+            {
+                if (filter.order[0].dir.Equals("asc"))
+                {
+                    sort = entity.OrderBy(x => x.Comment);
+                }
+                else
+                {
+                    sort = entity.OrderByDescending(x => x.Comment);
+                }
+            }
+            else if (filter.order[0].column == 3)
+            {
+                if (filter.order[0].dir.Equals("asc"))
+                {
+                    sort = entity.OrderBy(x => x.Date);
+                }
+                else
+                {
+                    sort = entity.OrderByDescending(x => x.Date);
+                }
+            }
+
+            if (string.IsNullOrEmpty(filter.search.value))
+            {
+                totalRowsFiltered = totalRows;
+                model = await sort.Skip(filter.start)
+                    .Take(filter.length)
+                    .ToListAsync();
+            }
+            else
+            {
+                totalRowsFiltered = await
+               applicationDbContext.ActivityLogs.CountAsync(x => x.Business_Id == business_working && (x.ActivityLogType.Name.ToString().Contains(filter.search.value) ||
+               x.Comment.ToString().Contains(filter.search.value) ||
+               x.User.UserName.ToString().Contains(filter.search.value) ||
+               x.Date.ToString().Contains(filter.search.value)));
+
+                model = await
+                    sort.Where(x => x.Business_Id == business_working && (x.ActivityLogType.Name.ToString().Contains(filter.search.value) ||
+               x.Comment.ToString().Contains(filter.search.value) ||
+               x.User.UserName.ToString().Contains(filter.search.value) ||
+               x.Date.ToString().Contains(filter.search.value)))
+                        .Skip(filter.start)
+                        .Take(filter.length)
+                        .ToListAsync();
+            }
+
+            foreach (var log in model)
+            {
+                result.Add(new LogModel()
+                {
+                    DT_RowId = log.Id.ToString(),
+                    Date = log.Date.ToString("yyyy-MM-dd hh:mm tt"),
+                    Name = log.ActivityLogType.Name,
+                    Comment = log.Comment,
+                    User = log.User.UserName
+                });
+            }
+
+            return Json(new
+            {
+                draw = filter.draw,
+                recordsTotal = totalRows,
+                recordsFiltered = totalRowsFiltered,
+                data = result
+            });
         }
     }
 }

@@ -13,23 +13,22 @@
         }
         <li class="nav-item">@Html.ActionLink("Transferencias", "Index", "Transfer", routeValues: null, htmlAttributes: new { @class = "nav-link" })</li>
 
-        @if (!RoleManager.IsInRole(RoleManager.Reading))
-        {
-            <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    Configuración
-                </a>
-                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                    @if (RoleManager.IsInRole(RoleManager.Editor) || RoleManager.IsInRole(RoleManager.Administrator))
-                    {
-                        @Html.ActionLink("Categorias", "Index", "Category", routeValues: null, htmlAttributes: new { @class = "dropdown-item" })
-                        @Html.ActionLink("Proveedores", "Index", "Provider", routeValues: null, htmlAttributes: new { @class = "dropdown-item" })
+        <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                Configuración
+            </a>
+            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                @if (RoleManager.IsInRole(RoleManager.Editor) || RoleManager.IsInRole(RoleManager.Administrator))
+                {
+                    @Html.ActionLink("Categorias", "Index", "Category", routeValues: null, htmlAttributes: new { @class = "dropdown-item" })
+                    @Html.ActionLink("Proveedores", "Index", "Provider", routeValues: null, htmlAttributes: new { @class = "dropdown-item" })
 
-                    }
-                    @Html.ActionLink("Negocios", "Index", "Business", routeValues: null, htmlAttributes: new { @class = "dropdown-item" })
-                </div>
-            </li>
-        }
+                }
+
+                @Html.ActionLink("Negocios", "Index", "Business", routeValues: null, htmlAttributes: new { @class = "dropdown-item" })
+                @Html.ActionLink("Registro Actividad", "Logs", "Home", routeValues: null, htmlAttributes: new { @class = "dropdown-item" })
+            </div>
+        </li>
     </ul>
     using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { id = "logoutForm", @class = "navbar-right" }))
     {
